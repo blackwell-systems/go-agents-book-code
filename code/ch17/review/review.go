@@ -215,9 +215,9 @@ func decide(ctx context.Context, c *Client, verb string,
 
 // tag::list[]
 
-// list returns one line per item: its ID, kind, tool, how long it has
-// waited (marked stale for an unknown outcome nobody has checked), and
-// why it waits.
+// list returns two lines per item: its ID, kind, tool, and how long it
+// has waited (marked stale for an unknown outcome nobody has checked),
+// then, indented, why it waits.
 func list(items []service.Item, now time.Time) string {
 	if len(items) == 0 {
 		return "nothing waiting\n"
@@ -228,7 +228,7 @@ func list(items []service.Item, now time.Time) string {
 		if it.Stale {
 			age += " STALE"
 		}
-		fmt.Fprintf(&b, "%s  %-15s  %-12s  %-12s  %s\n", it.ID, it.Kind,
+		fmt.Fprintf(&b, "%s  %-15s  %-12s  %s\n  %s\n", it.ID, it.Kind,
 			printable(it.Tool), age, printable(firstLine(it.Why)))
 	}
 	return b.String()

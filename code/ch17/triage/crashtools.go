@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"maps"
+	"path"
 	"regexp"
 	"slices"
 	"strings"
@@ -33,18 +34,19 @@ func crashList(e *Env) agent.Tool {
 			"usually share a cause, but check. Start here.",
 		func(context.Context, struct{}) (string, error) {
 			rs := slices.Clone(e.Reports)
+			t := e.target()
 			slices.SortStableFunc(rs, func(a, b Report) int { // <1>
-				return strings.Compare(Fingerprint(a), Fingerprint(b))
+				return strings.Compare(t.Fingerprint(a), t.Fingerprint(b))
 			})
 			var b strings.Builder
 			fmt.Fprintf(&b, "%d reports:\n", len(rs))
 			for _, r := range rs {
 				where := "(no frame in remind)"
-				if fs := frames(r, 1); len(fs) > 0 {
+				if fs := t.frames(r, 1); len(fs) > 0 {
 					where = fs[0]
 				}
 				fmt.Fprintf(&b, "%s %s x%d %s %s %s: %s\n", r.ID,
-					Fingerprint(r), r.Count, r.Kind, r.Version, where,
+					t.Fingerprint(r), r.Count, r.Kind, r.Version, where,
 					short(r.Panic, 100))
 			}
 			return b.String(), nil
@@ -89,7 +91,8 @@ func crashRead(e *Env) agent.Tool {
 				r.ID, r.Kind, r.Version, r.Commit, r.Count,
 				r.FirstSeen.Format("2006-01-02 15:04"),
 				r.LastSeen.Format("2006-01-02 15:04"))
-			fmt.Fprintf(&b, "fingerprint: %s\npanic: %s\n", Fingerprint(r), r.Panic)
+			fmt.Fprintf(&b, "fingerprint: %s\npanic: %s\n",
+				e.target().Fingerprint(r), r.Panic)
 			writeRequest(&b, r.Request)
 			switch {
 			case r.Kind == "stuck":
@@ -99,7 +102,7 @@ func crashRead(e *Env) agent.Tool {
 				fmt.Fprintf(&b, "stack:\n%s\n", limitText(r.Stack, 8<<10))
 			default:
 				fmt.Fprintf(&b, "stack, remind's frames, innermost first:\n%s",
-					remindFrames(r.Stack))
+					e.target().ownFrames(r.Stack))
 			}
 			fmt.Fprintf(&b, "log lines: %d; read them with crash_logs\n", len(r.Logs))
 			return b.String(), nil
@@ -123,19 +126,24 @@ func writeRequest(b *strings.Builder, req Request) {
 }
 
 // fileLine matches a stack line's location, such as
-// "\t/app/remind/api/reminders.go:42 +0x1c".
-var fileLine = regexp.MustCompile(`^\s+\S*?/remind/(\S+:\d+)`)
+// "\t/app/remind/api/reminders.go:42 +0x1c", in a directory named for
+// the module path's last element.
+func (t Target) fileLine() *regexp.Regexp {
+	dir := regexp.QuoteMeta(path.Base(t.orRemind().Module))
+	return regexp.MustCompile(`^\s+\S*?/` + dir + `/(\S+:\d+)`)
+}
 
-// remindFrames lists the frames of a stack that belong to remind, with
+// ownFrames lists the frames of a stack that belong to the target, with
 // their file and line, skipping the crash reporter.
-func remindFrames(stack string) string {
+func (t Target) ownFrames(stack string) string {
 	lines := strings.Split(stack, "\n")
+	fileLine := t.fileLine()
 	var b strings.Builder
 	for i := 0; i+1 < len(lines); i++ {
-		if !strings.HasPrefix(lines[i], "example.com/remind/") {
+		if !strings.HasPrefix(lines[i], t.prefix()) {
 			continue
 		}
-		fn := normalize(lines[i])
+		fn := t.normalize(lines[i])
 		if strings.HasPrefix(fn, "crash.") {
 			continue
 		}

@@ -1,0 +1,19 @@
+A fixed chain: crash report, summary, issue title
+  title: duration.Parse panics on an empty string
+  calls: 2
+
+Routing: a small model picks the handler
+  crash     duration.Parse panics on an empty string
+  question  Send "for": "1w" to snooze for a week.
+  (other)   dropped without a model call
+  calls: 4 to the small model, 2 to the large one
+
+Parallel calls with a vote: 3 of 5 must agree
+  votes: ["yes" "no" "yes" "Yes" " yes\n"]
+  answer: yes
+  votes: ["yes" "no" "unsure" "no" "yes"]
+  error: shapes: no answer reached the quorum: 5 answers, 0 failed calls
+
+Check and revise: draft an issue body
+  body:  POST /v1/reminders/{id}/snooze with an empty "for" panics in duration.Parse, which reads s[len(s)-1] before checking for an empty string.
+  calls: 2 to the writer, 2 to the critic

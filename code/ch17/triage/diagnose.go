@@ -62,7 +62,7 @@ func DiagnoseTools(e *Env) []agent.Tool {
 	var out []agent.Tool
 	for _, t := range Tools(e) {
 		if t.Def.Name == "code_patch" {
-			t = redacted(inWorkspace(e, testWrite(e)))
+			t = e.target().named(redacted(inWorkspace(e, testWrite(e))))
 		}
 		out = append(out, t)
 	}

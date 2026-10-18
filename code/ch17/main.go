@@ -142,7 +142,8 @@ func main() {
 		"or all (chapters 13 and 14)")
 	versionList := flag.String("versions", "base",
 		"with -eval, the agent versions to run: base, checked, "+
-			"no-crash-site, marked, defended, comma-separated")
+			"no-crash-site, marked, defended, final, or "+
+			"final-no-history, comma-separated")
 	flag.IntVar(&ec.runs, "runs", 2, "with -eval, scored runs per task")
 	only := flag.String("only", "", "with -eval, just these tasks of "+
 		"the set, comma-separated, as for a pilot")
@@ -164,8 +165,12 @@ func main() {
 		"OpenRouter provider for the reviewer's requests")
 	flag.StringVar(&c.issues, "issues", "", "with serve, the tracker's "+
 		"file (default: issues.json in -state)")
-	flag.StringVar(&c.git, "git", "", "with serve, a git repository to "+
-		"check out each crash's commit from (default: the book's remind)")
+	flag.StringVar(&c.git, "git", "", "with a file or serve, a git "+
+		"repository to check out each crash's commit from (default: "+
+		"the book's remind)")
+	targetFile := flag.String("target", "", "with a file or serve, a "+
+		"JSON file naming the service the reports come from: its name, "+
+		"its module path, and its protected paths (default: remind)")
 	flag.Float64Var(&c.daily, "daily", 0, "with serve, the most to "+
 		"spend in a day, in dollars; 0 means no daily limit")
 	flag.BoolVar(&c.diagnoseOnly, "diagnose-only", false, "with a file, "+
@@ -180,6 +185,16 @@ func main() {
 	getenv, err := takeSecrets() // chapter 14: before any child starts
 	if err != nil {
 		log.Fatal(err)
+	}
+	if *targetFile != "" {
+		if flag.NArg() == 0 { // a catalog task is remind's
+			log.Fatal("-target is for a file of reports or serve")
+		}
+		t, err := triage.LoadTarget(*targetFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		c.target = &t
 	}
 	ec.versions = strings.Split(*versionList, ",")
 	c.reviewer = ec.reviewer
@@ -271,14 +286,15 @@ type config struct {
 	maxResumes int    // how many restarts a run may have
 
 	// Chapter 17: the command over a file of reports, and the service.
-	issues       string        // the tracker's file for serve, if not in -state
-	git          string        // a git repository to build workspaces from
-	daily        float64       // serve's daily budget, in dollars
-	diagnoseOnly bool          // no tool that changes code
-	review       bool          // a second model reviews each answer
-	reviewer     string        // its model
-	keep         time.Duration // how long finished runs are kept
-	dieAfter     string        // a tool after whose first call to die
+	issues       string         // the tracker's file for serve, if not in -state
+	git          string         // a git repository to build workspaces from
+	target       *triage.Target // the service triaged; nil for remind
+	daily        float64        // serve's daily budget, in dollars
+	diagnoseOnly bool           // no tool that changes code
+	review       bool           // a second model reviews each answer
+	reviewer     string         // its model
+	keep         time.Duration  // how long finished runs are kept
+	dieAfter     string         // a tool after whose first call to die
 }
 
 // tag::run[]

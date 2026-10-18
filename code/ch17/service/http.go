@@ -11,8 +11,6 @@ import (
 	"regexp"
 	"slices"
 	"strings"
-
-	"github.com/blackwell-systems/go-agents-book/code/ch17/triage"
 )
 
 // tag::routes[]
@@ -80,7 +78,7 @@ func (s *Service) postCrash(w http.ResponseWriter, r *http.Request) {
 	}
 	rep := wr.report() // redacted from here on
 	got, err := s.ingest(r.Context(), storedReport{Report: rep,
-		Fingerprint: triage.Fingerprint(rep), Received: s.cfg.Now()})
+		Fingerprint: s.cfg.Fingerprint(rep), Received: s.cfg.Now()})
 	switch {
 	case errors.Is(err, ErrFull):
 		w.Header().Set("Retry-After", "60")

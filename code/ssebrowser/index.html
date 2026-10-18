@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent run</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { color-scheme: light dark; font: 15px/1.5 system-ui, sans-serif; }
+  body { max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+  input { width: 100%; box-sizing: border-box; padding: .4rem; font: inherit; }
+  button { margin: .5rem .5rem 1rem 0; font: inherit; }
+  #log > div { margin: .3rem 0; white-space: pre-wrap; }
+  .call, .result, .meta { font: 13px/1.4 ui-monospace, monospace; }
+  .result, .meta { opacity: .7; }
+  .result { max-height: 8.5em; overflow: auto; }
+  .error { color: #c33; }
+  .turn { border-top: 1px solid #8884; padding-top: .3rem; }
+</style>
+</head>
+<body>
+<h1>Agent run</h1>
+<input id="task" value="The tests in this project fail. Find out why and fix it.">
+<button id="run">Run</button><button id="stop" disabled>Stop</button>
+<div id="log"></div>
+<script>
+const log = document.getElementById("log");
+const run = document.getElementById("run");
+const stop = document.getElementById("stop");
+let es = null; // the open stream, if any
+let text = null; // the div the model's text is going into
+
+// line adds a line to the log. It sets textContent, never innerHTML,
+// since tool output and model text are untrusted.
+function line(cls, s) {
+  const div = document.createElement("div");
+  div.className = cls;
+  div.textContent = s;
+  log.append(div);
+  return div;
+}
+
+function done(msg, cls) {
+  if (!es) return;
+  es.close(); // without this, EventSource reconnects and runs again
+  es = null;
+  line(cls, msg);
+  run.disabled = false;
+  stop.disabled = true;
+}
+
+// tag::client[]
+run.onclick = () => {
+  log.replaceChildren();
+  text = null;
+  const task = document.getElementById("task").value;
+  es = new EventSource("/events?task=" + encodeURIComponent(task));
+  run.disabled = true;
+  stop.disabled = false;
+  const on = (kind, f) =>
+    es.addEventListener(kind, e => f(JSON.parse(e.data)));
+  on("text", d => {
+    text ??= line("text", "");
+    text.textContent += d.text;
+  });
+  on("call", d => {
+    text = null;
+    line("call", "→ " + d.name + " " + d.args);
+  });
+  on("result", d =>
+    line(d.is_error ? "result error" : "result", d.content));
+  on("turn", d => {
+    text = null;
+    line("turn meta", "end of turn " + d.turn);
+  });
+  on("stopped", d => d.error
+    ? done("stopped: " + d.error, "meta error")
+    : done("answered", "meta"));
+  es.onerror = () => done("connection lost", "meta error");
+};
+// end::client[]
+
+// Closing the stream ends the request; the server sees it in the
+// request's context and cancels the run.
+stop.onclick = () => done("stopped by you", "meta");
+</script>
+</body>
+</html>

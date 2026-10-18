@@ -120,8 +120,7 @@ func runFile(ctx context.Context, getenv func(string) string,
 	if err != nil {
 		return fmt.Errorf("tracker: %w", err)
 	}
-	s, err := newStack(getenv, w, c, ms, state, issues,
-		practiceTree(c.repo))
+	s, err := newStack(getenv, w, c, ms, state, issues, treeFor(c))
 	if err != nil {
 		return err
 	}
@@ -233,8 +232,8 @@ func (s *stack) runAll(ctx context.Context, w io.Writer, c config,
 		Triager: s.tr, Issues: s.late, Busy: s.tr.causes.Busy,
 		Prune: s.tr.prune, Slots: slots,
 		MaxQueued: len(reports) + 1, TotalCost: c.maxCost, SpentSoFar: s.tr.spentSoFar,
-		RunCost: c.maxCost / float64(slots),
-		Log:     slog.New(slog.DiscardHandler)})
+		RunCost:     c.maxCost / float64(slots),
+		Fingerprint: fingerprinter(c), Log: slog.New(slog.DiscardHandler)})
 	if err != nil {
 		return batchResult{}, fmt.Errorf("start: %w", err)
 	}
@@ -433,11 +432,7 @@ func serve(ctx context.Context, getenv func(string) string,
 	if err != nil {
 		return fmt.Errorf("tracker: %w", err)
 	}
-	build := practiceTree(c.repo)
-	if c.git != "" {
-		build = gitTree(c.git)
-	}
-	s, err := newStack(getenv, w, c, ms, c.state, issues, build)
+	s, err := newStack(getenv, w, c, ms, c.state, issues, treeFor(c))
 	if err != nil {
 		return err
 	}
@@ -448,7 +443,7 @@ func serve(ctx context.Context, getenv func(string) string,
 		Triager: s.tr, Issues: s.late, Busy: s.tr.causes.Busy,
 		Prune: s.tr.prune, Slots: cmp.Or(c.parallel, 2),
 		RunCost: c.maxCost, DailyCost: c.daily,
-		SpentSoFar: s.tr.spentSoFar})
+		SpentSoFar: s.tr.spentSoFar, Fingerprint: fingerprinter(c)})
 	if err != nil {
 		return fmt.Errorf("start: %w", err)
 	}
@@ -553,6 +548,10 @@ func command(ctx context.Context, getenv func(string) string, c config,
 	case "serve":
 		return serve(ctx, getenv, w, c, ms, addr)
 	case "catalog":
+		if c.git != "" || c.target != nil { // its tasks are remind's
+			return errors.New("catalog runs remind's crashes; " +
+				"-git and -target are for a file or serve")
+		}
 		return runCatalog(ctx, getenv, w, c, ms)
 	}
 	return runFile(ctx, getenv, w, c, ms, args[0])

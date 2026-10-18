@@ -154,7 +154,9 @@ type issueCommentArgs struct {
 // CommentTool returns issue_comment alone, redacted, for a harness
 // that comments outside any run, such as the service adding late
 // reports to an issue (chapter 17).
-func CommentTool(e *Env) agent.Tool { return redacted(issueComment(e)) }
+func CommentTool(e *Env) agent.Tool {
+	return e.target().named(redacted(issueComment(e)))
+}
 
 func issueComment(e *Env) agent.Tool {
 	t := agent.NewTool("issue_comment",
@@ -246,7 +248,7 @@ func (e *Env) fingerprint(fp string) (string, error) {
 	}
 	known := map[string]bool{}
 	for _, r := range e.Reports {
-		known[Fingerprint(r)] = true
+		known[e.target().Fingerprint(r)] = true
 	}
 	if !known[fp] {
 		return "", fmt.Errorf("not filed: no crash group has "+

@@ -176,7 +176,7 @@ func (t *triager) prepare(ctx context.Context, run service.Run,
 	rule := r.d.rule
 	if env.DiagnoseOnly { // chapter 17: the edit tool is absent
 		tools = triage.DiagnoseTools(env)
-		rule += triage.DiagnoseRule
+		rule += env.Target.Text(triage.DiagnoseRule)
 	}
 	tools = append(tools, triage.ExplainPackage(r.sm, env,
 		agent.Limits{MaxTurns: 15, Spend: r.pool, Context: policy}))
@@ -196,8 +196,8 @@ func (t *triager) prepare(ctx context.Context, run service.Run,
 	// end::prepare-tools[]
 
 	r.msgs = []agent.Message{
-		{Role: "system", Content: triage.Prompt + "\n\n" + explainLine +
-			"\n\n" + triage.HistoryLine},
+		{Role: "system", Content: env.Target.Text(triage.Prompt +
+			"\n\n" + explainLine + "\n\n" + triage.HistoryLine)},
 		{Role: "user",
 			Content: instruction + rule + t.restartNote(run)},
 	}
@@ -321,6 +321,9 @@ func (t *triager) setUp(ctx context.Context, run service.Run,
 	}
 	env.Keys, env.Gate, env.History = true, true, true
 	env.DiagnoseOnly = t.c.diagnoseOnly
+	if t.c.target != nil { // chapter 17: a service of your own
+		env.Target = *t.c.target
+	}
 	env.TestSlots = t.slots
 	if err := env.Keep(filepath.Join(work, "tools.json")); err != nil {
 		return nil, errors.Join(fmt.Errorf("set up %s: %w", run.ID, err),
@@ -330,6 +333,26 @@ func (t *triager) setUp(ctx context.Context, run service.Run,
 }
 
 // end::setup-env[]
+
+// treeFor returns how the command and the service build a group's
+// workspace: from -git, a service of your own, or else from the book's
+// copy of remind.
+func treeFor(c config) func(context.Context, service.Run,
+	string) error {
+	if c.git != "" {
+		return gitTree(c.git)
+	}
+	return practiceTree(c.repo)
+}
+
+// fingerprinter returns how the service groups reports: by -target's
+// fingerprint, or remind's.
+func fingerprinter(c config) func(triage.Report) string {
+	if c.target != nil {
+		return c.target.Fingerprint
+	}
+	return triage.Fingerprint
+}
 
 // practiceTree builds a workspace from the book's copy of remind, for
 // runs on the catalog's crashes, whose commit names a build of it.
@@ -507,8 +530,8 @@ func attemptRequest(runID string, st agent.State,
 }
 
 // prune deletes a finished run's workspace, checkpoint, and audit log,
-// the service's retention rule; the lock file stays, since a run ID is
-// never used twice (chapter 15).
+// the service's retention rule; the lock file stays, since a process
+// may have it open, about to lock it (chapter 15).
 func (t *triager) prune(r service.Run) error {
 	var errs []error
 	for _, p := range []string{r.ID + ".work", r.ID + ".json",

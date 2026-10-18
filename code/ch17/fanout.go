@@ -7,6 +7,7 @@ import (
 	"io"
 	"maps"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/blackwell-systems/go-agents-book/code/ch17/agent"
@@ -111,7 +112,9 @@ func printGroups(p *printer, r groups.Report, pool *agent.SpendPool) {
 		p.printf("  unresolved %s: %v\n", o.Group.Fingerprint, o.Err)
 	}
 	for _, fp := range slices.Sorted(maps.Keys(r.Conflicts)) {
-		p.printf("  left out %s: %v\n", fp, r.Conflicts[fp])
+		// One line each: a build failure's error holds go test's output.
+		why := strings.Join(strings.Fields(r.Conflicts[fp].Error()), " ")
+		p.printf("  left out %s: %s\n", fp, short(why, 80))
 	}
 	for _, is := range r.Outcome.Filed {
 		p.printf("filed #%d %s\n", is.ID, is.Title)

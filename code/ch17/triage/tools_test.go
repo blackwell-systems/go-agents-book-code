@@ -463,7 +463,7 @@ func TestOwnPanic(t *testing.T) {
 		{"panic: runtime error: invalid memory address or nil pointer dereference\n" +
 			"example.com/remind/store.(*Store).Get(...)", []Report{nilDeref}, false},
 	} {
-		if got := ownPanic(tc.out, tc.group); got != tc.want {
+		if got := Remind.ownPanic(tc.out, tc.group); got != tc.want {
 			t.Errorf("%.60q: %v, want %v", tc.out, got, tc.want)
 		}
 	}

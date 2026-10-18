@@ -18,8 +18,11 @@ import (
 // one frame where each crash happened; this compares the whole path to
 // it, so two crashes that reach the same broken code from different
 // places still score high.
-func Similarity(a, b Report) float64 {
-	fa, fb := set(frames(a, 1000)), set(frames(b, 1000))
+func Similarity(a, b Report) float64 { return Remind.Similarity(a, b) }
+
+// Similarity is Similarity over the target's functions (chapter 17).
+func (t Target) Similarity(a, b Report) float64 {
+	fa, fb := set(t.frames(a, 1000)), set(t.frames(b, 1000))
 	if len(fa) == 0 || len(fb) == 0 {
 		return 0
 	}
@@ -68,7 +71,7 @@ func crashSimilar(e *Env) agent.Tool {
 			var b strings.Builder
 			for _, m := range ms[:min(len(ms), 10)] {
 				fmt.Fprintf(&b, "%s %.2f %s %s\n", m.r.ID, m.score,
-					Fingerprint(m.r), short(m.r.Panic, 80))
+					e.target().Fingerprint(m.r), short(m.r.Panic, 80))
 			}
 			return b.String(), nil
 		})
@@ -90,7 +93,8 @@ type match struct {
 func (e *Env) similar(r Report) []match {
 	var ms []match
 	for _, o := range e.Reports {
-		if s := Similarity(r, o); o.ID != r.ID && s >= minSimilar {
+		if s := e.target().Similarity(r, o); o.ID != r.ID &&
+			s >= minSimilar {
 			ms = append(ms, match{o, s})
 		}
 	}

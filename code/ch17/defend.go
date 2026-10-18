@@ -117,7 +117,7 @@ func (d *defense) approverFor(approve string, out io.Writer) (
 func (d *defense) sandbox(ctx context.Context,
 	getenv func(string) string, j *taskrun.Job, minRung int,
 	out io.Writer) error {
-	prot := triage.Protected
+	prot := j.Env.Target.Protected // remind's, or -target's (chapter 17)
 	prot.Original = j.Env.Original // the agent may edit its own tests
 	d.protected = &prot
 	fixed, err := prot.Fixed(j.Env.Original)

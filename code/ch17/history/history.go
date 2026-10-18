@@ -237,7 +237,7 @@ func clean(p string) (string, error) {
 		return "", errors.New("give a file, such as store/store.go")
 	case path.IsAbs(p) || p == ".." || strings.HasPrefix(p, "../"):
 		return "", fmt.Errorf("%q is outside the workspace; paths "+
-			"are relative to remind's module root, such as "+
+			"are relative to the module root, such as "+
 			"store/store.go", p)
 	case strings.HasPrefix(p, "-"), strings.ContainsAny(p, ":\x00\n"):
 		return "", fmt.Errorf("%q is not a file path", p)

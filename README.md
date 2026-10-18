@@ -23,12 +23,12 @@ go run ./ch04
 go test ./ch04/...
 ```
 
-To check everything at once (a few minutes):
+To check everything at once (several minutes; the provider replays in chapters 12 to 15 are the slowest):
 
 ```
 cd code
 go vet ./...
-go test -race -p 4 ./...
+go test -race -p 4 -timeout 30m ./...
 ```
 
 The practice service `code/remind` and the crash catalog `code/catalog` have tests of their own.
@@ -61,6 +61,24 @@ Live runs cost money; the book states what each one cost when it was recorded, a
 Set a spending limit on your OpenRouter key before you run the larger evaluations (chapters 13 and 17).
 Model replies vary from run to run, so a live run will not match the book's output exactly.
 
+## Extra examples
+
+Two small programs go beyond the chapters, built on chapter 6's agent types and tested like the rest:
+
+* `code/shapes/`: the workflow shapes from chapter 5's table, written out: a fixed chain with checks between steps, a router that uses a small model to pick a handler, parallel calls with a vote, and check and revise.
+* `code/ssebrowser/`: an agent's progress served to a browser with server-sent events, using `net/http` alone, with heartbeats, flushing, and cancellation when the client leaves.
+
+Both run offline:
+
+```
+cd code
+go run ./shapes
+go run ./ssebrowser   # then open the address it prints
+go test -race ./shapes ./ssebrowser
+```
+
+Each directory's `README.md` says more.
+
 ## Layout
 
 | Path | What |
@@ -70,6 +88,8 @@ Model replies vary from run to run, so a live run will not match the book's outp
 | `code/catalog/` | The crash catalog and its grader |
 | `code/tracker/` | The small issue tracker the agent files issues in |
 | `code/sample/` | The sample program |
+| `code/shapes/` | The workflow shapes: chain, router, vote, check and revise |
+| `code/ssebrowser/` | An agent's events streamed to a browser page |
 
 ## License
 

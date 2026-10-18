@@ -141,7 +141,7 @@ func (e *Env) checkGroups(groups []Diagnosis) error {
 	for _, r := range e.Reports {
 		switch n := seen[r.ID]; {
 		case n == 0:
-			fp := Fingerprint(r)
+			fp := e.target().Fingerprint(r)
 			missing[fp] = append(missing[fp], r.ID)
 		case n > 1:
 			problems = append(problems, fmt.Sprintf("%s is in %d groups", r.ID, n))

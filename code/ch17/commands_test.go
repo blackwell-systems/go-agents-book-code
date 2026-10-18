@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json/jsontext"
 	"fmt"
+	"io"
 	"iter"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"strings"
@@ -13,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/blackwell-systems/go-agents-book/code/catalog"
 	"github.com/blackwell-systems/go-agents-book/code/ch17/agent"
 	"github.com/blackwell-systems/go-agents-book/code/ch17/durable"
 	"github.com/blackwell-systems/go-agents-book/code/ch17/service"
@@ -164,6 +167,65 @@ func TestCatalogCommand(t *testing.T) {
 	}
 }
 
+// TestRecordedBatchGroup replays the first group of the chapter's
+// recorded batch (testdata/replies/group-*, from triage -task batch
+// -parallel 1 -approve files -max-cost 0.75 catalog), with its tools
+// running for real, through the command's own stack: the group finds
+// the catalog's issue #101, comments on it, and is reported as its
+// duplicate at the recorded cost. The whole batch takes minutes to
+// replay, too long for every test run, and the first group is the
+// only one that doesn't depend on what earlier groups filed.
+func TestRecordedBatchGroup(t *testing.T) {
+	t.Parallel()
+	const group = "fp_6a907a"
+	getenv := func(string) string { return "" } // replay, no key
+	c := config{task: "batch", repo: "..", context: "default",
+		parallel: 1, maxTurns: 40, maxCost: 0.75, approve: "files",
+		defenses: "all", minRung: 2}
+	j, err := setUp(t.Context(), c.repo, c.task)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer j.Close()
+	var reports []triage.Report
+	for _, r := range j.Env.Reports {
+		if triage.Fingerprint(r) == group {
+			reports = append(reports, r)
+		}
+	}
+	state := t.TempDir()
+	issues, err := catalogTracker(state, j.Task)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ms, err := commandModels(getenv, io.Discard, c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	build := func(ctx context.Context, _ service.Run, ws string) error {
+		return catalog.BuildRepo(ctx, j.Task,
+			filepath.Join(c.repo, "remind"), ws)
+	}
+	var out bytes.Buffer
+	s, err := newStack(getenv, &out, c, ms, state, issues, build)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.tr.ask = commandApprover(c.approve, &out)
+	res, err := s.runAll(t.Context(), &out, c, state, reports, nil)
+	if err != nil {
+		t.Fatalf("runAll: %v\n%s", err, out.String())
+	}
+	want := "fp_6a907a  duplicate                 14   #101   0.0063"
+	if len(res.Runs) != 1 || !strings.Contains(out.String(), want) {
+		t.Errorf("want one run, reported as %q:\n%s", want, out.String())
+	}
+	is, err := issues.Get(101)
+	if err != nil || len(is.Comments) != 1 {
+		t.Errorf("issue #101: %+v, %v; want the group's comment", is, err)
+	}
+}
+
 type noTriager struct{}
 
 func (noTriager) Triage(context.Context, service.Run, []triage.Report,
@@ -305,4 +367,27 @@ func (v verdictModel) Generate(context.Context, agent.Request) (agent.Reply,
 func (v verdictModel) Stream(ctx context.Context,
 	req agent.Request) iter.Seq2[agent.Delta, error] {
 	return agent.Streamed(v).Stream(ctx, req)
+}
+
+// TestTargetFlags checks that the catalog refuses another service's
+// settings, since its tasks are remind's, and that the service groups
+// reports by the target's fingerprint.
+func TestTargetFlags(t *testing.T) {
+	getenv := func(string) string { return "" }
+	billing := &triage.Target{Name: "billing", Module: "example.com/billing"}
+	for _, c := range []config{{git: t.TempDir()}, {target: billing}} {
+		err := command(t.Context(), getenv, c, "", []string{"catalog"})
+		if err == nil || !strings.Contains(err.Error(), "-git and -target") {
+			t.Errorf("catalog with %+v: %v", c, err)
+		}
+	}
+	r := triage.Report{Kind: "panic", Stack: "example.com/billing/" +
+		"api.charge(0x1)\n\t/src/billing/api/charge.go:9 +0x1\n"}
+	if fingerprinter(config{})(r) != triage.Fingerprint(r) {
+		t.Error("no target: not remind's fingerprint")
+	}
+	if got := fingerprinter(config{target: billing})(r); got !=
+		billing.Fingerprint(r) || got == triage.Fingerprint(r) {
+		t.Errorf("billing's fingerprint: %s", got)
+	}
 }

@@ -23,7 +23,7 @@ func TestNormalize(t *testing.T) {
 		{"example.com/remind/store.Map[...].Get(0x0)", "store.Map.Get"},
 		{"example.com/remind/duration.Parse({0xc0000101a8, 0x4})", "duration.Parse"},
 	} {
-		if got := normalize(tc.line); got != tc.want {
+		if got := Remind.normalize(tc.line); got != tc.want {
 			t.Errorf("normalize(%q) = %q, want %q", tc.line, got, tc.want)
 		}
 	}
@@ -82,7 +82,7 @@ func grouping(t *testing.T, n int) (over, under []string, prints int) {
 		if err := json.Unmarshal(b, &r); err != nil {
 			t.Fatal(err)
 		}
-		fp[r.ID] = fingerprintAt(r, n)
+		fp[r.ID] = Remind.fingerprintAt(r, n)
 	}
 	causes := map[string]map[string]bool{}
 	for _, cause := range slices.Sorted(maps.Keys(batch.Expected)) {

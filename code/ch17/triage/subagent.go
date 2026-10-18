@@ -21,10 +21,10 @@ type explainArgs struct {
 // read-only code tools and its own limits. The parent's context grows
 // by the answer, not by every file the sub-agent read.
 func ExplainPackage(m agent.StreamModel, e *Env, lim agent.Limits) agent.Tool {
-	return agent.NewTool("explain_package", explainDesc,
+	return e.target().named(agent.NewTool("explain_package", explainDesc,
 		func(ctx context.Context, a explainArgs) (string, error) {
 			msgs := []agent.Message{
-				{Role: "system", Content: explainPrompt},
+				{Role: "system", Content: e.target().Text(explainPrompt)},
 				{Role: "user", Content: "Package " + a.Package + ": " + a.Question},
 			}
 			ctx = agent.WithName(ctx, "explain_package") // its costs roll up
@@ -38,7 +38,7 @@ func ExplainPackage(m agent.StreamModel, e *Env, lim agent.Limits) agent.Tool {
 				return "", fmt.Errorf("the helper failed: %w", err) // <2>
 			}
 			return short(res.Messages[len(res.Messages)-1].Content, 4000), nil
-		})
+		}))
 }
 
 // end::explain[]
@@ -93,7 +93,8 @@ func turns(res agent.Result) int {
 // parent, which must still read a file itself before patching it.
 func (e *Env) view() *Env {
 	return &Env{Reports: e.Reports, Issues: e.Issues, Dir: e.Dir,
-		Original: e.Original, root: e.root, TestSlots: e.TestSlots,
-		read: map[string]bool{}, created: map[string]bool{},
+		Original: e.Original, Target: e.Target, root: e.root,
+		TestSlots: e.TestSlots,
+		read:      map[string]bool{}, created: map[string]bool{},
 		notes: map[string][]string{}}
 }

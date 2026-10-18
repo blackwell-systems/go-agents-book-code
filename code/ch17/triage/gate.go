@@ -35,7 +35,8 @@ func (e *Env) gate(ctx context.Context, fingerprint string,
 		if err != nil {
 			return "", err
 		}
-		if r := failsRightly(test.Function, out, group); r != "" {
+		r := e.target().failsRightly(test.Function, out, group)
+		if r != "" {
 			return r, nil
 		}
 	}
@@ -60,7 +61,8 @@ func (e *Env) gate(ctx context.Context, fingerprint string,
 // failsRightly returns why a reproducer's run on the original code
 // doesn't count, or "" when it failed as a reproducer should: on its
 // own check, or with one of the group's panics.
-func failsRightly(name, out string, group []Report) string {
+func (t Target) failsRightly(name, out string,
+	group []Report) string {
 	switch outcome(out) {
 	case "pass":
 		return name + " passes on the original code, so it doesn't " +
@@ -70,7 +72,7 @@ func failsRightly(name, out string, group []Report) string {
 	case "no build":
 		return "the tests don't compile on the original code:\n" + out
 	}
-	if panicLine.MatchString(out) && !ownPanic(out, group) { // <1>
+	if panicLine.MatchString(out) && !t.ownPanic(out, group) { // <1>
 		return name + " panics on the original code, but not with " +
 			"the group's panic in the function that crashed:\n" + out
 	}
@@ -90,7 +92,7 @@ var (
 // A panic with no data, such as a nil pointer dereference, could come
 // from anywhere, so it matches only if the function that crashed in
 // the report is on the test's stack too.
-func ownPanic(out string, group []Report) bool {
+func (t Target) ownPanic(out string, group []Report) bool {
 	plain := digits.ReplaceAllString(out, "N")
 	for _, r := range group {
 		if r.Kind != "panic" || r.Panic == "" {
@@ -103,7 +105,7 @@ func ownPanic(out string, group []Report) bool {
 		if strings.Contains(msg, "N") {
 			return true // the message itself is specific
 		}
-		if fn := frames(r, 1); len(fn) == 1 && strings.Contains(out, fn[0]) {
+		if fn := t.frames(r, 1); len(fn) == 1 && strings.Contains(out, fn[0]) {
 			return true
 		}
 	}
@@ -114,7 +116,7 @@ func ownPanic(out string, group []Report) bool {
 func (e *Env) groupOf(fingerprint string) ([]Report, error) {
 	var out []Report
 	for _, r := range e.Reports {
-		if Fingerprint(r) == fingerprint {
+		if e.target().Fingerprint(r) == fingerprint {
 			out = append(out, r)
 		}
 	}

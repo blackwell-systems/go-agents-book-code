@@ -50,6 +50,10 @@ type Env struct {
 	// (chapter 17).
 	DiagnoseOnly bool
 
+	// Target is the service the run triages: its name, its module
+	// path, and its protected paths; NewEnv sets Remind (chapter 17).
+	Target Target
+
 	// History adds the git-history tools, code_history and
 	// code_blame, when the workspace has its own history (chapter 17).
 	History bool
@@ -90,7 +94,7 @@ func NewEnv(dir, original string, reports []Report,
 		return nil, fmt.Errorf("open workspace: %w", err)
 	}
 	return &Env{Reports: reports, Issues: issues, Dir: dir,
-		Original: original, root: root, read: map[string]bool{},
+		Original: original, Target: Remind, root: root, read: map[string]bool{},
 		created: map[string]bool{}, notes: map[string][]string{},
 		noteKeys: map[string]bool{}}, nil
 }

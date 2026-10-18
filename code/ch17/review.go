@@ -185,8 +185,9 @@ func (rv *reviewer) fenced(tag string, args jsontext.Value,
 	}
 	fence("The agent's diagnosis", string(args))
 	for _, r := range rv.env.Reports {
-		fence("Crash report "+r.ID, triage.Fingerprint(r)+": "+r.Panic+
-			"\n"+short(r.Stack, 1500))
+		fp := rv.env.Target.Fingerprint(r)
+		fence("Crash report "+r.ID, fp+": "+r.Panic+"\n"+
+			short(r.Stack, 1500))
 	}
 	fence("The agent's changes", short(diff, 16000))
 	return b.String()

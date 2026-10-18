@@ -27,7 +27,8 @@ var GroupPrompt string
 // tag::tools[]
 
 // Tools returns the triage agent's tools, working on e. Every tool's
-// output and errors pass through Redact before the model sees them.
+// output and errors pass through Redact before the model sees them,
+// and every description names e's target (chapter 17).
 func Tools(e *Env) []agent.Tool {
 	tools := []agent.Tool{
 		readOnly(crashList(e)), readOnly(crashRead(e)),
@@ -51,7 +52,7 @@ func Tools(e *Env) []agent.Tool {
 		if needsWorkspace[t.Def.Name] {
 			tools[i] = inWorkspace(e, t)
 		}
-		tools[i] = redacted(tools[i])
+		tools[i] = e.target().named(redacted(tools[i]))
 	}
 	return tools
 }

@@ -17,9 +17,9 @@ import (
 // person: the authorization code, the file that applies it to the
 // routes, the files that decide what the build pulls in, and git's.
 // It names files, not behavior: a new file in package api can still
-// change what the routes do.
-var Protected = safety.Protected{Paths: []string{"auth/", "api/api.go",
-	"go.mod", "go.sum", "go.work", "go.work.sum", "vendor/", ".git/"}}
+// change what the routes do. Remind is the target that uses it.
+var Protected = safety.Protected{Paths: slices.Concat(
+	[]string{"auth/", "api/api.go"}, AlwaysProtected)}
 
 // Outgoing names the tools whose text leaves the run for people to
 // read: the issue tools, built in or through the tracker's MCP server.

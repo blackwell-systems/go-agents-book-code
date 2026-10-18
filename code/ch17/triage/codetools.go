@@ -21,12 +21,12 @@ const (
 )
 
 // clean checks a path from the model and returns it in the form the
-// workspace uses: relative to remind's module root, with slashes.
+// workspace uses: relative to the module root, with slashes.
 func clean(p string) (string, error) {
 	p = path.Clean(strings.TrimPrefix(p, "./"))
 	if path.IsAbs(p) || p == ".." || strings.HasPrefix(p, "../") {
 		return "", fmt.Errorf("%q is outside the workspace; "+
-			"paths are relative to remind's module root, such as store/store.go", p)
+			"paths are relative to the module root, such as store/store.go", p)
 	}
 	return p, nil
 }

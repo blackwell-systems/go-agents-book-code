@@ -93,8 +93,12 @@ type Config struct {
 
 	// Prune deletes a finished run's files, such as its workspace and
 	// checkpoint, once Keep has passed; the run's record stays, and so
-	// does its lock file, since a run ID is never used twice.
+	// does its lock file, which a process may hold open (chapter 15).
 	Prune func(r Run) error
+
+	// Fingerprint groups the reports; triage.Fingerprint, for remind,
+	// if nil. Another service's is its triage.Target's.
+	Fingerprint func(triage.Report) string
 
 	Now func() time.Time
 	Log *slog.Logger
@@ -210,6 +214,9 @@ func New(ctx context.Context, cfg Config) (*Service, error) {
 	cfg.Keep = cmp.Or(cfg.Keep, 7*24*time.Hour)
 	if cfg.Now == nil {
 		cfg.Now = time.Now
+	}
+	if cfg.Fingerprint == nil {
+		cfg.Fingerprint = triage.Fingerprint
 	}
 	cfg.Log = cmp.Or(cfg.Log, slog.Default())
 	for _, d := range []string{reportsDir, runsDir, reviewDir} {
@@ -368,7 +375,7 @@ func (s *Service) Add(ctx context.Context,
 	var runs []string
 	for _, rep := range reports {
 		stored := storedReport{Report: rep,
-			Fingerprint: triage.Fingerprint(rep), Received: s.cfg.Now()}
+			Fingerprint: s.cfg.Fingerprint(rep), Received: s.cfg.Now()}
 		issue, _, err := s.followup(ctx, stored.Fingerprint)
 		if err != nil {
 			return runs, err

@@ -1,0 +1,215 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"content": "I'll start by looking at the project files and running the test suite to see the failures.",
+				"tool_calls": [
+					{
+						"id": "toolu_01Tz8UzYJrqn1uFpFyiEzQho",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "toolu_01UUif2ekVVL9hGP3s3fZ8D4",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSswUKEAgSGAI4AUIIdGhpbmtpbmcSDCiXL3yuGWYIUcmroBoMfv8AFasEP6u9KvY6IjDiJNQAeDfUhrc2Msp2IkF06YSbi1mgC1Ye7BSQjX4rl6MotxXXKbKU1EigwnPEX9gq0AT0sl/V5TOxOaHqDg5BQi6atVEy0v91Gl0B4j+hlntYI51wOjwpxsf8lcbJzT5eBORh9rMBIfeGdWbWJECvmsGswCxlu/cKYgHYGswzMi3w/ynREJj/yze5kXwZUmR7vRd/N6nC12HT0GQR6nfo0OIQRxQoGEwuULiGpsNLIisWJpefiJGMJ74BKX/aBnFkIEDfvyKTuQ20NKZMO9PpHpZr6Uh9yenrEvxjwJjnd1zk1RUahup217uEW+5or7HD97PVi5E0YXSjaFaXxteS0tamiuw7QOrxgm9S87RENfvdnCOrpdcIHXpd8C406j0TYk5/e7sAB1ueuHHzfj6Gk2FTxJxbImLoR/P8zyzzLLZpMXRhka34ctVEVy1P9TS7Cy0ua+BHHo8MXbqJRfsq3sVvfwafXUiSFGWsbxVTxkhewYlWahZWSR66S1+7xEn1XdKt3RjLNhA/711vvtxZCuWWmMyD4gJ/hI2qliYS3gzPZAHd+Nt0Wayk5bQwKW8mRvIRZvGq0Oa8cKIsgtc26arMDpWYxpdg72N3vOIx5Mz33tRIz7oIiWKf01i8RGOqpJf0FzUYox7zorolDFWgFEWJBgg3iuE54HgCQVsyUuRWamJa8fguxvwu8fPzkB0ETZTRCiV09bgY+sE2e6JTpH78McrVhG7UAja9td3qI3PrY7rjY1m4Z5RUrWCC4i63cDRB+uEpaTLfo2PG/gHd6X2XYnqGOeFIZFLWHs0rgYd9ziJL1MSds/Rj+Uot5Er+z7QvLn/G5tYZJFu4LtSE8SxnGAE=.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "toolu_01Tz8UzYJrqn1uFpFyiEzQho"
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "toolu_01UUif2ekVVL9hGP3s3fZ8D4"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01E2jNkowNroAnxLTjGu5c6z",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\": \"duration.go\"}"
+						}
+					},
+					{
+						"id": "toolu_012sWK6ghzhPEM8P5731mKtc",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\": \"duration_test.go\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "toolu_01E2jNkowNroAnxLTjGu5c6z"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "toolu_012sWK6ghzhPEM8P5731mKtc"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file. Prefer reading the test file first.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093703-bWGRfwy3jq2gEhoJ3ghn",
+		"object": "chat.completion",
+		"created": 1792093703,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "The bug is in the unit table: `'m'` is mapped to `time.Second` instead of `time.Minute`. That makes \"45m\" parse as 45 seconds. I'll fix it.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01TMSc28cMcymBPwRAMcpShH",
+							"function": {
+								"name": "edit_file",
+								"arguments": "{\"path\": \"duration.go\", \"old\": \"\\t'm': time.Second,\", \"new\": \"\\t'm': time.Minute,\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01XST3jBbmi39UKy11kii5wt",
+							"function": {
+								"name": "run_tests",
+								"arguments": "{}"
+							}
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1859,
+			"completion_tokens": 196,
+			"total_tokens": 2055,
+			"cost": 0.0002839,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002839,
+				"upstream_inference_prompt_cost": 0.0001859,
+				"upstream_inference_completions_cost": 0.000098
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,146 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "Here's a sensible scope for a first version:\n\n**Core commands**\n- `add <title> <author>`: add a book with status \"to read\"\n- `list`: show all books, with their status\n- `start <id>`: mark a book as \"reading\"\n- `finish <id>`: mark a book as \"done\"\n- `remove <id>`: delete a book\n\n**Storage**\n- Save to a single JSON file (e.g., `~/.books.json`) so the list persists between runs\n- Load the file on startup; create it if it doesn't exist\n\n**Data per book**\n- ID (auto-incremented integer)\n- Title\n- Author\n- Status (to read / reading / done)\n\n**Skip for now**\n- Ratings, notes, dates, tags, search, sorting, editing, and multiple lists. These are easy to add once the basics work.\n\n**Go pieces you'll need**\n- `os.Args` or the `flag` package for parsing commands\n- `encoding/json` for reading and writing the file\n- A simple `struct` for the book and a slice to hold them"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file. Load the whole list into memory at startup, modify it there, and write the whole thing back after each change. For a personal reading list with a few hundred entries, this is simpler and fast enough.\n\n**Location**\n\nPick a path with `os.UserHomeDir()` (for example `~/.books.json`), or use `os.UserConfigDir()` if you want it to follow platform conventions. Allow an environment variable override if you like, but it's not necessary for v1.\n\n**Format**\n\nWrap the list in an object so you can add fields later without breaking the file:\n\n```json\n{\n  \"next_id\": 4,\n  \"books\": [\n    {\"id\": 1, \"title\": \"Dune\", \"author\": \"Frank Herbert\", \"status\": \"done\"},\n    {\"id\": 2, \"title\": \"Piranesi\", \"author\": \"Susanna Clarke\", \"status\": \"reading\"}\n  ]\n}\n```\n\nStoring `next_id` ensures removed IDs aren't reused. If you'd rather not store it, compute `max(id)+1` on load instead.\n\n**Loading**\n\n- If the file doesn't exist, start with an empty list. Don't treat this as an error.\n- Otherwise, read the file and unmarshal it into your struct.\n\n**Saving**\n\nWrite atomically so a crash mid-write can't corrupt your list:\n\n1. Marshal with `json.MarshalIndent` so the file stays readable.\n2. Write to a temporary file in the same directory (`os.CreateTemp`).\n3. Call `os.Rename` to replace the real file.\n\nUse file mode `0600`, since this is personal data.\n\n**Sketch**\n\n```go\ntype Store struct {\n    NextID int    `json:\"next_id\"`\n    Books  []Book `json:\"books\"`\n}\n\nfunc load(path string) (*Store, error) {\n    data, err := os.ReadFile(path)\n    if errors.Is(err, fs.ErrNotExist) {\n        return &Store{NextID: 1}, nil\n    }\n    if err != nil {\n        return nil, err\n    }\n    var s Store\n    if err := json.Unmarshal(data, &s); err != nil {\n        return nil, err\n    }\n    return &s, nil\n}\n\nfunc save(path string, s *Store) error {\n    data, err := json.MarshalIndent(s, \"\", \"  \")\n    if err != nil {\n        return err\n    }\n    tmp, err := os.CreateTemp(filepath.Dir(path), \"books-*.json\")\n    if err != nil {\n        return err\n    }\n    defer os.Remove(tmp.Name()) // no-op after a successful rename\n    if _, err := tmp.Write(data); err != nil {\n        tmp.Close()\n        return err\n    }\n    if err := tmp.Close(); err != nil {\n        return err\n    }\n    if err := os.Chmod(tmp.Name(), 0600); err != nil {\n        return err\n    }\n    return os.Rename(tmp.Name(), path)\n}\n```\n\nEach command follows the same pattern: load, change the in-memory data, save. Once that's working, the storage layer is done."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Status string\n\nconst (\n    StatusToRead  Status = \"to read\"\n    StatusReading Status = \"reading\"\n    StatusDone    Status = \"done\"\n)\n\ntype Book struct {\n    ID     int    `json:\"id\"`\n    Title  string `json:\"title\"`\n    Author string `json:\"author\"`\n    Status Status `json:\"status\"`\n}\n```\n\nA typed `Status` with constants keeps you from misspelling a status in the code. It still serializes as a plain string, so the JSON stays the same as the example from before."
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			},
+			{
+				"role": "assistant",
+				"content": "Read the arguments, load the store, append the book with the next ID, and save.\n\n```go\nfunc cmdAdd(path string, args []string) error {\n    if len(args) != 2 {\n        return fmt.Errorf(\"usage: add <title> <author>\")\n    }\n\n    s, err := load(path)\n    if err != nil {\n        return err\n    }\n\n    b := Book{\n        ID:     s.NextID,\n        Title:  args[0],\n        Author: args[1],\n        Status: StatusToRead,\n    }\n    s.NextID++\n    s.Books = append(s.Books, b)\n\n    if err := save(path, s); err != nil {\n        return err\n    }\n    fmt.Printf(\"added #%d: %s by %s\\n\", b.ID, b.Title, b.Author)\n    return nil\n}\n```\n\nThen `main` dispatches on the first argument:\n\n```go\nfunc main() {\n    home, err := os.UserHomeDir()\n    if err != nil {\n        fmt.Fprintln(os.Stderr, err)\n        os.Exit(1)\n    }\n    path := filepath.Join(home, \".books.json\")\n\n    if len(os.Args) < 2 {\n        fmt.Fprintln(os.Stderr, \"usage: books <command> [args]\")\n        os.Exit(1)\n    }\n\n    switch os.Args[1] {\n    case \"add\":\n        err = cmdAdd(path, os.Args[2:])\n    default:\n        err = fmt.Errorf(\"unknown command: %s\", os.Args[1])\n    }\n    if err != nil {\n        fmt.Fprintln(os.Stderr, err)\n        os.Exit(1)\n    }\n}\n```\n\nUsage:\n\n```\nbooks add \"Piranesi\" \"Susanna Clarke\"\n```\n\nThe shell splits arguments on spaces, so quote any title or author that contains spaces. Each new command you add (`list`, `start`, and so on) gets its own `case` and its own `cmdX` function that follows the same load, change, save pattern."
+			},
+			{
+				"role": "user",
+				"content": "How should the program handle two books with the same title?"
+			},
+			{
+				"role": "assistant",
+				"content": "Titles aren't unique. Two editions can share a title, and you may want to reread a book. Since every command refers to books by ID, duplicate titles don't cause ambiguity. The question is whether to block accidental duplicates.\n\nI'd reject a book whose title and author both match an existing entry, ignoring case and surrounding spaces. That catches accidental double-adds, which are the likely mistake, and lets you add the same title by a different author (a different edition, say).\n\n```go\nfunc findDuplicate(s *Store, title, author string) *Book {\n    t := strings.TrimSpace(title)\n    a := strings.TrimSpace(author)\n    for i := range s.Books {\n        b := &s.Books[i]\n        if strings.EqualFold(b.Title, t) && strings.EqualFold(b.Author, a) {\n            return b\n        }\n    }\n    return nil\n}\n```\n\nCall it in `cmdAdd` after loading the store and before creating the book:\n\n```go\nif dup := findDuplicate(s, args[0], args[1]); dup != nil {\n    return fmt.Errorf(\"already in list as #%d: %s by %s\", dup.ID, dup.Title, dup.Author)\n}\n```\n\nKeep the check in `cmdAdd` and out of `save`, so storage stays a simple write and the rule lives with the command that enforces it. Add the `strings` import.\n\nIf you later want to reread a book, you can either remove the old entry first or add a `--force` flag to skip the check. For v1, rejecting the duplicate is enough."
+			},
+			{
+				"role": "user",
+				"content": "Write the function that loads the list from the file."
+			},
+			{
+				"role": "assistant",
+				"content": "This is the same `load` from earlier, with two fixes: it guards against a missing or zero `next_id`, and it makes sure `Books` isn't `nil`, so the file always serializes as `[]` rather than `null`.\n\n```go\nfunc load(path string) (*Store, error) {\n    data, err := os.ReadFile(path)\n    if errors.Is(err, fs.ErrNotExist) {\n        return &Store{NextID: 1, Books: []Book{}}, nil\n    }\n    if err != nil {\n        return nil, fmt.Errorf(\"reading %s: %w\", path, err)\n    }\n\n    var s Store\n    if err := json.Unmarshal(data, &s); err != nil {\n        return nil, fmt.Errorf(\"parsing %s: %w\", path, err)\n    }\n\n    if s.Books == nil {\n        s.Books = []Book{}\n    }\n    // If next_id is missing or was hand-edited to something too low,\n    // compute it from the existing IDs so we never reuse one.\n    maxID := 0\n    for _, b := range s.Books {\n        if b.ID > maxID {\n            maxID = b.ID\n        }\n    }\n    if s.NextID <= maxID {\n        s.NextID = maxID + 1\n    }\n    return &s, nil\n}\n```\n\nThe `errors.Is(err, fs.ErrNotExist)` check treats a missing file as an empty list, so the first `add` creates it. Any other read error, such as a permissions problem, is returned rather than silently overwriting the file on the next save. Wrapping with `%w` keeps the original error available to callers while adding the path to the message.\n\nThe imports are `encoding/json`, `errors`, `fmt`, `io/fs`, and `os`."
+			},
+			{
+				"role": "user",
+				"content": "What happens if the file doesn't exist yet?"
+			},
+			{
+				"role": "assistant",
+				"content": "If the file doesn't exist, `load` returns an empty store with `NextID: 1` and an empty `Books` slice, and no error. The check `errors.Is(err, fs.ErrNotExist)` matches only a missing file, so other read errors still surface.\n\nNothing is written at this point. `load` only reads, so running `list` on a fresh system just prints nothing and leaves no file behind. The file is created the first time a command calls `save`. For `add`, that means:\n\n1. `cmdAdd` gets the empty store, appends the book as ID 1, and bumps `NextID` to 2.\n2. `save` creates a temp file in the home directory, writes the JSON, sets mode `0600`, and renames it to `~/.books.json`.\n\nThe first `add` therefore creates the file. The only assumption is that the directory containing the file (here, your home directory) already exists and is writable, which is true in practice. If it weren't, `save` would return an error rather than failing silently."
+			},
+			{
+				"role": "user",
+				"content": "Now write the function that saves the list."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc save(path string, s *Store) error {\n    data, err := json.MarshalIndent(s, \"\", \"  \")\n    if err != nil {\n        return fmt.Errorf(\"encoding books: %w\", err)\n    }\n\n    // Write to a temp file in the same directory so the rename stays on\n    // one filesystem and is atomic.\n    tmp, err := os.CreateTemp(filepath.Dir(path), \".books-*.tmp\")\n    if err != nil {\n        return fmt.Errorf(\"creating temp file: %w\", err)\n    }\n    tmpName := tmp.Name()\n    // Removes the temp file if we return early. After a successful rename\n    // the name no longer exists, so this is a harmless no-op.\n    defer os.Remove(tmpName)\n\n    if _, err := tmp.Write(data); err != nil {\n        tmp.Close()\n        return fmt.Errorf(\"writing %s: %w\", tmpName, err)\n    }\n    // Flush to disk before renaming, so a crash can't leave an empty or\n    // partial file under the real name.\n    if err := tmp.Sync(); err != nil {\n        tmp.Close()\n        return fmt.Errorf(\"syncing %s: %w\", tmpName, err)\n    }\n    if err := tmp.Close(); err != nil {\n        return fmt.Errorf(\"closing %s: %w\", tmpName, err)\n    }\n\n    if err := os.Rename(tmpName, path); err != nil {\n        return fmt.Errorf(\"replacing %s: %w\", path, err)\n    }\n    return nil\n}\n```\n\nCompared with the earlier sketch, there are two changes. `os.CreateTemp` already creates files with mode `0600`, so the separate `Chmod` isn't needed. The `Sync` call forces the data to disk before the rename, which closes a gap where a power loss could leave an empty file in place of your list."
+			},
+			{
+				"role": "user",
+				"content": "How do I make sure a crash halfway through saving doesn't lose the list?"
+			},
+			{
+				"role": "assistant",
+				"content": "The pattern is: never modify the real file in place. Write the new contents to a separate temporary file, then swap it in with a single `rename`. At every moment, `~/.books.json` is either the complete old version or the complete new version.\n\nHere's what each crash point leaves behind:\n\n- **Crash while writing the temp file:** The real file is untouched. The temp file is incomplete, and it's ignored.\n- **Crash after `Sync` but before `Rename`:** The real file is still the old version. The temp file is complete but unused.\n- **Crash during `Rename`:** On POSIX systems, `rename` within the same directory is atomic, so you get either the old file or the new one.\n\nTwo details make this hold up in practice:\n\n1. **`tmp.Sync()` before the rename.** Without it, the filesystem can reorder writes, so the rename might reach disk before the data. After a power loss, you'd have a valid name pointing at an empty or partial file. The code in `save` already does this.\n\n2. **Syncing the directory after the rename.** The rename itself is a directory change, and that change may not be durable until the directory is synced. For full durability, add this at the end of `save`:\n\n```go\nif err := os.Rename(tmpName, path); err != nil {\n    return fmt.Errorf(\"replacing %s: %w\", path, err)\n}\n\n// Make the rename itself durable. Best effort: this works on Linux and\n// macOS, and may fail or do nothing on other platforms.\nif dir, err := os.Open(filepath.Dir(path)); err == nil {\n    dir.Sync()\n    dir.Close()\n}\nreturn nil\n```\n\nSome limitations to know about:\n\n- **Orphaned temp files.** The `defer os.Remove` doesn't run if the process is killed, so a crash can leave a `.books-*.tmp` file in your home directory. It's harmless, and you can delete it by hand. You could also have `load` clean up old temp files, but that's probably not worth it for v1.\n- **Concurrent runs.** This protects against crashes, not against two commands running at the same time. If two `add` calls overlap, each loads the same state, and the second save overwrites the first's change. For a personal tool run by hand, this is rarely a problem. If it becomes one, use a lock file.\n- **Backups.** If you want protection against bad edits or bugs, not just crashes, keep the previous version by copying the old file to `~/.books.json.bak` before the rename. This is optional."
+			},
+			{
+				"role": "user",
+				"content": "How do I mark a book as finished?"
+			},
+			{
+				"role": "assistant",
+				"content": "Parse the ID, find the book, set its status, and save. The `findBook` helper will also serve `start` and `remove`.\n\n```go\nfunc findBook(s *Store, id int) *Book {\n    for i := range s.Books {\n        if s.Books[i].ID == id {\n            return &s.Books[i]\n        }\n    }\n    return nil\n}\n\nfunc cmdFinish(path string, args []string) error {\n    if len(args) != 1 {\n        return fmt.Errorf(\"usage: finish <id>\")\n    }\n    id, err := strconv.Atoi(args[0])\n    if err != nil {\n        return fmt.Errorf(\"invalid id %q: %w\", args[0], err)\n    }\n\n    s, err := load(path)\n    if err != nil {\n        return err\n    }\n\n    b := findBook(s, id)\n    if b == nil {\n        return fmt.Errorf(\"no book with id %d\", id)\n    }\n    b.Status = StatusDone\n\n    if err := save(path, s); err != nil {\n        return err\n    }\n    fmt.Printf(\"finished #%d: %s\\n\", b.ID, b.Title)\n    return nil\n}\n```\n\nBecause `findBook` returns a pointer into `s.Books`, changing `b.Status` changes the store directly, so `save(path, s)` writes it out.\n\nAdd the case to `main`'s switch:\n\n```go\ncase \"finish\":\n    err = cmdFinish(path, os.Args[2:])\n```\n\nAdd `strconv` to the imports."
+			},
+			{
+				"role": "user",
+				"content": "Add a command that lists only the books I haven't finished."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091700-hT01fTfsRM82S57CyrBM",
+		"object": "chat.completion",
+		"created": 1792091700,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "Add a read-only command that loads the store, skips finished books, and prints the rest. It doesn't call `save`, since nothing changes.\n\n```go\nfunc cmdUnfinished(path string, args []string) error {\n    if len(args) != 0 {\n        return fmt.Errorf(\"usage: unfinished\")\n    }\n\n    s, err := load(path)\n    if err != nil {\n        return err\n    }\n\n    found := false\n    for _, b := range s.Books {\n        if b.Status == StatusDone {\n            continue\n        }\n        fmt.Printf(\"#%d  %-8s  %s by %s\\n\", b.ID, b.Status, b.Title, b.Author)\n        found = true\n    }\n    if !found {\n        fmt.Println(\"no unfinished books\")\n    }\n    return nil\n}\n```\n\nAdd the case to `main`'s switch:\n\n```go\ncase \"unfinished\":\n    err = cmdUnfinished(path, os.Args[2:])\n```\n\nUsage:\n\n```\nbooks unfinished\n```\n\nThe `%-8s` pads the status so the columns line up. `to read` and `reading` are both 7 characters, so 8 leaves a space of padding. When you write `list`, you can reuse the same format line, and it would just skip the `StatusDone` check.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 5613,
+			"completion_tokens": 1004,
+			"total_tokens": 6617,
+			"cost": 0.0010633,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0010633,
+				"upstream_inference_prompt_cost": 0.0005613,
+				"upstream_inference_completions_cost": 0.000502
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 601,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,816 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You triage crash reports for remind, a Go web service. Its source is in your workspace; paths are relative to its module root, such as store/store.go.\n\nFor each problem:\n1. Group the crash reports that share a cause.\n2. Find the root cause: the function whose code is wrong.\n3. Write a test that reproduces the crash: a new _test.go file whose test fails on the current code.\n4. Fix the code, then check that your test and the whole test suite pass.\n5. File one issue for the cause.\n\nHow to work: start with crash_list, then read reports with crash_read, crash_logs, and crash_goroutines. Investigate with code_search, code_list, and code_read. Change code and create test files with code_patch, and check your work with run_tests. Search the issue tracker with issue_search before filing with issue_file. Don't change or delete existing tests.\n\nWhen you are done, call submit_diagnosis once, with one entry for every group. If you can't find a cause, file an issue with what you found and give the group the status needs_human.\n"
+			},
+			{
+				"role": "user",
+				"content": "Triage the crash reports: group them by cause, then investigate, fix, and file each cause that isn't filed yet."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_019ZNQoepau7Kw5Fr1kkF14k",
+						"type": "function",
+						"function": {
+							"name": "crash_list",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQS/AQKEAgSGAI4AUIIdGhpbmtpbmcSDLB+XJh1W8bs3ubRzRoMPG+VcPR+CUgy7rw6IjAdkdCIXbiVF6uAcuVijWfF3kXO+kFyVWcYwZjX6q7WYG+2uHt2arndD2W7zPSzFfoqmQRBrYYxku6bAh29D7WBur6iioflY0yPOBVi/kxbY+JOXp0Eal+Z0cvn4gw2tI5BzWBIAlxMhbed5V8qtNUlU80Nml7UTyaBOvHMGbLEcOIVqo6EGge/x3U0vpu6Cd5+H0OkS1cUN5gemZbXPCQG8HSVA85QcSWiYedcbkiV0xUX2+aoE3CvS7zmGx/8FJnBqcMR0Ix21CX9AwF8vPXJp5eYWImv1epsy1XiUKUSkm52ZjlsvAsB3JUtzi/giWGRtGuQXDiVvpok7DyOp7TSeJqsN0dLw8SZ1SnJywPYDTF4xG2z3ptfvY1GosOJHFChOvoI2jv4tpNWLEypUaow9Rc3mTeWSkPDU/gyb+Px241T/lELZeieuvtMOVe4iFZExz+IrKbjrzIKUTBnIOk3m5Sga2i3mIrKYg4wVOetjeW6nFc8o9V3kPqcjaRkHPGCK0rQPOikPGB+rqORrQxh3mWFG4NtUgnqEn9bnKyXXDy0SCVESUIGpF1Fo6ESSnuzoIqNGW597uJj8jV/Obb1NJsn1QN3ZbXQriwlLFbFzMrf5wuhvNBcxL4Wyy1kbXeBpgGhohqpKsVcvaAxRQuSDTXg3GbDyEe/1qqg7Y8TZFDONHV/BgG9cK9Je40ZM9udlriYTphK2JnuYT7+eb0TIwcD8BmGqXFDXh4xCtI/MR70DkzbVFPylqKsEk/GcIaHUSl3L+7AEVb/dqcYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "4 reports:\ncr_fd4982 fp_2bcd17 x1 panic v1.4.0 notify.(*Dispatcher).Stop: close of closed channel\ncr_1e2ea0 fp_4828a6 x2 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_ee551c fp_4828a6 x1 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_f9ee9e fp_6b14b3 x3 panic v1.4.0 auth.parseBearer: runtime error: index out of range [1] with length 1\n",
+				"tool_call_id": "toolu_019ZNQoepau7Kw5Fr1kkF14k"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01MpBE9GAakWKsruHbTHBU6z",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_fd4982\"}"
+						}
+					},
+					{
+						"id": "toolu_01C3V7kSdRdBX4LVu8hT4ByT",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_1e2ea0\"}"
+						}
+					},
+					{
+						"id": "toolu_018CdovbxFMFhoKM33ELojfx",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_f9ee9e\"}"
+						}
+					},
+					{
+						"id": "toolu_01LjVZpyHuvhFdzhS62FjMgj",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_ee551c\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "cr_fd4982: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:18 to 2026-10-05 14:18\nfingerprint: fp_2bcd17\npanic: close of closed channel\nrequest: POST /v1/admin/dispatcher/stop\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 0\n  User-Agent: curl/8.12.1\n  X-Request-Id: 6ac3ae14-0008\nstack, remind's frames, innermost first:\n  notify.(*Dispatcher).Stop  notify/notify.go:103\n  api.(*API).stopDispatcher  api/admin.go:69\n  auth.RequireAdmin  auth/auth.go:39\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 6; read them with crash_logs\n",
+				"tool_call_id": "toolu_01MpBE9GAakWKsruHbTHBU6z"
+			},
+			{
+				"role": "tool",
+				"content": "cr_1e2ea0: panic in v1.4.0 (commit 9c41e7a), 2 times, 2026-10-05 14:12 to 2026-10-05 14:13\nfingerprint: fp_4828a6\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: POST /v1/reminders/rem_0001/done\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 0\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0005\nstack, remind's frames, innermost first:\n  api.(*API).owned  api/reminders.go:144\n  api.(*API).markDone  api/reminders.go:171\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 4; read them with crash_logs\n",
+				"tool_call_id": "toolu_01C3V7kSdRdBX4LVu8hT4ByT"
+			},
+			{
+				"role": "tool",
+				"content": "cr_f9ee9e: panic in v1.4.0 (commit 9c41e7a), 3 times, 2026-10-05 14:04 to 2026-10-05 14:07\nfingerprint: fp_6b14b3\npanic: runtime error: index out of range [1] with length 1\nrequest: POST /v1/reminders\n  Accept-Encoding: gzip\n  Authorization: Bearer\n  Content-Length: 15\n  Content-Type: application/json\n  User-Agent: okhttp/4.12.0\n  X-Request-Id: 6ac3ae14-0002\nstack, remind's frames, innermost first:\n  auth.parseBearer  auth/auth.go:66\n  auth.authenticate  auth/auth.go:50\n  auth.Require  auth/auth.go:18\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 1; read them with crash_logs\n",
+				"tool_call_id": "toolu_018CdovbxFMFhoKM33ELojfx"
+			},
+			{
+				"role": "tool",
+				"content": "cr_ee551c: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:15 to 2026-10-05 14:15\nfingerprint: fp_4828a6\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: GET /v1/reminders/rem_0001\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0006\nstack, remind's frames, innermost first:\n  api.(*API).owned  api/reminders.go:144\n  api.(*API).getReminder  api/reminders.go:152\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 4; read them with crash_logs\n",
+				"tool_call_id": "toolu_01LjVZpyHuvhFdzhS62FjMgj"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01NLQV3MXd2yrA6rU4FPPh2F",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\": \"cr_fd4982\"}"
+						}
+					},
+					{
+						"id": "toolu_01R4Bs2pcQxs3nS3HQdn1fYr",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\": \"cr_1e2ea0\"}"
+						}
+					},
+					{
+						"id": "toolu_01C83AjNVWFrPQsZsz97EkSb",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\": \"cr_f9ee9e\"}"
+						}
+					},
+					{
+						"id": "toolu_01Ph6JprN9ra45XvhZBh28w4",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"auth/auth.go\"}"
+						}
+					},
+					{
+						"id": "toolu_01T7woukCTchtX1vbWRTPXRQ",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/reminders.go\", \"start\": 120, \"end\": 180}"
+						}
+					},
+					{
+						"id": "toolu_01EprFAqdS56DqXwa5WcQnhY",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"notify/notify.go\", \"start\": 60, \"end\": 120}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSzgYKEAgSGAI4AUIIdGhpbmtpbmcSDMtKIczDVCF2EUZNaRoMQ23QgTTEMIho5eHtIjDH6gkCKV7Bkh8UxECta4d3GKcGRHy/T3p/eIHaED+lBzrFVo7IiJqPOUXWDpEAXS8q6wWZI8UN65IsDtWGLvdKP7suwW7b8qoQvr0cIGslZmiN+zp22p4rvd4cZyHvHx/Dt5eZ+tvrgM9ZjJzRVzeST/uJ1nunLXvqOkNi2BDqgUuow3ZlfWvpM7WqghEG2T1d8l/oKedKND4dRxZZBZ9bLxajg7Wmq0xboTKPDvWorUiEtKuLJhAqNOBQKvYq1du7NJOzd0KjIN0DLhlRWER5QJN8bcS9rwP98Ip8xJT1Jz8J2i3OWRtXkQQ4y767u4PQ+wbw2r2yj5ku8Uis4vsp7I4C/2FfTc0mCCKYVCLoehC8ykt+I0iiqENb6ZXSMjCXNfxmyoyuTqFDqsEL84eZ7HXgYAnHwtZGVsRrHL8bZdi695booGYBB6KAasChESs/36806pAkZ9iWqS4OC0U9OQwVsumFm/wJjdUxc2OiiOCCzbgkaZ0Rvre9Z6IhnvKN3RlHUA3M8P45ZTJ6xejKhJoVEk/TiRtooRI5drhIN0aN7jc1FwDuVdiEcoXXv+Hs8dsXY9CnyHbttYnhedk83cjf28YTCVA1mKJp0ezk+TBcIzIaYpUTJnlxPedzHffK1UTKsz58Swm8Jry7sciEL4dimTBl6IyPI8NXloo3uNzGeXZpLlck4pS6Wk4BWliK60EZdQcmo0+YEkOW/Gvluufu8Xz8T/Zi836cd6H4lOK+zdt5y9tHp0/tOGta33Ik6kDQHPo5uWgaNJnyg0o/3wg3Ey9Jfc/ny0UtNL51eni0RPTjWeFrH6jtQZtxJtyg3byxa2OKNS9WybcE4+puUshIljipL25Z7NGn/3Un0TOFQyP/DmL93IHxhiEDHQizhVTnfm1m9EStMYCUMzFijL9tLVg+JV/RhqDebPXAt4RJ3Qi7UBeFPnu3wPQYT4SgywJuEd7nyPOhBsq1GucIW+2EH1Ehxl5hlTyOJu4u6s297LVMZGK6onEICoH+K0pjrh2QD+ZF5f03m7mxo5E1TXdkY949pKPts+H53lQYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\"\n2026-10-05T14:09:46Z INFO reminder created id=rem_0001 user=usr_ana\n2026-10-05T14:09:46Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:16:53Z WARN dispatcher stopped by an administrator\n2026-10-05T14:16:53Z INFO request method=POST path=/v1/admin/dispatcher/stop status=204 dur=3.4ms ua=curl/8.12.1",
+				"tool_call_id": "toolu_01NLQV3MXd2yrA6rU4FPPh2F"
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\"\n2026-10-05T14:09:46Z INFO reminder created id=rem_0001 user=usr_ana\n2026-10-05T14:09:46Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"",
+				"tool_call_id": "toolu_01R4Bs2pcQxs3nS3HQdn1fYr"
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\"",
+				"tool_call_id": "toolu_01C83AjNVWFrPQsZsz97EkSb"
+			},
+			{
+				"role": "tool",
+				"content": "auth/auth.go, lines 1-67 of 67:\n    1\t// Package auth authenticates API requests by bearer token.\n    2\tpackage auth\n    3\t\n    4\timport (\n    5\t\t\"context\"\n    6\t\t\"net/http\"\n    7\t\t\"strings\"\n    8\t\n    9\t\t\"example.com/remind/store\"\n   10\t)\n   11\t\n   12\ttype userKey struct{}\n   13\t\n   14\t// Require lets a request through only if it carries a valid API token,\n   15\t// and makes the token's user available through UserFrom.\n   16\tfunc Require(s *store.Store, next http.Handler) http.Handler {\n   17\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n   18\t\t\tu, ok := authenticate(s, r)\n   19\t\t\tif !ok {\n   20\t\t\t\thttp.Error(w, \"unauthorized\", http.StatusUnauthorized)\n   21\t\t\t\treturn\n   22\t\t\t}\n   23\t\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, u)))\n   24\t\t})\n   25\t}\n   26\t\n   27\t// RequireAdmin is Require for administrators only.\n   28\tfunc RequireAdmin(s *store.Store, next http.Handler) http.Handler {\n   29\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n   30\t\t\tu, ok := authenticate(s, r)\n   31\t\t\tif !ok {\n   32\t\t\t\thttp.Error(w, \"unauthorized\", http.StatusUnauthorized)\n   33\t\t\t\treturn\n   34\t\t\t}\n   35\t\t\tif !u.Admin {\n   36\t\t\t\thttp.Error(w, \"forbidden\", http.StatusForbidden)\n   37\t\t\t\treturn\n   38\t\t\t}\n   39\t\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, *u)))\n   40\t\t})\n   41\t}\n   42\t\n   43\t// UserFrom returns the authenticated user, or nil if there is none.\n   44\tfunc UserFrom(ctx context.Context) *store.User {\n   45\t\tu, _ := ctx.Value(userKey{}).(*store.User)\n   46\t\treturn u\n   47\t}\n   48\t\n   49\tfunc authenticate(s *store.Store, r *http.Request) (*store.User, bool) {\n   50\t\ttoken, ok := parseBearer(r.Header.Get(\"Authorization\"))\n   51\t\tif !ok {\n   52\t\t\treturn nil, false\n   53\t\t}\n   54\t\tu, err := s.UserByToken(token)\n   55\t\tif err != nil {\n   56\t\t\treturn nil, false\n   57\t\t}\n   58\t\treturn u, true\n   59\t}\n   60\t\n   61\t// parseBearer extracts the token from \"Bearer <token>\".\n   62\tfunc parseBearer(h string) (string, bool) {\n   63\t\tif !strings.HasPrefix(h, \"Bearer\") {\n   64\t\t\treturn \"\", false\n   65\t\t}\n   66\t\treturn strings.SplitN(h, \" \", 2)[1], true\n   67\t}\n",
+				"tool_call_id": "toolu_01Ph6JprN9ra45XvhZBh28w4"
+			},
+			{
+				"role": "tool",
+				"content": "api/reminders.go, lines 120-180 of 223:\n  120\t\n  121\tfunc (a *API) listReminders(w http.ResponseWriter, r *http.Request) {\n  122\t\tu := auth.UserFrom(r.Context())\n  123\t\toffset, limit, ok := a.page(w, r)\n  124\t\tif !ok {\n  125\t\t\treturn\n  126\t\t}\n  127\t\trems := a.Store.List(u.ID, offset, limit)\n  128\t\tviews := make([]reminderView, len(rems))\n  129\t\tfor i, rem := range rems {\n  130\t\t\tviews[i] = viewOf(rem)\n  131\t\t}\n  132\t\ta.writeJSON(w, http.StatusOK, map[string]any{\"reminders\": views})\n  133\t}\n  134\t\n  135\t// owned returns the caller's reminder with the request's ID, or answers\n  136\t// 404 and returns nil.\n  137\tfunc (a *API) owned(w http.ResponseWriter, r *http.Request) *store.Reminder {\n  138\t\tu := auth.UserFrom(r.Context())\n  139\t\trem, err := a.Store.Get(r.PathValue(\"id\"))\n  140\t\tif err != nil {\n  141\t\t\ta.writeError(w, err)\n  142\t\t\treturn nil\n  143\t\t}\n  144\t\tif rem.UserID != u.ID {\n  145\t\t\ta.fail(w, http.StatusNotFound, \"not found\")\n  146\t\t\treturn nil\n  147\t\t}\n  148\t\treturn rem\n  149\t}\n  150\t\n  151\tfunc (a *API) getReminder(w http.ResponseWriter, r *http.Request) {\n  152\t\tif rem := a.owned(w, r); rem != nil {\n  153\t\t\ta.writeJSON(w, http.StatusOK, viewOf(rem))\n  154\t\t}\n  155\t}\n  156\t\n  157\tfunc (a *API) deleteReminder(w http.ResponseWriter, r *http.Request) {\n  158\t\trem := a.owned(w, r)\n  159\t\tif rem == nil {\n  160\t\t\treturn\n  161\t\t}\n  162\t\tif err := a.Store.Delete(rem.ID); err != nil {\n  163\t\t\ta.writeError(w, err)\n  164\t\t\treturn\n  165\t\t}\n  166\t\ta.Search.Remove(rem.ID)\n  167\t\tw.WriteHeader(http.StatusNoContent)\n  168\t}\n  169\t\n  170\tfunc (a *API) markDone(w http.ResponseWriter, r *http.Request) {\n  171\t\trem := a.owned(w, r)\n  172\t\tif rem == nil {\n  173\t\t\treturn\n  174\t\t}\n  175\t\terr := a.Store.Update(rem.ID, func(r *store.Reminder) error {\n  176\t\t\tr.Done = true\n  177\t\t\treturn nil\n  178\t\t})\n  179\t\tif err != nil {\n  180\t\t\ta.writeError(w, err)\n... 43 more lines; read on with start=181\n",
+				"tool_call_id": "toolu_01T7woukCTchtX1vbWRTPXRQ"
+			},
+			{
+				"role": "tool",
+				"content": "notify/notify.go, lines 60-120 of 182:\n   60\t\t\tnow:     now,\n   61\t\t\tretries: make(map[string]int),\n   62\t\t\tstop:    make(chan struct{}),\n   63\t\t}\n   64\t\ts.OnChange(d.forget)\n   65\t\treturn d\n   66\t}\n   67\t\n   68\t// SetWebhookSecret sets the key webhook deliveries are signed with.\n   69\tfunc (d *Dispatcher) SetWebhookSecret(secret []byte) {\n   70\t\td.senders[\"webhook\"].(webhookSender).client.Secret = [REDACTED]\n   71\t}\n   72\t\n   73\t// Status is what the admin dashboard shows about deliveries.\n   74\ttype Status struct {\n   75\t\tRetrying int      `json:\"retrying\"` // reminders whose last send failed\n   76\t\tChannels []string `json:\"channels\"`\n   77\t}\n   78\t\n   79\t// Status reports the dispatcher's current state.\n   80\tfunc (d *Dispatcher) Status() Status {\n   81\t\treturn Status{Retrying: len(d.retries), Channels: slices.Sorted(maps.Keys(d.senders))}\n   82\t}\n   83\t\n   84\t// Run sends due reminders every interval until Stop is called or ctx\n   85\t// ends.\n   86\tfunc (d *Dispatcher) Run(ctx context.Context, interval time.Duration) {\n   87\t\tt := time.NewTicker(interval)\n   88\t\tdefer t.Stop()\n   89\t\tfor {\n   90\t\t\tselect {\n   91\t\t\tcase <-ctx.Done():\n   92\t\t\t\treturn\n   93\t\t\tcase <-d.stop:\n   94\t\t\t\treturn\n   95\t\t\tcase <-t.C:\n   96\t\t\t\td.flush(ctx)\n   97\t\t\t}\n   98\t\t}\n   99\t}\n  100\t\n  101\t// Stop stops Run.\n  102\tfunc (d *Dispatcher) Stop() {\n  103\t\tclose(d.stop)\n  104\t}\n  105\t\n  106\t// flush sends every due reminder once. It holds d.mu so flushes never\n  107\t// overlap.\n  108\tfunc (d *Dispatcher) flush(ctx context.Context) {\n  109\t\td.mu.Lock()\n  110\t\tdefer d.mu.Unlock()\n  111\t\tfor _, r := range d.store.Due(d.now()) {\n  112\t\t\tu, err := d.store.User(r.UserID)\n  113\t\t\tif err != nil {\n  114\t\t\t\tcontinue\n  115\t\t\t}\n  116\t\t\tif err := d.SendNow(ctx, u, r); err != nil {\n  117\t\t\t\td.retries[r.ID]++\n  118\t\t\t\td.log.Warn(\"notify: send failed\", \"reminder\", r.ID, \"attempt\", d.retries[r.ID], \"err\", err)\n  119\t\t\t\tcontinue\n  120\t\t\t}\n... 62 more lines; read on with start=121\n",
+				"tool_call_id": "toolu_01EprFAqdS56DqXwa5WcQnhY"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01L5vKSPhvVCjjNkkdDBu2fq",
+						"type": "function",
+						"function": {
+							"name": "code_search",
+							"arguments": "{\"pattern\": \"func \\\\(s \\\\*Store\\\\) (Get|Delete|Update)\\\\b|func \\\\(s \\\\*Store\\\\) Get\"}"
+						}
+					},
+					{
+						"id": "toolu_01Qs4vxkKagqnRQFtzVXGHv3",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"notify/notify.go\", \"start\": 1, \"end\": 60}"
+						}
+					},
+					{
+						"id": "toolu_01J7m1Zqe8HCuBY77u1rf6BS",
+						"type": "function",
+						"function": {
+							"name": "code_list",
+							"arguments": "{\"dir\": \"store\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSpgkKEAgSGAI4AUIIdGhpbmtpbmcSDOOW9/VAT15i/fPWlRoMiGerEcO5hx7EgQcgIjDuMR3t0aeMuPex3cwSLJiCImVkbXdMMQaOA+rMBjRHEY6+n+RoGkQKRoCl+qUqs+Iqwwhjcf/3Htnoi1eZEhx+UBoofxLWEe9iMkosewutZYBxs25cGlZ3cbdaY9kxYTRfj29IeQIsMFy/DR2lBu8meLE8AnvlLNJlot8xUJtXYz+2oPHyehIIF2SD3nUzqr6QxtMI+70LI1KpJQ6l5bZS+tFkIoeqKS3xO8S4EzQ3eXCYCFYBF1HhXrpbfhwkduBDfSrat5RkSSeL1WF0S3nYjMIFlRoOHwY3SSuiUJ9aFGYUHeWter3OgJBxfXacZpfAlcTdyDh2NEgEZhtOd/S/NZDzSnpP6AmDwKlvCv17T4qqEL7EGwCovkHm+pbM6FZbKnukP4zN+XePX0lkPW2Hu59Ppoe/MhbffuDHXKs2uWBmzhYVyo8I28cBeBXYzO96/yZXAiQvNDW7O5FOB3ObDfjuMjzfFGS4uMeIgYtKxxsQSumQbJf/ExhE3mtBPOOOEuT8TFNZuAuFpIj4NB7LS+xEK+PAZRayt8huxeXFFtNeaiBi6/SN1ip0JVK/QcM/90fKN/wwcrn5yoWMCEuZrkrbkTvygTbzRwCSj4K3Z+QohaTbREgHEQuuAfpWcp0oowzGHwoC1zg0ckxYn4HGgeyCp+fBncOGJSJwbCEqbMf+mfWP+XYfi8Bvb87McXICJoRXAYFXvl41lylgs3jvFvRupoeoy77KNV7EtcZeFlQusnhVb0f3ZiQjnwXhgI0r3B12dYcQymzS1nCYmbTGjxUloQKyoWgwCnh7y8ZYZgS3VLyqkMop2sUTb1X07vc1SmDuIrAdZMGgjqKMLFtTrHEmoLs5YUtHfEMr88CHRpCskqtxER0t/CH5Wc1XfuVnC/I7+lQZKaDBHY4vT8j1uqAnFLzabKdd4Y9NEPZeG9ubqNInmA5OtRVz330SuefDfvUu4Jwe9lpIM0AJwTij661zlEigUiA99HhNJboKgSmet0/zBambC5YeGSUoGHgQopvJIj/+3Ri0x59RxpHcZb16viFg+AMtxQR92oM+djxfgIk1jU8XcWW6eHPyGBnDS5g+lCn5tqlq3DIG4VCc8u87yAzUAlKI51J2xQELgND/1hIMf1AiAxUbm8tMLBzqOjLOT1fg8eT400sLfgV+0GPY3IYfNgCy+zsselSi+S82PGuZnfaWHBdKXj44Ww9qdivg3BZ3KccXFUYuwcr2YXH8k9cHJRl6rhsE1amFdTfz99ogI0QkUNBzclHO9B+jkr0Nz5qwlt518IChtCq4QG3DKThQa3mxebzZ/FG9NejRhAdEbMVvETlGXF6y2QbRIKW+W7UKeyBrBgxnM6+VlxOk8oN06/Llz4sBE9BMwYKvxSwn+NPtJG2vQlqDHoQhDN8Z/tAlUwztMrsxOR6AulX3n3C/gZsTQ6WC67IEc+4cAiOp2dx4Lh93UndzV2FQ25sWoHrYInTO4fD9FfUSga0c1xhsgBidYdcC3D6XUw/K4gxYSBgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "store/store.go:111: func (s *Store) Get(id string) (*Reminder, error) {\nstore/store.go:153: func (s *Store) Update(id string, f func(*Reminder) error) error {\nstore/store.go:168: func (s *Store) Delete(id string) error {",
+				"tool_call_id": "toolu_01L5vKSPhvVCjjNkkdDBu2fq"
+			},
+			{
+				"role": "tool",
+				"content": "notify/notify.go, lines 1-60 of 182:\n    1\t// Package notify delivers reminders through each user's chosen channel.\n    2\tpackage notify\n    3\t\n    4\timport (\n    5\t\t\"context\"\n    6\t\t\"encoding/json\"\n    7\t\t\"fmt\"\n    8\t\t\"log/slog\"\n    9\t\t\"maps\"\n   10\t\t\"slices\"\n   11\t\t\"sync\"\n   12\t\t\"time\"\n   13\t\n   14\t\t\"example.com/remind/i18n\"\n   15\t\t\"example.com/remind/store\"\n   16\t\t\"example.com/remind/webhook\"\n   17\t)\n   18\t\n   19\t// A Message is one notification.\n   20\ttype Message struct {\n   21\t\tTo      *store.User\n   22\t\tSubject string\n   23\t\tBody    string\n   24\t}\n   25\t\n   26\t// A Sender delivers messages over one channel.\n   27\ttype Sender interface {\n   28\t\tSend(ctx context.Context, m Message) error\n   29\t}\n   30\t\n   31\t// channels lists the channel names users may choose.\n   32\tvar channels = []string{\"email\", \"webhook\", \"sms\"}\n   33\t\n   34\t// ValidChannel reports whether name is a channel users may choose.\n   35\tfunc ValidChannel(name string) bool {\n   36\t\treturn slices.Contains(channels, name)\n   37\t}\n   38\t\n   39\t// Dispatcher sends due reminders.\n   40\ttype Dispatcher struct {\n   41\t\tstore   *store.Store\n   42\t\tsenders map[string]Sender\n   43\t\tlog     *slog.Logger\n   44\t\tnow     func() time.Time\n   45\t\n   46\t\tmu      sync.Mutex\n   47\t\tretries map[string]int // failed sends per reminder ID\n   48\t\tstop    chan struct{}\n   49\t}\n   50\t\n   51\t// NewDispatcher returns a dispatcher with the email and webhook channels.\n   52\tfunc NewDispatcher(s *store.Store, log *slog.Logger, now func() time.Time) *Dispatcher {\n   53\t\td := &Dispatcher{\n   54\t\t\tstore: s,\n   55\t\t\tsenders: map[string]Sender{\n   56\t\t\t\t\"email\":   emailSender{log: log},\n   57\t\t\t\t\"webhook\": webhookSender{client: &webhook.Client{Log: log, Now: now}, now: now},\n   58\t\t\t},\n   59\t\t\tlog:     log,\n   60\t\t\tnow:     now,\n... 122 more lines; read on with start=61\n",
+				"tool_call_id": "toolu_01Qs4vxkKagqnRQFtzVXGHv3"
+			},
+			{
+				"role": "tool",
+				"content": "store/store.go (264 lines)\nstore/store_test.go (168 lines)\nstore/users.go (135 lines)\n",
+				"tool_call_id": "toolu_01J7m1Zqe8HCuBY77u1rf6BS"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01BnpSE66VXWPuFzuWHzpcn6",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"store/store.go\", \"start\": 100, \"end\": 200}"
+						}
+					},
+					{
+						"id": "toolu_01Kfn5CCBX5GpGKoHv8LcA7F",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/admin.go\", \"start\": 55, \"end\": 85}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "store/store.go, lines 100-200 of 264:\n  100\t\t\tRule:    rule,\n  101\t\t\tDue:     due,\n  102\t\t\tCreated: now,\n  103\t\t}\n  104\t\ts.reminders[r.ID] = r\n  105\t\ts.byUser[userID] = append(s.byUser[userID], r)\n  106\t\ts.changed(r)\n  107\t\treturn r\n  108\t}\n  109\t\n  110\t// Get returns a reminder by ID. Deleted reminders are not returned.\n  111\tfunc (s *Store) Get(id string) (*Reminder, error) {\n  112\t\ts.mu.RLock()\n  113\t\tdefer s.mu.RUnlock()\n  114\t\tr, ok := s.reminders[id]\n  115\t\tvar err error\n  116\t\tswitch {\n  117\t\tcase !ok:\n  118\t\t\terr = ErrNotFound\n  119\t\tcase r.Deleted:\n  120\t\t\tr = nil\n  121\t\t}\n  122\t\treturn r, err\n  123\t}\n  124\t\n  125\t// List returns a page of a user's reminders, oldest first.\n  126\tfunc (s *Store) List(userID string, offset, limit int) []*Reminder {\n  127\t\ts.mu.RLock()\n  128\t\tdefer s.mu.RUnlock()\n  129\t\tvar out []*Reminder\n  130\t\tfor _, r := range s.byUser[userID] {\n  131\t\t\tif !r.Deleted {\n  132\t\t\t\tout = append(out, r)\n  133\t\t\t}\n  134\t\t}\n  135\t\tend := min(offset+limit, len(out))\n  136\t\treturn out[offset:end]\n  137\t}\n  138\t\n  139\t// Count returns how many reminders a user has, not counting deleted ones.\n  140\tfunc (s *Store) Count(userID string) int {\n  141\t\ts.mu.RLock()\n  142\t\tdefer s.mu.RUnlock()\n  143\t\tn := 0\n  144\t\tfor _, r := range s.byUser[userID] {\n  145\t\t\tif !r.Deleted {\n  146\t\t\t\tn++\n  147\t\t\t}\n  148\t\t}\n  149\t\treturn n\n  150\t}\n  151\t\n  152\t// Update calls f with the reminder locked, then records the change.\n  153\tfunc (s *Store) Update(id string, f func(*Reminder) error) error {\n  154\t\ts.mu.Lock()\n  155\t\tdefer s.mu.Unlock()\n  156\t\tr, ok := s.reminders[id]\n  157\t\tif !ok || r.Deleted {\n  158\t\t\treturn ErrNotFound\n  159\t\t}\n  160\t\tif err := f(r); err != nil {\n  161\t\t\treturn err\n  162\t\t}\n  163\t\ts.changed(r)\n  164\t\treturn nil\n  165\t}\n  166\t\n  167\t// Delete marks a reminder deleted, keeping a tombstone.\n  168\tfunc (s *Store) Delete(id string) error {\n  169\t\ts.mu.Lock()\n  170\t\tdefer s.mu.Unlock()\n  171\t\tr, ok := s.reminders[id]\n  172\t\tif !ok || r.Deleted {\n  173\t\t\treturn ErrNotFound\n  174\t\t}\n  175\t\tr.Deleted = true\n  176\t\ts.changed(r)\n  177\t\treturn nil\n  178\t}\n  179\t\n  180\t// Due returns reminders that are due at or before now and not done.\n  181\tfunc (s *Store) Due(now time.Time) []*Reminder {\n  182\t\ts.mu.RLock()\n  183\t\tdefer s.mu.RUnlock()\n  184\t\tvar out []*Reminder\n  185\t\tfor _, r := range s.reminders {\n  186\t\t\tif !r.Done && !r.Deleted && !r.Due.After(now) {\n  187\t\t\t\tout = append(out, r)\n  188\t\t\t}\n  189\t\t}\n  190\t\tslices.SortFunc(out, func(a, b *Reminder) int { return a.Due.Compare(b.Due) })\n  191\t\treturn out\n  192\t}\n  193\t\n  194\t// MarkSent records that a reminder fired: a recurring reminder moves to\n  195\t// its next time, and a one-off reminder is done.\n  196\tfunc (s *Store) MarkSent(id string) {\n  197\t\ts.mu.Lock()\n  198\t\tdefer s.mu.Unlock()\n  199\t\tr, ok := s.reminders[id]\n  200\t\tif !ok {\n... 64 more lines; read on with start=201\n",
+				"tool_call_id": "toolu_01BnpSE66VXWPuFzuWHzpcn6"
+			},
+			{
+				"role": "tool",
+				"content": "api/admin.go, lines 55-85 of 91:\n   55\t\ta.writeJSON(w, http.StatusOK, map[string]int{\"added\": n})\n   56\t}\n   57\t\n   58\tfunc (a *API) deleteUser(w http.ResponseWriter, r *http.Request) {\n   59\t\tid := r.PathValue(\"id\")\n   60\t\ta.audit(r, \"delete user\", id)\n   61\t\tif err := a.Store.DeleteUser(id); err != nil {\n   62\t\t\ta.writeError(w, err)\n   63\t\t\treturn\n   64\t\t}\n   65\t\tw.WriteHeader(http.StatusNoContent)\n   66\t}\n   67\t\n   68\tfunc (a *API) stopDispatcher(w http.ResponseWriter, _ *http.Request) {\n   69\t\ta.Notify.Stop()\n   70\t\ta.Log.Warn(\"dispatcher stopped by an administrator\")\n   71\t\tw.WriteHeader(http.StatusNoContent)\n   72\t}\n   73\t\n   74\tfunc (a *API) snapshot(w http.ResponseWriter, _ *http.Request) {\n   75\t\tout, err := a.Snapshot()\n   76\t\tif err != nil {\n   77\t\t\ta.Log.Error(\"store: snapshot failed\", \"err\", err)\n   78\t\t\ta.fail(w, http.StatusInternalServerError, \"snapshot failed\")\n   79\t\t\treturn\n   80\t\t}\n   81\t\terr = a.Store.Snapshot(out)\n   82\t\tif cerr := out.Close(); err == nil {\n   83\t\t\terr = cerr\n   84\t\t}\n   85\t\tif err != nil {\n... 6 more lines; read on with start=86\n",
+				"tool_call_id": "toolu_01Kfn5CCBX5GpGKoHv8LcA7F"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01W4d5i1FiE7Sj9By59EkXHu",
+						"type": "function",
+						"function": {
+							"name": "code_search",
+							"arguments": "{\"pattern\": \"\\\\.Get\\\\(|\\\\.Stop\\\\(\\\\)|d\\\\.stop|ErrNotFound\"}"
+						}
+					},
+					{
+						"id": "toolu_01JuKojR2n4uuo2je1ekh5zb",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"store/store_test.go\", \"start\": 1, \"end\": 60}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSuQkKEAgSGAI4AUIIdGhpbmtpbmcSDNvrB6FQnYd4WPWhDxoMyywEa5y6wrlB0ULtIjAZM6+NKx18Xz0rhrvUsOecutKwR9Vcr9GXTLr/kFyigdNv7Qf6YMTEnMwtKHMfHbMq1ggNTq7YWhSwG7xujyBdUfyxglfwkwRuGdc8TATvt07qaFnnxS2kfYBLSgyF3artDrTz0qSDy0UiL/e0XxjXhp3o0AJwVnEShtEq5Csb7mhO1bGz4590BfUfkTVNyKPsy6Ka7h/g7SLIpbnhiNwmGzyTZqI44WoINcNY2xNtCeJNitnrgyMhN/vjWn5FoXzJ+V7+0iGoCDiLmCQP5GDkLIg/wsZDtG46ohktl8vSnbaNwHuRyXSvwbc2sUtxEUpEkw6SbCR2srkmId7Kuvv+HlPzKE1dSrZPjOW54ORoBq2jcH4VrZQhAhg8ugjA7tIAKEbjyJhOrrNb8xJEoO5Qycy7SuJo4OoXBuRODEgH9PX+fQf6i7fieh3V5gzz+nNABqVyiJEDcSr3sZ77jdbIHbvaILgb5GVZQ9frWwhpZ+SLk8RFhpYYxrPx3sLCPbFX5q41pnfCZtgCR0KU8eks71O/Z4+mv/DpQacSSzJ4kqTcmpcave3vply6gCiSeMR6FG6Qrw/2J0wyesTDZUQeXAKrLyIs9E4e2avCAWnJgHlQ4PB24a9kfVJylXslsE1fMc2M72DPJM+SyAXw4foszAvx4XFdVed3pO7glVC33e6baM0YtdPcJbwwrknu7cxV+ym3XdKf+ppfzkxeaIrsGwRjCBe6q7JlSXSexi1ci/w3UIWsbMHK+EsIoN1G+RLMyx5q6M9S6+BpKJqeOx5MhKWu3CjTpQDVsq74xLBvID4U0JxrPQ6u8OmG1N72O3g5OkUh/MNwhVgWBygLvtYMuEDnu1M0T4J7LXNLtkFdtxJs1HKOaOirb+n+zk4ZvNqTk+YNPkdy6PlNWInSHM/NQlPbxqzifKpYFr6IhmbnwOT1DlpKbfcW+2qh3IugGyhpZC0IgMWI61480+BqpCI+grPVUqchoph2PR2SwmzKEanek5Zqz2/wc5wUCB+PukRsbQTMxczEdLe1Ofghg4icMVMYCdCcKE2qp+JC2QA5ghlBRKkAn7tvMwjBKyUVgD4fAw8SCHkaqKmTE6BBn8fEMNKiEZh7B1s7Vh80/ZzvI1+erGW8y7mrWOJnQEr/MLc2y8A8Wpm+QnN8pQjeTjoyjG+yVHYsJ+RojcFgOLT5Hk6hEx3uNFeziv9nrgy2IP1ci595HyZuDEA366c0cLGs4f/frP4O8oSW6XEKOMCWneCZmQFvCtuT1scre2yNMK8uxFF+EmjnLuM9P4o91D9i3Z5d+exV9hw9uP9h8RR6HfUU79O7MA9rejX5hHvFqWBMZobjAjWKr3bXfSMTKnzv04fbJMb55R7Kc7sZIANl9H3FmZ24m7Nl19aCL1rkYIRV3idfDPLEtEoVkv0OTqTc0IpopljC3K80MjHMzdD4Zb0YmLGNW8GSXDT6omsrXFendj2gbqC6IKeGXaiIzmEibeMS3SHyhpw210ZYIiHAtZboOMcvw+oOu303hU8mlBxcnBx33CZshiwYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "api/admin.go:25: f := audit.Filter{Actor: q.Get(\"actor\"), Action: q.Get(\"action\"), Limit: 100}\napi/admin.go:26: if s := q.Get(\"since\"); s != \"\" {\napi/admin.go:69: a.Notify.Stop()\napi/api.go:137: case errors.Is(err, store.ErrNotFound):\napi/api.go:152: if s := q.Get(\"offset\"); s != \"\" {\napi/api.go:158: if s := q.Get(\"limit\"); s != \"\" {\napi/lists.go:14: case errors.Is(err, share.ErrNotFound):\napi/lists.go:49: l, err := a.Lists.Get(r.PathValue(\"id\"), u.ID)\napi/lists.go:56: rem, err := a.Store.Get(id)\napi/lists.go:113: rem, err := a.Store.Get(req.Reminder)\napi/reminders.go:139: rem, err := a.Store.Get(r.PathValue(\"id\"))\napi/search.go:15: q := r.URL.Query().Get(\"q\")\napi/search.go:21: if s := r.URL.Query().Get(\"limit\"); s != \"\" {\napi/search.go:31: rem, err := a.Store.Get(hit.DocID)\napi/users.go:73: if s := r.URL.Query().Get(\"days\"); s != \"\" {\napi/users.go:81: loc := must.Get(time.LoadLocation(u.Prefs.TZ))\nauth/auth.go:50: token, ok := parseBearer(r.Header.Get(\"Authorization\"))\ncmd/remind/main.go:106: srv.Dispatcher.Stop()\nmetrics/metrics_test.go:166: if ct := rec.Header().Get(\"Content-Type\"); !strings.HasPrefix(ct, \"text/plain\") {\nnotify/notify.go:88: defer t.Stop()\nnotify/notify.go:93: case <-d.stop:\nnotify/notify.go:103: close(d.stop)\nnotify/notify_test.go:61: got, err := s.Get(r.ID)\nnotify/notify_test.go:78: d.Stop()\nquota/quota_test.go:152: key := func(r *http.Request) (string, Plan) { return r.Header.Get(\"X-User\"), p }\nquota/quota_test.go:172: if got := rec.Header().Get(\"Retry-After\"); got != \"3\" {\nquota/quota_test.go:175: if got := rec.Header().Get(\"Content-Type\"); got != \"application/json\" {\nserver/server.go:105: defer t.Stop()\nshare/share.go:18: ErrNotFound  = errors.New(\"share: not found\")\nshare/share.go:81: // get ErrNotFound for it; members whose role does not allow an action\nshare/share.go:109: return nil, 0, ErrNotFound\nshare/share.go:113: return nil, 0, ErrNotFound\nshare/share.go:229: return fmt.Errorf(\"remove %s from %s: %w\", user, id, ErrNotFound)\nshare/share.go:264: return fmt.Errorf(\"remove reminder %s from %s: %w\", reminderID, id, ErrNotFound)\nshare/share_test.go:52: _, err := s.Get(id, by)\nshare/share_test.go:55: want: map[string]error{\"out\": ErrNotFound, \"nolist\": ErrNotFound},\nshare/share_test.go:60: want: map[string]error{\"vic\": ErrForbidden, \"out\": ErrNotFound, \"nolist\": ErrNotFound},\nshare/share_test.go:65: want: map[string]error{\"ed\": ErrForbidden, \"vic\": ErrForbidden, \"out\": ErrNotFound, \"nolist\": ErrNotFound},\nshare/share_test.go:75: want: map[string]error{\"ed\": ErrForbidden, \"vic\": ErrForbidden, \"out\": ErrNotFound, \"nolist\": ErrNotFound},\nshare/share_test.go:80: want: map[string]error{\"ed\": ErrForbidden, \"vic\": ErrForbidden, \"out\": ErrNotFound, \"nolist\": ErrNotFound},\n... 39 more matches; narrow the pattern or give a dir",
+				"tool_call_id": "toolu_01W4d5i1FiE7Sj9By59EkXHu"
+			},
+			{
+				"role": "tool",
+				"content": "store/store_test.go, lines 1-60 of 168:\n    1\tpackage store\n    2\t\n    3\timport (\n    4\t\t\"bytes\"\n    5\t\t\"errors\"\n    6\t\t\"strings\"\n    7\t\t\"testing\"\n    8\t\t\"time\"\n    9\t\n   10\t\t\"example.com/remind/schedule\"\n   11\t)\n   12\t\n   13\tvar t0 = time.Date(2026, 9, 7, 8, 0, 0, 0, time.UTC)\n   14\t\n   15\tfunc newStore() *Store {\n   16\t\treturn New(func() time.Time { return t0 })\n   17\t}\n   18\t\n   19\tfunc TestCreateGet(t *testing.T) {\n   20\t\ts := newStore()\n   21\t\tr := s.Create(\"u1\", \"water the plants\", t0.Add(time.Hour), nil)\n   22\t\tgot, err := s.Get(r.ID)\n   23\t\tif err != nil {\n   24\t\t\tt.Fatal(err)\n   25\t\t}\n   26\t\tif got.Text != \"water the plants\" || !got.Due.Equal(t0.Add(time.Hour)) {\n   27\t\t\tt.Errorf(\"Get = %+v\", got)\n   28\t\t}\n   29\t\tif _, err := s.Get(\"rem_9999\"); !errors.Is(err, ErrNotFound) {\n   30\t\t\tt.Errorf(\"Get(missing) error = %v, want ErrNotFound\", err)\n   31\t\t}\n   32\t}\n   33\t\n   34\tfunc TestCreateRecurring(t *testing.T) {\n   35\t\ts := newStore()\n   36\t\trule, err := schedule.Parse(\"every 2h\", nil, t0)\n   37\t\tif err != nil {\n   38\t\t\tt.Fatal(err)\n   39\t\t}\n   40\t\tr := s.Create(\"u1\", \"stretch\", time.Time{}, rule)\n   41\t\tif want := t0.Add(2 * time.Hour); !r.Due.Equal(want) {\n   42\t\t\tt.Errorf(\"Due = %v, want %v\", r.Due, want)\n   43\t\t}\n   44\t\ts.MarkSent(r.ID)\n   45\t\tif want := t0.Add(4 * time.Hour); !r.Due.Equal(want) {\n   46\t\t\tt.Errorf(\"after MarkSent, Due = %v, want %v\", r.Due, want)\n   47\t\t}\n   48\t}\n   49\t\n   50\tfunc TestList(t *testing.T) {\n   51\t\ts := newStore()\n   52\t\tfor _, text := range []string{\"a\", \"b\", \"c\"} {\n   53\t\t\ts.Create(\"u1\", text, t0, nil)\n   54\t\t}\n   55\t\tif got := s.List(\"u1\", 0, 2); len(got) != 2 || got[0].Text != \"a\" {\n   56\t\t\tt.Errorf(\"List(0, 2) = %v\", got)\n   57\t\t}\n   58\t\tif got := s.List(\"u1\", 2, 50); len(got) != 1 || got[0].Text != \"c\" {\n   59\t\t\tt.Errorf(\"List(2, 50) = %v\", got)\n   60\t\t}\n... 108 more lines; read on with start=61\n",
+				"tool_call_id": "toolu_01JuKojR2n4uuo2je1ekh5zb"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_list",
+					"description": "List every crash report, one line each: its ID, fingerprint, how many times it happened, the version that crashed, the function inside remind where it happened, and the panic message, cut short. Reports with the same fingerprint usually share a cause, but check. Start here.",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": [],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_read",
+					"description": "Read one crash report: when and how often it happened, the panic, the request being served, and the stack. By default the stack shows only remind's own frames, with file and line; set full for every frame. Log lines are in crash_logs.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							},
+							"full": {
+								"type": "boolean",
+								"description": "show every stack frame, not just remind's"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_search",
+					"description": "Search every crash report for text, ignoring case: panic messages, request paths and bodies, stacks, and log lines. Lists each match with the report's ID and where it was found.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "text to look for, such as a function name, a path, or words from a panic"
+							}
+						},
+						"required": [
+							"query"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_logs",
+					"description": "Read the log lines remind wrote just before a crash.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_goroutines",
+					"description": "Summarize the goroutine dump of a stuck request: goroutines with identical stacks are grouped and counted, so a dump of thousands reads as a few groups. Use it for reports of kind stuck.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_list",
+					"description": "List the files under a directory of remind's source, with how many lines each has. Use it to find your way around; use code_search to find where something is defined.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"dir": {
+								"type": "string",
+								"description": "a directory such as \"store\"; empty lists everything"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_read",
+					"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "a file path, such as store/store.go"
+							},
+							"start": {
+								"type": "integer",
+								"description": "the first line to show; default 1"
+							},
+							"end": {
+								"type": "integer",
+								"description": "the last line to show; default 200 lines after start"
+							}
+						},
+						"required": [
+							"path"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_search",
+					"description": "Search remind's Go files for a regular expression and list the matching lines with file and line number. Use it to find where a function is defined or called.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"pattern": {
+								"type": "string",
+								"description": "a Go regular expression, such as func \\(s \\*Store\\) Get"
+							},
+							"dir": {
+								"type": "string",
+								"description": "limit the search to this directory"
+							}
+						},
+						"required": [
+							"pattern"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run go test on remind's code, as it is now, and report failed tests, build errors, and each package's result. Run one package while you work; run ./... before you finish.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"package": {
+								"type": "string",
+								"description": "a package pattern, such as ./store or ./..."
+							},
+							"run": {
+								"type": "string",
+								"description": "run only tests matching this regular expression, such as ^TestGetDeleted$"
+							},
+							"race": {
+								"type": "boolean",
+								"description": "run with the race detector"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_patch",
+					"description": "Change a file by replacing one piece of text, or create a new file, such as a test, by leaving old empty. Read a file with code_read before changing it, and copy old exactly from what you read. After a change, the package and its tests are compiled, and you see the result.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "the file to change, such as store/store.go"
+							},
+							"old": {
+								"type": "string",
+								"description": "text copied exactly from the file, appearing in it once; empty to create a new file"
+							},
+							"new": {
+								"type": "string",
+								"description": "the text to put in its place, or the new file's contents"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_search",
+					"description": "Search the open issues in the issue tracker, by words or by fingerprint; with neither, list them all. Issues that contain more of the words come first. Check here before filing, since a crash may already be filed, perhaps by a person, with no fingerprint and in other words.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "words to look for in titles and bodies, such as parseBearer index out of range"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "a fingerprint from crash_list"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_file",
+					"description": "File a new issue for a crash group, once you know its cause. Search the open issues first; don't file a problem that is already filed. File one issue per cause.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"title": {
+								"type": "string",
+								"description": "one line naming the problem, such as \"store.Get returns a deleted reminder\""
+							},
+							"body": {
+								"type": "string",
+								"description": "the cause, the evidence, the fix, and the reports it covers"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "the crash group's fingerprint, from crash_list"
+							}
+						},
+						"required": [
+							"title",
+							"body",
+							"fingerprint"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_comment",
+					"description": "Add a comment to an issue, such as new crash reports that match one already filed.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "integer",
+								"description": "the issue number, such as 101"
+							},
+							"body": {
+								"type": "string",
+								"description": "the comment, such as new reports of the same crash"
+							}
+						},
+						"required": [
+							"id",
+							"body"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "submit_diagnosis",
+					"description": "Finish the job: submit one diagnosis per crash group. Call it once, at the end, after filing an issue for each new cause. For status fixed, the reproducer test must fail on the original code and pass on yours; this is checked.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"groups": {
+								"type": "array",
+								"description": "one entry per crash group; every report belongs to exactly one",
+								"items": {
+									"type": "object",
+									"properties": {
+										"fingerprint": {
+											"type": "string",
+											"description": "the group's fingerprint, from crash_list"
+										},
+										"reports": {
+											"type": "array",
+											"description": "the IDs of every report in the group",
+											"items": {
+												"type": "string"
+											}
+										},
+										"category": {
+											"type": "string",
+											"enum": [
+												"nil_value",
+												"out_of_range",
+												"concurrency",
+												"bad_input",
+												"other"
+											]
+										},
+										"root_cause": {
+											"type": "object",
+											"description": "where the code is wrong, which may not be where it crashed",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "string",
+											"description": "why this is the cause: what you read and ran"
+										},
+										"reproducer": {
+											"type": "object",
+											"description": "the test you wrote that fails before the fix; leave out for already_fixed and duplicate",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"fix": {
+											"type": "string",
+											"description": "what you changed, for status fixed"
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"fixed",
+												"already_fixed",
+												"duplicate",
+												"not_a_bug",
+												"needs_human"
+											]
+										},
+										"issue": {
+											"type": "integer",
+											"description": "the issue you filed, for status fixed or needs_human"
+										},
+										"duplicate": {
+											"type": "integer",
+											"description": "for status duplicate: the open issue it duplicates"
+										}
+									},
+									"required": [
+										"fingerprint",
+										"reports",
+										"category",
+										"root_cause",
+										"evidence",
+										"status"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"groups"
+						],
+						"additionalProperties": false
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792109985-8wY8I5cN3vLld505qC2g",
+		"object": "chat.completion",
+		"created": 1792109985,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01MAKU55ZqwQkWhFbUGSuXbE",
+							"function": {
+								"name": "code_search",
+								"arguments": "{\"pattern\": \"Deleted|Delete\\\\(\", \"dir\": \"store\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01T3QvUpGXJnqguxfR2YoQ5v",
+							"function": {
+								"name": "code_read",
+								"arguments": "{\"path\": \"notify/notify_test.go\", \"start\": 1, \"end\": 90}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSiwgKEAgSGAI4AUIIdGhpbmtpbmcSDCpgCfrJMSaO00EdbxoMdNYWTUJGxrR816rdIjAt8XdXQZYQbmupDFWwznHuQJaHDkNhwyWm5vzT9y4VJ96R8YsQGoTx1a08pr1zA+wqqAc3YDD4dA2oIVN3/VVXdCs97T19qJ97YPTBBow8AhyvTq4SnwbQROjybZmNkQ9l9noODxqGGC06hrFTCA4ck5YEw9q+gteBbAIeYDNF+El8qoCiEn0UiZAJhAZjuOFuCPeLwdIWd7Er0gEooJR3TOb/RW69ESuVlOBvYMRWBLj574u294T3vfUZTkAyK7/GZmc1y3asiEoAQDYXyp7TE4E6uY244+FzfPBo/luufhqRgHyswehVU9HYn28WMAD2jnerSGw9k64+zC1NjEwTN1tqHY1hHZErb5xzcEBrTv/8hX9NrkJiMvGIOg7TwRkjNeOqQXkoVmTxUbdUEXo2BiO4SpjFzgaBRiCNTvufPxUBU6srKiOhWgT/zpmauNcmERT/VfMx7wmjggFpgHijjNRnAo6V1gnmGLV7UKRwmSq6counVwxE50ZCjqmbCjVMc75xqaF4HUWxxm0dIybo0X3xojVVzBTCQ5uPHEoDWSxcKRa/FIw8eaglnVgoZjAi9QAijLi9GMFQ669aHBnorPAfBhsFhlAt41Nx5v+lXudLmkCHo3JuwKlxXY9NTPZ9LnwoboBO5na29iK2Kx0qUc76vzwSxwMGva7f//zEeCDNEOZBtoBAus5q5QqSYKgq+30VDQC8A4FDwNgDm4KnvpiXm3JPY1CEVXWRSaxByviudPhKz1Q+/duxblAErl3HzI9opCIBOgxpQ4ELRAB7JMfStdCR5V8pl7rQwetSHCOngj8ZYw6X8Oxx/9HFzG3rSSx1cj5qRrZ4aw9/rMD2WKUwqv01J3yU/Pwe493ZPonfIRVH0Tc9KEBL2nMbNDL2Lxd6N5HGJcy+Mp7SplLk7/qsl9sN5V7gObICyMDMyIdOcHyDD7EAqxdWfmDiYFtzZ8dnZ0wVDy98rlFuRkqLaCf3jArI65KdomKpW3MsH7qFQRu6k3E4rLa8FOq18IMgwuKOtFiVgtcAkKtNuD3NPTsV65PCYubQtJ7tWFnk4L8Zyzct3HSNccggQfA1w6+rQPUQgrtTpME+q+Cd4cR+/rL6ymHCQqgX8PMo6m54xfGmS6mYHbQUvR9VbM15oJM8M1UQnoWwH2g2PrxKi4RlYzPVVrJyvAK9ljuejQnxdfAhM6GNbztE6yoVzHRwtEV9jo9UQzryjWdEC0pSK2EUofDXAwCGqKwqNl9VaUosFSiXG/DtbEudCjPlRbqKdZytDt+fi+RPoP9jL5FY9MvMlN4cNGnHpCvVakwYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 16475,
+			"completion_tokens": 264,
+			"total_tokens": 16739,
+			"cost": 0.0017795,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0017795,
+				"upstream_inference_prompt_cost": 0.0016475,
+				"upstream_inference_completions_cost": 0.000132
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 89,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

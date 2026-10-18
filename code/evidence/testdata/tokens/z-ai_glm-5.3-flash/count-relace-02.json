@@ -1,0 +1,72 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n"
+			}
+		],
+		"max_tokens": 400,
+		"provider": {
+			"only": [
+				"relace"
+			]
+		}
+	},
+	"response": {
+		"id": "gen-1792094042-81assC8rXBasnStGYaDR",
+		"object": "chat.completion",
+		"created": 1792094042,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "length",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "The user has shared a Go package for parsing durations. There's a bug in the code! Look at the `units` map:\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,  // BUG: should be time.Minute\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\nThe 'm' unit maps to `time.Second` but should be `time.Minute`. So \"1h30m\" would parse as 1 hour + 30 seconds = 3600s + 30s = 3630s, not 90 minutes (5400s).\n\nLet me review the whole code carefully:\n\n1. **The main bug**: `'m': time.Second` should be `'m': time.Minute`. This is a classic copy-paste error. The doc comment says \"1h30m is ninety minutes\" but the code would give 1h30s.\n\n2. **Other observations**:\n   - No overflow checking: `time.Duration(n) * unit` can overflow for large n. E.g., \"999999999999d\" would overflow. Also `strconv.Atoi` on very long digit strings returns an error (out of range), which is handled via `%w`. But multiplication can still overflow: e.g., Atoi succeeds with a number like 999999999999 (within int64 range)... wait, on 64-bit platforms, `int` is 64-bit, so Atoi succeeds for anything up to ~9.2e18. `time.Duration(9e18) * time.Hour` would overflow silently. So large durations overflow. Also negative? No, digits only, so n >= 0.\n   - Leading zeros are allowed: \"007s\" — probably fine.\n   - The empty check: `total == 0` returns \"empty\" error, but this message is misleading — a",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user has shared a Go package for parsing durations. There's a bug in the code! Look at the `units` map:\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,  // BUG: should be time.Minute\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\nThe 'm' unit maps to `time.Second` but should be `time.Minute`. So \"1h30m\" would parse as 1 hour + 30 seconds = 3600s + 30s = 3630s, not 90 minutes (5400s).\n\nLet me review the whole code carefully:\n\n1. **The main bug**: `'m': time.Second` should be `'m': time.Minute`. This is a classic copy-paste error. The doc comment says \"1h30m is ninety minutes\" but the code would give 1h30s.\n\n2. **Other observations**:\n   - No overflow checking: `time.Duration(n) * unit` can overflow for large n. E.g., \"999999999999d\" would overflow. Also `strconv.Atoi` on very long digit strings returns an error (out of range), which is handled via `%w`. But multiplication can still overflow: e.g., Atoi succeeds with a number like 999999999999 (within int64 range)... wait, on 64-bit platforms, `int` is 64-bit, so Atoi succeeds for anything up to ~9.2e18. `time.Duration(9e18) * time.Hour` would overflow silently. So large durations overflow. Also negative? No, digits only, so n >= 0.\n   - Leading zeros are allowed: \"007s\" — probably fine.\n   - The empty check: `total == 0` returns \"empty\" error, but this message is misleading — a",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 351,
+			"completion_tokens": 400,
+			"total_tokens": 751,
+			"cost": 0.00020524,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 320,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00020524,
+				"upstream_inference_prompt_cost": 0.00000524,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 354,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

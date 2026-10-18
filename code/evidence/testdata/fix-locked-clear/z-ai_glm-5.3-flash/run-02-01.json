@@ -1,0 +1,152 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792094313-u3xqTCRmgIZ4AETwOHi6",
+		"object": "chat.completion",
+		"created": 1792094313,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_calls",
+				"message": {
+					"role": "assistant",
+					"content": "I'll start by looking at the project structure and running the tests to see what's failing.",
+					"refusal": null,
+					"reasoning": "The user says tests fail. Let me first list files and run tests to see what's going on. These are independent calls, so I can do them in the same block. Actually, running tests first might tell me the failure; listing files gives structure. Let me do both in parallel.",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "7b3dbcba-5348-4c26-a9e7-e9ed3126e38b",
+							"function": {
+								"name": "list_files",
+								"arguments": "{}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "2daef152-483c-4030-933a-b3a44de833b1",
+							"function": {
+								"name": "run_tests",
+								"arguments": "{}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user says tests fail. Let me first list files and run tests to see what's going on. These are independent calls, so I can do them in the same block. Actually, running tests first might tell me the failure; listing files gives structure. Let me do both in parallel.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 317,
+			"completion_tokens": 88,
+			"total_tokens": 405,
+			"cost": 0.00009155,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00009155,
+				"upstream_inference_prompt_cost": 0.00004755,
+				"upstream_inference_completions_cost": 0.000044
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 60,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092335-gcyU9Ka6k734yj8y0Wm2",
+		"object": "chat.completion",
+		"created": 1792092335,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, `context.Context` is a standard way to manage the lifetime of a request or operation across API boundaries and goroutines. It serves three main purposes:\n\n1. **Cancellation:** A context can be canceled explicitly or when a deadline passes. Code watches `ctx.Done()` and stops work early, which prevents wasted effort when a client disconnects or a timeout expires.\n\n2. **Deadlines and timeouts:** Functions like `context.WithTimeout` and `context.WithDeadline` create contexts that cancel automatically after a set time.\n\n3. **Request-scoped values:** `context.WithValue` attaches data such as request IDs or auth info to a call chain. It should be used sparingly, not for passing optional function arguments.\n\nBy convention, `ctx` is the first parameter of a function, and a parent context is passed down so cancellation and deadlines propagate through the entire call tree. Contexts are immutable, so derived contexts don't affect their parents. The root is usually created with `context.Background()` or `context.TODO()`.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQS2wgKEAgSGAI4AUIIdGhpbmtpbmcSDFhJ90YOW6C2aBEmKhoMIuT6K+TdvkyuT5TeIjBwcjlvarsL84qs8cq6moNRUyDhL74TiWhmcRksw6YvpkEY6ZIYURl4/8qF1OSTmZkq+Ae7qEJ60ynKP2xMy6sJFHoyWp/ysWzSyFweBQhUidapvTO7fAjfsv64LnUvUwTS2YV2oucD7EmYZumz0DqMLE+c+aGqEIPLY0xKJ45vFMxK3gDwgl/reVhE1q05MJdBF1sYMkDvjCerCX5wfDWe577CMY/SU+EFk2x1gLWRmp0PawV8SkFIkYPIOeYViF06d3+SoOitjnFtF/C90E0BMunkIpcN2YWMLa4OdzeAFn1ccfLSI/vIAEnmUki1W7oTiw4O/oKBrLEPojxUhDm1UoZAH1g1PDg2RMSEl/ASsrVG7jvnl4fWvTP2plPtqyr0Ui17P7c3XNpP3XY7F5YLvh+4XHnaeDlpU41N53AoX3UptzQnCU7vwX9L2aDX9DiNVTX1jr3YfSk9bFXa4td7K1ddwO8FEsMd7K0OTWJ1fNIpbCgTewvFbs1IFuBpIsmaZXlvEJazegp32C+JvTnSLhfOktueOcCAo10zi5z6QR4UcXWEUh4i1UklvxTysYP1dqS8tZAV+elBst1hAn9rVetGbuz2wd23DBzykb0wggfUNjD52H2ba9e2F5nhTU1tCV1DaUyxAwivrcEDOFsxYXS45V/8F3d6ijDj+PJpDsVTYeD+GbugPiMcuj2R3WS6zgvJshVI0nniknrC5au86d02MgtCjarJoZ7MZXEIXyk0N2D+Ri9+DxaLdWs5zV0gsr6arIbsJrpkOzxeT6MpLA3ESc010z88Zv2nzN4GsD4TYlsJDy5vAZ5+bmIBmWemEyywOukG68WpeSX04KcbDaAgP7Suuix7q5VKja4W9T0iqTd8Icqygcf8g+Cydl6nodXnoeL9/P/r4w8u23TL/cDMyHzGNGyccD7mkdoGd/ucgkBiJ+ozK+3Gun394YJA1a0OpVUjPhvS0ovUbeGxf142ALWwJkzJ1mlU0BM+c2ZRNh7eIiDkBgstb1lJ/e8czxJbCK61I6F0fTSmTrDdMs/KG/ehT1Xu4QrkDNSHhQLyMRNPWsfGIz8LOSBzXeTUP1gnAddihieAtzUJWp7kBUu3UFzu94Rx3qVpdqCQtDNhMi+4V8X4q8FSZo8h3HT/5uygLCAjuFKmCki3xeubWBs/ieYj4Xb403k3XXfHP1iztD0Gf1dauqbduHQoIohS7mW5+NcLjR6TD4DVOHSekO5fk5v23lE7+y3BAcTItNaFZKITNvOqFrvrvEseaJTzr9TduzwsoA0lPFkyX02vO8RRZggk34+sk+ib/5AfMWGy4H3RU5O/2kOxMlPV5v6IAm4TkKmeMBtQ/R12/eJB20E9XGu0+YJ2KsCw78D00PcW+CZZAkLxv0bG3osm17X6AQt6PC/0dBJTRBgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 28,
+			"completion_tokens": 520,
+			"total_tokens": 548,
+			"cost": 0.0002628,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002628,
+				"upstream_inference_prompt_cost": 0.0000028,
+				"upstream_inference_completions_cost": 0.00026
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 179,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

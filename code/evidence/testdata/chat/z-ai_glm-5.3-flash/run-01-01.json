@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091656-hOET5D6FMHVDZP1yIPcf",
+		"object": "chat.completion",
+		"created": 1792091656,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "For a first version, keep it to three commands plus persistence:\n\n```\nbooks add \"The Hobbit\"\nbooks list\nbooks finish 2\n```\n\n- **add** — stores a title with status \"reading\"\n- **list** — prints books with an index and status (reading/finished)\n- **finish** — marks a book done by its index from `list`\n\nStore everything in a single JSON file (e.g. `~/.books.json`) using `encoding/json` and `os` from the standard library — no database, no config.\n\nSkip for now: authors, ratings, editing, deleting, search, dates. Add those later once the basic loop feels useful — that'll also tell you which ones you actually want.",
+					"refusal": null,
+					"reasoning": "The user wants a small CLI tool in Go to keep a list of books they're reading. They're asking what the first version should do, and they explicitly said \"Keep it short.\"\n\nThis is a simple, practical question. They want advice on scoping a v1 — the minimal feature set. I should give them a concise answer: what commands/behaviors the first version should have, maybe a tiny hint at data storage, and nothing more. They said \"keep it short\" so I should respect that strongly.\n\nWhat's a sensible v1 scope for a \"books I'm reading\" tracker?\n\nCore loop:\n- add a book (title, maybe author)\n- list books\n- mark one as finished / remove it\n- persist to a file (JSON is simplest)\n\nThat's really it. Maybe status: reading vs done. Keep it minimal: add, list, done/remove. Persist to a local JSON file so it survives restarts.\n\nOptional nice-to-haves for later: authors, ratings, search, dates, multiple shelves.\n\nI could show a tiny example of the CLI shape (commands), which helps them visualize. Something like:\n\n```\nbooks add \"The Hobbit\"\nbooks list\nbooks finish 2\n```\n\nAnd a one-line note about storage: single JSON file in ~/.books.json or similar, no database.\n\nShould I include Go code? They asked \"what should the first version do?\" — that's a scoping question, not a \"write the code\" question. So no code, or at most a very small command sketch. Keeping it short means listing the scope. I could mention standard library only (encoding/json, os) to keep it simple.\n\nFormat: short intro line, a small list of commands, one line on storage, one line on what to skip for now. Maybe use a code block for the command examples since it reads well. Keep total length quite short per their request. Avoid headers. A few bullets and a small code block is appropriate.\n\nLet me draft:\n\nFirst version: three commands plus persistence.\n\n- `add <title>` — append a book with status \"reading\"\n- `list` — show books with an index and status\n- `finish <n>` (or `done <n>`) — mark as finished\n\nStore everything in one JSON file (e.g., `~/.books.json`) using `encoding/json` — no database, no flags beyond those.\n\nSkip for now: authors, ratings, editing, multiple lists, search. Add them when the basic loop feels good.\n\nThat's about the right length. Maybe 6-8 lines total. Good.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user wants a small CLI tool in Go to keep a list of books they're reading. They're asking what the first version should do, and they explicitly said \"Keep it short.\"\n\nThis is a simple, practical question. They want advice on scoping a v1 — the minimal feature set. I should give them a concise answer: what commands/behaviors the first version should have, maybe a tiny hint at data storage, and nothing more. They said \"keep it short\" so I should respect that strongly.\n\nWhat's a sensible v1 scope for a \"books I'm reading\" tracker?\n\nCore loop:\n- add a book (title, maybe author)\n- list books\n- mark one as finished / remove it\n- persist to a file (JSON is simplest)\n\nThat's really it. Maybe status: reading vs done. Keep it minimal: add, list, done/remove. Persist to a local JSON file so it survives restarts.\n\nOptional nice-to-haves for later: authors, ratings, search, dates, multiple shelves.\n\nI could show a tiny example of the CLI shape (commands), which helps them visualize. Something like:\n\n```\nbooks add \"The Hobbit\"\nbooks list\nbooks finish 2\n```\n\nAnd a one-line note about storage: single JSON file in ~/.books.json or similar, no database.\n\nShould I include Go code? They asked \"what should the first version do?\" — that's a scoping question, not a \"write the code\" question. So no code, or at most a very small command sketch. Keeping it short means listing the scope. I could mention standard library only (encoding/json, os) to keep it simple.\n\nFormat: short intro line, a small list of commands, one line on storage, one line on what to skip for now. Maybe use a code block for the command examples since it reads well. Keep total length quite short per their request. Avoid headers. A few bullets and a small code block is appropriate.\n\nLet me draft:\n\nFirst version: three commands plus persistence.\n\n- `add <title>` — append a book with status \"reading\"\n- `list` — show books with an index and status\n- `finish <n>` (or `done <n>`) — mark as finished\n\nStore everything in one JSON file (e.g., `~/.books.json`) using `encoding/json` — no database, no flags beyond those.\n\nSkip for now: authors, ratings, editing, multiple lists, search. Add them when the basic loop feels good.\n\nThat's about the right length. Maybe 6-8 lines total. Good.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 44,
+			"completion_tokens": 692,
+			"total_tokens": 736,
+			"cost": 0.00034776,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00034776,
+				"upstream_inference_prompt_cost": 0.00000176,
+				"upstream_inference_completions_cost": 0.000346
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 581,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

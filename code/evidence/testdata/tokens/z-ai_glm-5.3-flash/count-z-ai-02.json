@@ -1,0 +1,72 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n"
+			}
+		],
+		"max_tokens": 400,
+		"provider": {
+			"only": [
+				"z-ai"
+			]
+		}
+	},
+	"response": {
+		"id": "gen-1792094041-HwwGZaKHJICNMKi9EoLo",
+		"object": "chat.completion",
+		"created": 1792094041,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Z.AI",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "length",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "The user has shared Go code for a duration parsing package. Let me analyze it carefully for bugs.\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,  // BUG! 'm' should be time.Minute\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\nThe most obvious bug: `'m': time.Second` — minutes are mapped to seconds! The doc comment says \"1h30m is ninety minutes\" but with this table, \"1h30m\" would parse as 1 hour + 30 seconds.\n\nLet me check other issues:\n\n1. **The `'m'` bug**: `'m': time.Second` should be `'m': time.Minute`. This is the critical bug.\n\n2. **Overflow concerns**: `strconv.Atoi` on very long digit strings could overflow. On 64-bit systems, `Atoi` returns int (64-bit), and errors on overflow of int. But then `time.Duration(n) * unit` — converting a large int to time.Duration could overflow silently, or the multiplication could overflow. For example, \"99999999999999999999h\" — Atoi would fail with out of range. But \"9999999999999h\" (13 digits) fits in int64, then multiplying by time.Hour overflows time.Duration (max ~292 years). Actually `time.Duration(n) * unit` — this is int64 * int64 multiplication in Go, which wraps around silently. So \"9999999999999h\" would wrap around to some weird value. A more careful implementation would check for overflow.\n\n   Actually wait, `time.Duration(n) * unit`: n is int, unit is time.Duration. `time.Duration(n)` converts. The multiplication is Duration * Duration = int64 multiplication, which wraps. So yes, silent overflow.\n\n3. **The \"empty\" error message is",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user has shared Go code for a duration parsing package. Let me analyze it carefully for bugs.\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,  // BUG! 'm' should be time.Minute\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\nThe most obvious bug: `'m': time.Second` — minutes are mapped to seconds! The doc comment says \"1h30m is ninety minutes\" but with this table, \"1h30m\" would parse as 1 hour + 30 seconds.\n\nLet me check other issues:\n\n1. **The `'m'` bug**: `'m': time.Second` should be `'m': time.Minute`. This is the critical bug.\n\n2. **Overflow concerns**: `strconv.Atoi` on very long digit strings could overflow. On 64-bit systems, `Atoi` returns int (64-bit), and errors on overflow of int. But then `time.Duration(n) * unit` — converting a large int to time.Duration could overflow silently, or the multiplication could overflow. For example, \"99999999999999999999h\" — Atoi would fail with out of range. But \"9999999999999h\" (13 digits) fits in int64, then multiplying by time.Hour overflows time.Duration (max ~292 years). Actually `time.Duration(n) * unit` — this is int64 * int64 multiplication in Go, which wraps around silently. So \"9999999999999h\" would wrap around to some weird value. A more careful implementation would check for overflow.\n\n   Actually wait, `time.Duration(n) * unit`: n is int, unit is time.Duration. `time.Duration(n)` converts. The multiplication is Duration * Duration = int64 multiplication, which wraps. So yes, silent overflow.\n\n3. **The \"empty\" error message is",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 351,
+			"completion_tokens": 400,
+			"total_tokens": 751,
+			"cost": 0.00021425,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 320,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00021425,
+				"upstream_inference_prompt_cost": 0.00001425,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 399,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

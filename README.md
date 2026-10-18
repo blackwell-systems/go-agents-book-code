@@ -35,6 +35,16 @@ The practice service `code/remind` and the crash catalog `code/catalog` have tes
 `remind` is a separate module, so run `cd code/remind && go test ./...`.
 Its bugs are deliberate: the agent's job in Part 2 is to triage crashes they cause, so do not fix them.
 
+## Print the book's results again
+
+Every table of measured results in the book comes from live runs saved under `code/evidence/`.
+This prints them all again from those recordings, offline:
+
+```
+cd code
+go run ./evidence
+```
+
 ## Run against a live model
 
 The examples that call a model use OpenRouter's chat completions endpoint.

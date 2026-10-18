@@ -1,0 +1,209 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"content": "I'll start by exploring the project structure.",
+				"tool_calls": [
+					{
+						"id": "call_95034ab70ed8498a992539da",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me start by exploring the project.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_95034ab70ed8498a992539da"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_bc2eb1d3d6ca43a19121d7bb",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration.go\"}"
+						}
+					},
+					{
+						"id": "call_1b0f5f79204d448892aa111e",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration_test.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me read both files.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "call_bc2eb1d3d6ca43a19121d7bb"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "call_1b0f5f79204d448892aa111e"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091710-fvCcDxGhWQ6apO1LzcYF",
+		"object": "chat.completion",
+		"created": 1792091710,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Venice",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_calls",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "Bugs:\n1. `'m': time.Second` should be `time.Minute`.\n2. `total == 0` error: \"0s\" would be an error? Tests don't test that. Actually \"1h30m\" works... Let's check the tests.\n\nTest cases:\n- \"90s\" → 90s: 90 * Second = 90s. OK.\n- \"45m\" → 45 * time.Minute. But units['m'] = time.Second → 45s. FAIL.\n- \"1h30m\" → 1h + 30*Second = 1h30s, want 90m. FAIL.\n- \"2d\" → 48h. OK.\n\nError test: \"\" → loop doesn't execute, total==0 → error. OK. \"1h30\" → i=1 at 'h', ok; rest=\"30\", i=2 == len(rest) → error. OK. \"h\" → i==0 → error OK. \"10y\" → unknown unit → error OK.\n\nSo the only bug is 'm' mapping. Let me fix and run tests.",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_91d1de8930344e6ebf05938c",
+							"function": {
+								"name": "run_tests",
+								"arguments": "{}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "Bugs:\n1. `'m': time.Second` should be `time.Minute`.\n2. `total == 0` error: \"0s\" would be an error? Tests don't test that. Actually \"1h30m\" works... Let's check the tests.\n\nTest cases:\n- \"90s\" → 90s: 90 * Second = 90s. OK.\n- \"45m\" → 45 * time.Minute. But units['m'] = time.Second → 45s. FAIL.\n- \"1h30m\" → 1h + 30*Second = 1h30s, want 90m. FAIL.\n- \"2d\" → 48h. OK.\n\nError test: \"\" → loop doesn't execute, total==0 → error. OK. \"1h30\" → i=1 at 'h', ok; rest=\"30\", i=2 == len(rest) → error. OK. \"h\" → i==0 → error OK. \"10y\" → unknown unit → error OK.\n\nSo the only bug is 'm' mapping. Let me fix and run tests.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1203,
+			"completion_tokens": 269,
+			"total_tokens": 1472,
+			"cost": 0.000369555,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 1074,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000369555,
+				"upstream_inference_prompt_cost": 0.000046755,
+				"upstream_inference_completions_cost": 0.0003228
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 244,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

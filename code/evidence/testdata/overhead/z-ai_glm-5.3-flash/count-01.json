@@ -1,0 +1,67 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"max_tokens": 400
+	},
+	"response": {
+		"id": "gen-1792092713-jgKX7gvnJVA8Fvw0QFQL",
+		"object": "chat.completion",
+		"created": 1792092713,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "length",
+				"message": {
+					"role": "assistant",
+					"content": "I'll start by exploring the project structure to understand what we're working with.let me look at the project structure first.<tool_call>bash<tool_call>bash\nfind . -type f -name \"*.md\" -o -name \"*.toml\" -o -name \"*.txt\" -o -name \"*.cfg\" | grep -v node_modules | grep -v \".git/\" | head -20<tool_call>bash\nls -la<tool_call>bash\nls -la\ncat README.md 2>/dev/null | head -50\ncat pyproject.toml 2>/dev/null || cat setup.py 2>/dev/null || cat package.json 2>/dev/null\n```\nI see this is a Python project with tests using pytest. Let me look at the structure more.\n\n## Analysis\n\nLet me check the test files and source code.A Python project with pytest. Let me look at the structure and run the tests to see the failures.<tool_call>bash\nfind . -type f -name \"*.py\" | grep -v node_modules | grep -v \".git/\" | grep -v __pycache__ | head -30\necho \"---\"\npip list 2>/dev/null | grep -i -E \"pytest|tox\" || echo \"no pytest found in pip list\"<tool_call>bash\ncat pyproject.toml\necho \"---\"\nfind . -type f -name \"*.py\" -not -path \"./.venv/*\" -not -path \"./.git/*\" | head -30<tool_call>bash\npip install -e . 2>&1 | tail -5\npython -m pytest --co -q 2>&1 | tail -20\n```\n\nLet me run the tests to see the failures.\n\n## Run the testsLet me run the tests to see the failures.<tool_call>bash\npython -m pytest -x --tb=short ",
+					"refusal": null,
+					"reasoning": "Let me start by exploring the project structure to understand what we're working with.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "Let me start by exploring the project structure to understand what we're working with.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 26,
+			"completion_tokens": 400,
+			"total_tokens": 426,
+			"cost": 0.0002039,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002039,
+				"upstream_inference_prompt_cost": 0.0000039,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 17,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

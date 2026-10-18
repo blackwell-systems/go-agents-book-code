@@ -1,0 +1,131 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version (MVP):\n\n- Add a book: title, author, and status (`to-read`, `reading`, `finished`)\n- List all books\n- Update a book’s status\n- Remove a book\n- Save data locally in a simple JSON file\n- Provide basic command-line help and clear error messages"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file in the user’s config/data directory:\n\n- Linux: `~/.local/share/booklist/books.json`\n- macOS: `~/Library/Application Support/booklist/books.json`\n- Windows: `%AppData%\\booklist\\books.json`\n\nExample:\n\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"reading\"\n  }\n]\n```\n\nIn Go, use `encoding/json`. Load the file at startup and rewrite it after changes. Write to a temporary file first, then rename it over the original so interrupted writes don’t corrupt the list."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Book struct {\n\tID     int    `json:\"id\"`\n\tTitle  string `json:\"title\"`\n\tAuthor string `json:\"author\"`\n\tStatus string `json:\"status\"` // to-read, reading, finished\n}\n```"
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a subcommand with flags:\n\n```bash\nbooklist add --title \"The Hobbit\" --author \"J.R.R. Tolkien\" --status to-read\n```\n\nExample Go handler:\n\n```go\nfunc addBook(args []string, books *[]Book) error {\n\tfs := flag.NewFlagSet(\"add\", flag.ExitOnError)\n\n\ttitle := fs.String(\"title\", \"\", \"Book title\")\n\tauthor := fs.String(\"author\", \"\", \"Book author\")\n\tstatus := fs.String(\"status\", \"to-read\", \"to-read, reading, or finished\")\n\n\tfs.Parse(args)\n\n\tif *title == \"\" || *author == \"\" {\n\t\treturn errors.New(\"title and author are required\")\n\t}\n\n\tif *status != \"to-read\" && *status != \"reading\" && *status != \"finished\" {\n\t\treturn errors.New(\"invalid status\")\n\t}\n\n\t*books = append(*books, Book{\n\t\tID:     nextID(*books),\n\t\tTitle:  *title,\n\t\tAuthor: *author,\n\t\tStatus: *status,\n\t})\n\n\treturn nil\n}\n```\n\nThen save the updated slice to your JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How should the program handle two books with the same title?"
+			},
+			{
+				"role": "assistant",
+				"content": "Allow them. Different books can share a title, and the same book may have different editions or authors.\n\n- Give every entry a unique ID.\n- Use the ID for update and delete commands.\n- Optionally warn when the title and author match an existing book, but don’t block it.\n\nExample:\n\n```bash\nbooklist add --title \"Dune\" --author \"Frank Herbert\"\nbooklist delete --id 3\n```"
+			},
+			{
+				"role": "user",
+				"content": "Write the function that loads the list from the file."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc LoadBooks(path string) ([]Book, error) {\n\tdata, err := os.ReadFile(path)\n\tif err != nil {\n\t\tif errors.Is(err, os.ErrNotExist) {\n\t\t\treturn []Book{}, nil // Start with an empty list.\n\t\t}\n\t\treturn nil, err\n\t}\n\n\tvar books []Book\n\tif err := json.Unmarshal(data, &books); err != nil {\n\t\treturn nil, fmt.Errorf(\"decode books file: %w\", err)\n\t}\n\n\treturn books, nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n\t\"os\"\n)\n```\n\nA missing file is treated as an empty list; other file or JSON errors are returned."
+			},
+			{
+				"role": "user",
+				"content": "What happens if the file doesn't exist yet?"
+			},
+			{
+				"role": "assistant",
+				"content": "`LoadBooks` treats a missing file as an empty list:\n\n```go\nreturn []Book{}, nil\n```\n\nThe program can then add books normally. When it first saves the list, it should create the parent directory and JSON file."
+			},
+			{
+				"role": "user",
+				"content": "Now write the function that saves the list."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc SaveBooks(path string, books []Book) error {\n\tdata, err := json.MarshalIndent(books, \"\", \"  \")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"encode books: %w\", err)\n\t}\n\n\tif err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {\n\t\treturn fmt.Errorf(\"create data directory: %w\", err)\n\t}\n\n\ttmp, err := os.CreateTemp(filepath.Dir(path), \"books-*.tmp\")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"create temporary file: %w\", err)\n\t}\n\ttmpName := tmp.Name()\n\tdefer os.Remove(tmpName)\n\n\tif _, err := tmp.Write(data); err != nil {\n\t\ttmp.Close()\n\t\treturn fmt.Errorf(\"write books: %w\", err)\n\t}\n\n\tif err := tmp.Close(); err != nil {\n\t\treturn fmt.Errorf(\"close temporary file: %w\", err)\n\t}\n\n\tif err := os.Rename(tmpName, path); err != nil {\n\t\treturn fmt.Errorf(\"replace books file: %w\", err)\n\t}\n\n\treturn nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"os\"\n\t\"path/filepath\"\n)\n```\n\nIt creates the parent directory if needed and uses a temporary file to avoid leaving a partially written JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How do I make sure a crash halfway through saving doesn't lose the list?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091675-k2g6Ms8CDlSkYb6YEX1k",
+		"object": "chat.completion",
+		"created": 1792091675,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "Write to a temporary file in the **same directory**, flush it to disk, then atomically rename it over the original:\n\n```go\nfunc SaveBooks(path string, books []Book) error {\n\tdata, err := json.MarshalIndent(books, \"\", \"  \")\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tdir := filepath.Dir(path)\n\tif err := os.MkdirAll(dir, 0o755); err != nil {\n\t\treturn err\n\t}\n\n\ttmp, err := os.CreateTemp(dir, \".books-*.tmp\")\n\tif err != nil {\n\t\treturn err\n\t}\n\ttmpName := tmp.Name()\n\tdefer os.Remove(tmpName)\n\n\tif _, err := tmp.Write(data); err != nil {\n\t\ttmp.Close()\n\t\treturn err\n\t}\n\tif err := tmp.Sync(); err != nil { // Flush file contents to disk.\n\t\ttmp.Close()\n\t\treturn err\n\t}\n\tif err := tmp.Close(); err != nil {\n\t\treturn err\n\t}\n\n\t// Because the temp file is in the same directory, this replacement is atomic.\n\treturn os.Rename(tmpName, path)\n}\n```\n\nIf the program crashes before `Rename`, the original file remains unchanged. If it crashes after the rename, the complete new file is available. The temporary file must be in the same directory for this guarantee.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SYfCuKXaugvbhwQrpPtgRgMBxzYsk-aJepBzbp7suswsNk32Dc-rW-aXJUHo261HF5i79ul0k8_Hxx6zImJluQMtFUQBEiUHafl0GPdlJ42m0NseWKOYOLoCHEurVRcOeaMAXu6T1eKoYV-WyU99CQhubiy6ncX8eFBjeUdlAEffgN6TuVkN7u1-FzjZs91WcOI7voyKMFak3ky8bpnE6JaZMO3ush4gzGqMEFTjowjHZ_rVD1TflatLA2pRL0lhUigr08KMw9OwfYP2-xbRFf-Bf16029_RB7PZ2hepJhSY6yRbu4B7DR7fOyNnPpBa4DXmW28KtkcDj0d5UntistwjREbgVOkBRb0Yay__CjDgvbElM13s6sCxfYB8sv-khXmujgngJCEY9b4JocAkYsRot0vZ6gOIMXQ9IRDkP9Fa-O5v7tj6WhzB_GFnC3-TevEReclVkKAT3YH-_JeNF-13c4zLuKcDepUSmZTGG7005uFZ_Ru7h34MKfhN0zMymypfJ9Pv11jvuHpHn3ufgUtGr-csxv5SGd38AgA5Ie_REe2dd4W_Y9ELR2gkNpqH70e2FCFy8SkQ4va9nTi6aABM-sTfj2cazrs1_9e5a0oEewuEHdeCm6WnuTI-e7vFIuBBx4GZg0jpI_yRdz3oMoUrCdN6bCP5x5PROn0HQqzdghqsdXaKOoYTsqIf31JN_MO7x86GCx9Ql3kj8dCqgn063Bp0AIxfRiDg-jvPqI8-PytNTQSznlEXOk9XTWLg5di9dbhL5y7hOkJ391PcNjwZqyjUehNUj8kpCAKuzHmgwGqQqywoLwHJ7In5y3CUfpL7c0Tp8YAQ93_3bjM3IJAmcQwra6FubyxahUzJu8cV5mrIwV2unLjevPgI34cTtMPdGGGVvlfJ9h6F-a26Oe-nVTgYEwvYNzwwRZacoGZiSSZtsYoVwd39JcwDbeSz1FGofVUwSRhBwKZk6nM84wUTsDf1f4eO503oknXfMzC86RfW_xWH8wqIC96usxbqM0Id2yEELbY1dhqUetP1IqAeOqYim_sBCWQH5EuI0MwxXVZdibwZlNXZ0xKWjwqwwl8hFAOUC-alDz81sxzzfowL7X0xGLw7HxoU8Lv7qQCw5Y75GI5TI5aEZcD9SbvW8kP7yCkN0SOxuxifuBIkD4t-V3YFs3IkExv61icgNNsBXn6V3MTqGq_orPnX1xycuRVVvYGcswE0E2RTxnnjhu9lZIbEtWdL3qeEosG3-yR-ZRDe9xoxlVCWn3-071V7Ciyy70ARQATfpB_uhWphWQF9fv2_Ds6YbQpDC2hsv5WYQlr-kQaXme6hTBmFDpHBuU4CapYRyGUQ3WaXI3Uji8gJyhOQLBRLY4m6Ok0115Z27fgGTgAHjHLJ9jON7u2oWdMaWc9USxeyJW7rItR4eMOaFDBCVfrY-LcCFTBethngIMIAkRsagCtyEElleWKjF6i9vymZ-X5hR--C1d0bSdJYHhKMgLinXOoWF1EzMRNZ4HtZ4jWARip-kp9CtlLHsVaLGjSafL866fXVkh2ITib9-A9VYCtAt8du11xZ3LxCe7ECjWER2-f-EaRcpHA7Si-jK48s72KLEz2JCKVdChs6uOSxcPaJmd1hzZxbgWNnrGV0GTJ8lJWIeGj3ATQADJlakwq0nGGR4Sd70z7e_Qww6MJ139X4iPtfPxXO-oGH3d0OGXR_YVuyqqL9qx3pax77hGa-ZOnI_eP8FLrnRa7idlfydlTiJLmCW0_h8ZVTSgajAtFzR1_l84SQMJTO_5CE80fZ3ZRyWxDUsujspfHp-A9njc-wSmP3qtCWo-l5ULMjhDLJZ_MKjBsom1USfy8qRW9QrUwZ03QDugZ5Jhlq4NK5ei70QYJtdBNOdWC-0ZuO-bZ2bjOap604x9ilabQfpHjvXeMYJWXAsACUZZxxqA22nb98aoqkqOrJaNiUSkgluRGDExMIMT3Kh59LPPk0wgbqZhEKF1kqwD934Uj6gRz4xaKJECz3mIRleoLrc0WnBbvgbCSg_zIqAiuDSgvX7gWdKdS6KvD2cjx1KUg55jYAFqoM8Q0NCz476N19k2K_hMPTYsYPPHHEhnSRcATmPEtY8qH0NCO0KbGEmCPAHH_ynCbtImYXk4nEthZYbEXwpRJFxyes294GhS5Tth0eoCKkOzljeCVsUkE8AwO1BRTBc6VZvyHJOUBGGBhzQt2Fq59nAnNTeT5reMu8MJz24lAsImvu8DEGmV0yQ6ytccNtBz9RPfM6pCjLjFVI5e0Ekd5kgIOMVrbFEnsiaWMzwfY3TFkfasvoFw2XSOW5Cu5eVFTND31zbU53cxSC3zWRjzOsaBY8W5Ux-yxvwA0atAcuUtr6rvrw45j2E-HjLGWdzvqtzQ21_tQYwGWpKlrdw44Etc5Rr0iLe-jGIjtTrHPde4rO66MdqTxWoUL0snHRGA0lViKDDyDcKbhJa6f8oQzO1DWlzlPPl2zyBrHevMqyIInIU_0O3S7jLEyyDBHXXyKnh_znI3kpRyMRiX2qJIuYAvyjbzYq3AQgbNrT7FNq3htE318eQlFRIQwGRYuH8Rs2iuLeKa_5_XpGXgX4Jtd1tVy7PkaMMOqm6wAH3sT13ozMphagLMeXg1HNQH5riyHq27VxJqViNe3g4GdgjwP9xBuW6dY3-wGWPdeeVQJFC8MEalpkYYEG6wQB938Z6LhBBNDeTJ2Jt3R6x_BISqTIkTe-JO3gPNdsouJpCPMo5dtgdytN3fn7XxrTz4U-TQjrlTYY69rS0kc8O1_U9YHanJIMyksLWH-LYyS0hMoh1Y_0x0w3IISe2ZMd3xId3_Q2b-Z9J_R41zCCNphw1k45I44qOAfqjoGc7xgAqXnyl7cGDYFK8zINWFyj8-RwQ7WubtyLHGYhQTeSuy1dpOGgn_KhE9WLRK8Pyk9z10GuI4CAW6srZ2Mr6HNn-GLK0UiUFu9w23ikvpdPjyGcfDC-eFoWni3eQ20JOxaffAmFM7eXDj6kZ8upkUyRDppt1EDfjUl4BzJgpul4LURmRMxFatz_Aeej70crH1Sy_tbrmU4uQWhn7n0CgXbbwwEsukpc-vSMdZtzENP34wWx0x7Pv_Q8PnRYmifZNyX50haHGwtc3-nhbZG0dVMuYnZFOsxopirrMl1tvdlRUmaplWjfeJqxbcAxoV5I-EgEOdRSdCLpWxlNXOAHPejv2WDzfZ2w-_Vk0f6AfZWcSiS1E-GRArNjAl7yE2XQ-hRhdyAEseC_H_Q-8mI07vWTl33e6nnkVlGAOrC45npJe3GcgZLR_dz4tzBxlFT9rTtSyvD5qhQKflyiO1rMsVTA7D_7wHAvW_OFRuZ-hcPz1hZQjgrUCfYvl8Ooqm5ioFkSpC2u9fd0zm6MQKnSvYIJGy9xLWNAkbeDqWYZEYjbUeMr0VvhUPyYfOZEYqR9nPDUd9YcR7s4ElbJgnqtc5sHk2aCvov4s-iAm5npKMZG1X8T_PP2dilon8anPsV2mEfjRvMBVl1Iz9U-6JO4r-87GQAtjKvHdA4Ozn7vN5Q9wLnGedPLi2vGbm9rE7UuMSCDdN9Rk4VlycI8YxfMvUFVeaXv4FEtHR6Rfb9cIb6UcR12meWDxrbujL_chNRkiFsTisxVJNdX86mKRHtgH2-D0wjI8FjCrzEWtJDCqgKfXXOocxyiZmGQWpT0EzJqWxpGJUqwe5ctPYdRgdjq0mPF-hT6_LGqWnONix7_wqWMAqVE2rEUK3BfOZ1_B6vRuuLPAVZzOXQuyFSfRj_q3Ma7ILrOdZpPm-yon3GOzY5neA2SfDgsyJtz6ZgbWhgfqUkd4CZN4pP9YI6V1zQi46sK3zewEORMsn58pseJQ1SrfGJ1kKN97livzTiTXlDzFWuhc3WXf1zY_y1H3BuwWc8092um8p7AnVbXaUOq-19sFc0kWKibKdLqk10INtJyoSSR2PHshNwyxJlUrINDn459087fCL23p0_v0kbpiN6983ndt0dwj5E-LAMPr-F36OEKPrASKe423LLBBYkcEDgFlRMWZZxGAIVOCjDC8J3Wr0VqSWc057KURy1Z0ef2rNqg-3KiMPvp-INFXkRy-4NOvInbkRpTqrsSG_ofgsoYSM5IvMwKMcpGR4AAGB6g0ByLkPkDSN8UOpLOiqd03eTrWYQ8vq4iOQW9onnJmPXkZIba8TwbresvI1gu-FPYKqo80G5vJ4jcrHWRnm2ONiZjHnP8hN0nwpa24XOx95fL6gEOx_2LeMD76eJsVod143G9jjmMNYq9akDvDnsozbsUOvnRy0Q9hmX7b58V_WWvMT1FMdENb2Bt1ZtViYBDFse.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0775f9320018bb2b016ad1261c963887d198044a06fd5a04fd",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1251,
+			"completion_tokens": 480,
+			"total_tokens": 1731,
+			"cost": 0.0008886,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 1248,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0008886,
+				"upstream_inference_prompt_cost": 0.0003126,
+				"upstream_inference_completions_cost": 0.000576
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 206,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

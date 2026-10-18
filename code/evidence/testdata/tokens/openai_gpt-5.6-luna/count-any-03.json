@@ -1,0 +1,74 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "This chapter answers one question: what is an agent, in terms a Go programmer can build?\nIt starts by watching one work, names the parts, and then builds the loop at the center of every agent in this book.\nThe loop you write here runs with no AI at all.\nThat is on purpose: the loop is ordinary Go, and you can see and test every part of it before a real model is involved.\nHere is a small Go project with a bug.\nIts duration package parses strings like 1h30m into a time.Duration, and its tests fail.\nAn agent is given one instruction: The tests in this project fail. Find out why and fix it.\nA large language model, usually just called a model, is a system trained to continue text.\nYou send it text over an API; it sends back the text it predicts should come next.\nChapter 2 calls a real one.\nThe agent is the one you will finish in chapter 4: a Go program working with a model.\nThe table shows one run of it, one row per round trip.\nLater in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key.\nread_file {path: duration_test.go}\nRead the middle column again.\nEvery entry is a request.\nThe model asked to list files, to read them, to run the tests, and to change one line.\nIt never touched a file, and it can't.\nThe model is a remote service, reached in this book over HTTP: your program sends it text and gets text back.\nAnything that happens on your machine, your program has to do.\nEach of these requests is a tool call.\nA tool is something your program can do on the model's behalf, such as reading a file or running the tests, described to the model by a name and the inputs it takes.\nA tool call is the model asking your program to run one tool with particular inputs, such as read_file with the path duration.go.\nThe right-hand column is the other half of the work, and it is all your program.\nYour code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.\n"
+			}
+		],
+		"max_tokens": 400
+	},
+	"response": {
+		"id": "gen-1792094043-1S2vI2C9hhO7XEjl4jTb",
+		"object": "chat.completion",
+		"created": 1792094043,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "What would you like me to do with this passage—summarize it, edit for clarity and style, continue writing the chapter, or turn it into Go code?",
+					"refusal": null,
+					"reasoning": "**Considering user intent**\n\nThe user pasted text but didn’t make an explicit request, which is a bit tricky. They might want me to edit or summarize it, but it's hard to know without asking for clarification. Maybe the text is a chapter, and they expect something specific from me. I think I should ask them directly what they’d like me to do with it, just to be sure and keep it concise!",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Considering user intent**\n\nThe user pasted text but didn’t make an explicit request, which is a bit tricky. They might want me to edit or summarize it, but it's hard to know without asking for clarification. Maybe the text is a chapter, and they expect something specific from me. I think I should ask them directly what they’d like me to do with it, just to be sure and keep it concise!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0S9coc2q3MZOYMfIVlr7AqB9oNIrg0O9n4iFPBV4noQzFl4en8gy1z04n_lk2ANGpI4UXx6N7dXPtM5yvh4QLkzeDhAjeXIybmFM3r6Rl8DrECYS3oeggX8EpEYK60knu7xD-_pcfB-8NgfCiL_addrl3ya5ynK3Kx6QD18a_GGp4UpJXRzxWaJ7FpPlYxyPmlu4mBYw_ejuRohv0o4_c8RE1aLYHtUIFOj3GY-1jzu5qo1mVV7OtiaaVfnsWYCZOC2drSN-b5VjGiRPxjOhqZsIKa1oXmP9pHEt_ssP2dQDgiRqN4-kr0oVE0DD_1eV2cHJwu7yzKXCLVaLC7IIpd870wQ4lFvcrCrbkLp2XD3dZi_RA0SOKzGPM3tKmAl5YGiRkG-G2rxJK-cUnXV9uMkRaL4fUct-5lF1P3zl6yn0dBpeq7WmoKuYOTLnrOu3y8e0wGCs-aS_ctvVTtJV65_OCjUEU44eTZLRqhI1EtE7wK0jWEMnll3dNclC_oIW2jpSzIXXvJoyt9z_agFVHnhCh25jfGq_6AIaZZKAHk1yAwQJmR4l0aoGybokqVKJ3jbUxw7NxqZyrUOt1H59_SzsdrBajF87LEsOHVndr52y2pSEOEYjb2U4XpnhY2XN80zzBw8LfVOinnNAJVGoPyeJJpRUXorAYfrCQ_BtxGqCYAYOLsE7bL3yqzfd29p7atKiN5krjjIdDT0E3KyhO1b6_5GFFTS-bTtp1q1wJI5jj6ksYRWutNlId8BdjDNsrAcXMQVwhB3WZ1rCKMcNsQy5c5XxtR2IQ5KkDnQnh4N1FQA_F4XhNn3bq6gXSWbwPGvTtzIt6l_n10JajMjNRvXBekCki5FOZH27hjTdlMPpbXfRLdiqyUWH4-WVCcK753_LrIReOUdEO-GJf-u50Ckyc0SYJII3D7_8SFZ_NvZYKu1DVL-qe72GpTXGjth6B_CNVfANk2JnWobGHKzMFXus3puI8drk_oaylargSZFfeKQ3u5FMOh_XQ6xHbs8NKXiwqyuu_fdnHqrDoWQ5SWGbAtJgtrMMRs63NCA9I5TOHEvVJZnZKfSK2sELFMoQs8ffsMJBuTtYajhIilkYUKIiruD1BEMoFoBjRcnO40WS13Y3jfwJ7gxuDBwBWoe8nSJbeHekyhh2eeFPxgihLOXjLtMSgud-qKbEDr_jYK-VJFPhitw9SO4dxFHXL0yDGcgW7oE6rFe7pt-cfhc9hyEL-IaBTSn_hkU267uvlLczn-2UAvnPdbI92jrr-cJbxXNYK5brizJaJLpC1hwCJPb8G2ndYERp0jb6eb8zpdXUCzv3UtmzDXp_UnS_eT0SkktKlR6TBQVMoEUxd88W1t8K6RHXpDmVVTIgDuss9KQwgelsZHXi50VbFCdF19DlmKo_CeTUme7u1xBmM_c5drEtlgM4q1GQ1wHuaH7SQcXajcAdqwxWML5L--E9dDTRZipn-kq4fql65pdW6X89NYBQyFU5f4j8FNsBQvJ-M0EmNBJ3CSbe32cr4Ud4QUibk7Vq4_Od1D7bAE9hGbdyxp1mfwao0Zfkl_RBdJhy8VIRjpGzm_rQEMQyzJy7HwfNmp0Wdu6ERhp24GqUPufKjwzk8RsQgOyA4StBRScUbcEJD3WmB9SkzTnECVx3Gbf2SjzutrKbT4W5Rmp91cWgx8qGnBf7B0Iytddqf7W_F3TCnA8-ZlvZx5f9Jt2unPrbO2WvBfzy9YrCl8s-zOEKM80W1l2mJbSlEuLbky7S57B6NIzcBzN-bvyvb-efygSKlEGSo90vmvNdhsrKC9EcMKUFYWZbn5ZXOcBO-EzPei_NtwQR4WuKqeWPInWk9yu_tk05wfP3bhBi2Wz2sXt3_jwI0i_8Jvvn7efo2716bOXNeIvW4FZ8TwaheCJtuxTJGyX0lrSZkcD1R59RPntTOO159z93y6UiZGdYXa_C-PkpK4KfxGBVG6YfdhoEEt7UqoTRjfTj4DrfcBE6XE3i6vyT6A90D9yYSQ-Lgbzid4SwpV5TXb6Yq9k0TjYCK5PGvh6aApZbtTSj2QQL55_ovUM0XF4XTlANsxhga2VKdXxa878fLBG2o_yBT5ewdGLJPi5P-XwrVFlbhUs0vrN7MF_ZfxtrC6fkhQcOyC3mgFVJXWM5rmJ4ZcODqDecfhh5vNCIWk3ZOWquhgu60styHuWDwrK-PuxH7AaLnCXS5H3501UjHu0FX35Vy0aishBVBpc_R-mr0YKsIoZmOknVCdyxB89Pd5OpSijTJBe7SaMKs6KHAt1ZfZT31sHbLdZXW8YrI9GmEsa8RucsYb6V2eRZzSKIhHYpvR-UqoPBjxMSj2dXRafPRicXbKomnPOFjZ3l.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0c060b69eacb4b5c016ad12f5bc96087d19ebe697ebc75dbc0",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 457,
+			"completion_tokens": 100,
+			"total_tokens": 557,
+			"cost": 0.0002114,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002114,
+				"upstream_inference_prompt_cost": 0.0000914,
+				"upstream_inference_completions_cost": 0.00012
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 60,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

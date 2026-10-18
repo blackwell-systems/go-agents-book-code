@@ -1,0 +1,74 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "Here's a sensible scope for a first version:\n\n**Core commands**\n- `add <title> <author>`: add a book with status \"to read\"\n- `list`: show all books, with their status\n- `start <id>`: mark a book as \"reading\"\n- `finish <id>`: mark a book as \"done\"\n- `remove <id>`: delete a book\n\n**Storage**\n- Save to a single JSON file (e.g., `~/.books.json`) so the list persists between runs\n- Load the file on startup; create it if it doesn't exist\n\n**Data per book**\n- ID (auto-incremented integer)\n- Title\n- Author\n- Status (to read / reading / done)\n\n**Skip for now**\n- Ratings, notes, dates, tags, search, sorting, editing, and multiple lists. These are easy to add once the basics work.\n\n**Go pieces you'll need**\n- `os.Args` or the `flag` package for parsing commands\n- `encoding/json` for reading and writing the file\n- A simple `struct` for the book and a slice to hold them"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091658-LxkA6YJhQF4YiFG9x1a4",
+		"object": "chat.completion",
+		"created": 1792091658,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "Use a single JSON file. Load the whole list into memory at startup, modify it there, and write the whole thing back after each change. For a personal reading list with a few hundred entries, this is simpler and fast enough.\n\n**Location**\n\nPick a path with `os.UserHomeDir()` (for example `~/.books.json`), or use `os.UserConfigDir()` if you want it to follow platform conventions. Allow an environment variable override if you like, but it's not necessary for v1.\n\n**Format**\n\nWrap the list in an object so you can add fields later without breaking the file:\n\n```json\n{\n  \"next_id\": 4,\n  \"books\": [\n    {\"id\": 1, \"title\": \"Dune\", \"author\": \"Frank Herbert\", \"status\": \"done\"},\n    {\"id\": 2, \"title\": \"Piranesi\", \"author\": \"Susanna Clarke\", \"status\": \"reading\"}\n  ]\n}\n```\n\nStoring `next_id` ensures removed IDs aren't reused. If you'd rather not store it, compute `max(id)+1` on load instead.\n\n**Loading**\n\n- If the file doesn't exist, start with an empty list. Don't treat this as an error.\n- Otherwise, read the file and unmarshal it into your struct.\n\n**Saving**\n\nWrite atomically so a crash mid-write can't corrupt your list:\n\n1. Marshal with `json.MarshalIndent` so the file stays readable.\n2. Write to a temporary file in the same directory (`os.CreateTemp`).\n3. Call `os.Rename` to replace the real file.\n\nUse file mode `0600`, since this is personal data.\n\n**Sketch**\n\n```go\ntype Store struct {\n    NextID int    `json:\"next_id\"`\n    Books  []Book `json:\"books\"`\n}\n\nfunc load(path string) (*Store, error) {\n    data, err := os.ReadFile(path)\n    if errors.Is(err, fs.ErrNotExist) {\n        return &Store{NextID: 1}, nil\n    }\n    if err != nil {\n        return nil, err\n    }\n    var s Store\n    if err := json.Unmarshal(data, &s); err != nil {\n        return nil, err\n    }\n    return &s, nil\n}\n\nfunc save(path string, s *Store) error {\n    data, err := json.MarshalIndent(s, \"\", \"  \")\n    if err != nil {\n        return err\n    }\n    tmp, err := os.CreateTemp(filepath.Dir(path), \"books-*.json\")\n    if err != nil {\n        return err\n    }\n    defer os.Remove(tmp.Name()) // no-op after a successful rename\n    if _, err := tmp.Write(data); err != nil {\n        tmp.Close()\n        return err\n    }\n    if err := tmp.Close(); err != nil {\n        return err\n    }\n    if err := os.Chmod(tmp.Name(), 0600); err != nil {\n        return err\n    }\n    return os.Rename(tmp.Name(), path)\n}\n```\n\nEach command follows the same pattern: load, change the in-memory data, save. Once that's working, the storage layer is done.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQS+QcKEAgSGAI4AUIIdGhpbmtpbmcSDDgeyJSr+IZK/pYcVRoMR2pdpj2UwyPK/br+IjATX0CtofQA0DMCpCSLK/0kutEOsoxEEL07KcbH0uTBroudoxm04OzTsO19XmdbRScqlgesdpL49kFl05JjJhPdwhOCwLs3SkzgAyn/GhfHmQY7FfM5PD4RvfhnPLZSFy7hBeTj16I1leLVDG9j18r2O58YV6c7+H0PufOCxKn7nUVbmbUyIAF0gcfSoIGuWcV8ac7mjOA9C3tm4YU0kAQifer9rdfrSSHejidG2wh7k1DQCEodhhWXtjcfOd4pi7D5+f2dcgRq8akkMHRi7O2YusvO3gQ8Q/tt1jnLkQCUOQHC/oAvTvpYuh9B0qfT/gAEve4jU75jnOBfY0rPOKf/rXWFdX8thVV91Pq6cWyJFyWQYmP4c+PMv5Sk5y19EiSrKhF1QKDCLyGC6csO+h3tlffMHcGSKmR5OMXcz5VHHnXgKfUk5h0r7PlDYHQBWqXKiNopYTQoW9NdUw1VkIwcZofpt2cF3jQ98yErLvouFPOg8KrDOqhDYUMDkT2xPlByGzwPLJgax3be0YpgVQDLDr2dRm1lOlVOqO0SaOJ6O666j6LYz0ORpWUzWiHG+HOi74SFXIW0jAjl9MduT67PVi95WHbVLCL+3YHowjvvWNOiGEZm/Ciod4+ZJ8TnyyerAq04LRy+s0U7L74OkpDZy+ihKdoZcII4QmB9qKRSndSs8HuVY9U59XHSvFrNVMtPRcaKG/yYzyKhjs506mMXyQZ85v8p34jpxuGf6SpjgCKRtNpAnRFXjoqU+LmWsqkvHNgIGcUrS57HDonUriYhJl5AJ3JwYcrAYkLyQRPWWNmmzCDNISJgDgptSqu6rjk3TF9/PECzigQGI+9kGKRa/VML4QZkrVFiEHhKOthGFatE1i/+dy0W6CRlcGFSOS62p6whUEtnBy5bmqLQGcuaKURXNu2xZyYqbjv044HsLgyS2zGo3h76MxztNU6nCcB3v4wZaKjiE4N0NONUem2m98IdJCWFYrztRXe8UHWXNOJI6lHIhjN1QzKUY3MHUZ703t6U3aeqI/az+mvogoJYflD9aqppp6j/EpTVV0jyLupopmpwhamhPZNek26XoDjRIeTHvP+GmIGTYOY589W8xDSdN3LfJZdUJN/MJcJSfpFaMcw73clgs0DQymYTqENaqo9w1zgESSuwcIDN5drf9U69eTziCRZEc5bpAsQ/CC998uj6Qf89W1OQdGFZlccVo9J2SnhFLrFTcYTDFjk0XtPTvG0Xa+v42TWxBlgFj5HDigglsII40cw9+YtU9zfSH9niomhG8bcYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 391,
+			"completion_tokens": 1152,
+			"total_tokens": 1543,
+			"cost": 0.0006151,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0006151,
+				"upstream_inference_prompt_cost": 0.0000391,
+				"upstream_inference_completions_cost": 0.000576
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 155,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

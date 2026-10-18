@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091656-z6S3eLPeMud0pNFNIgbz",
+		"object": "chat.completion",
+		"created": 1792091656,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "First version:\n\n- `add \"Title\" --author \"Author\"` — save a book as “reading”\n- `list` — show title, author, status, progress\n- `update <id> --status finished --page 123` — change status/progress\n- `remove <id>` — delete a book\n- Persist to one local JSON file, e.g. `~/.books.json`\n\nUse only Go’s standard library: `flag`, `encoding/json`, `os`.  \nSkip databases, tags, search, sync, and TUIs until later.",
+					"refusal": null,
+					"reasoning": "We need answer user asks: \"I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short.\" Need provide concise scope for v1. They want first version do. Keep short. We should suggest minimal viable features. Maybe CRUD? List, add, update status, remove. Persist to JSON. CLI commands. Go specifics maybe use standard library flag or simple subcommands. Keep short. Need maybe mention: add, list, update progress/status, remove, persist to JSON file. Avoid overengineering (no DB, tags, sync). Maybe examples commands. Answer in a few bullets. Desired oververbosity 5 but user says keep short. So final maybe:\n\nV1:\n- Store books in ~/.books.json with fields: title, author, status (reading/finished), current page/percent, notes optional.\n- Commands:\n  - `books add \"Title\" --author \"...\"` \n  - `books list` (show status/progress)\n  - `books update <id> --status finished --page 123`\n  - `books remove <id>`\n- Use simple ID (incrementing or short hash).\n- Use Go stdlib only: `flag`/`os.Args`, `encoding/json`, `os`.\n- No config, no API, no sync, no editing UI.\n\nMaybe mention \"pick one file path; if not exists create it\". Keep short.\n\nCould also say \"Start with just add/list; update/remove next if you want.\" But first version maybe minimum: add and list plus persistence. The question: \"What should the first version do?\" So answer direct. Maybe:\n\nFirst version should:\n1. Add a book (title, author)\n2. List books with status (reading/finished) and progress\n3. Update status/progress for a book\n4. Delete a book\n5. Persist to a local JSON file\n\nCLI: `books add`, `books list`, `books update`, `books rm`. Use stdlib. Skip DB, tags, search, sync, TUI.\n\nThat's short. Could include \"choose one binary name\" maybe. Final. Ensure not too verbose. Use concise bullets. Good. \n",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer user asks: \"I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short.\" Need provide concise scope for v1. They want first version do. Keep short. We should suggest minimal viable features. Maybe CRUD? List, add, update status, remove. Persist to JSON. CLI commands. Go specifics maybe use standard library flag or simple subcommands. Keep short. Need maybe mention: add, list, update progress/status, remove, persist to JSON file. Avoid overengineering (no DB, tags, sync). Maybe examples commands. Answer in a few bullets. Desired oververbosity 5 but user says keep short. So final maybe:\n\nV1:\n- Store books in ~/.books.json with fields: title, author, status (reading/finished), current page/percent, notes optional.\n- Commands:\n  - `books add \"Title\" --author \"...\"` \n  - `books list` (show status/progress)\n  - `books update <id> --status finished --page 123`\n  - `books remove <id>`\n- Use simple ID (incrementing or short hash).\n- Use Go stdlib only: `flag`/`os.Args`, `encoding/json`, `os`.\n- No config, no API, no sync, no editing UI.\n\nMaybe mention \"pick one file path; if not exists create it\". Keep short.\n\nCould also say \"Start with just add/list; update/remove next if you want.\" But first version maybe minimum: add and list plus persistence. The question: \"What should the first version do?\" So answer direct. Maybe:\n\nFirst version should:\n1. Add a book (title, author)\n2. List books with status (reading/finished) and progress\n3. Update status/progress for a book\n4. Delete a book\n5. Persist to a local JSON file\n\nCLI: `books add`, `books list`, `books update`, `books rm`. Use stdlib. Skip DB, tags, search, sync, TUI.\n\nThat's short. Could include \"choose one binary name\" maybe. Final. Ensure not too verbose. Use concise bullets. Good. \n",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 62,
+			"completion_tokens": 596,
+			"total_tokens": 658,
+			"cost": 0.000477079,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000477079,
+				"upstream_inference_prompt_cost": 2.79e-7,
+				"upstream_inference_completions_cost": 0.0004768
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 470,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

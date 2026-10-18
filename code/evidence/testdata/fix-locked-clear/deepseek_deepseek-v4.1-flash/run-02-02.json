@@ -1,0 +1,170 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_ad9dba6fe86c49d58028b0c4",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me start by exploring the project.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_ad9dba6fe86c49d58028b0c4"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792094318-2o9IbpS55mpNrbmuAnxZ",
+		"object": "chat.completion",
+		"created": 1792094318,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Venice",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_calls",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_c5c592eca8ef4288b49adf99",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"duration.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "call_91da7236837c4f7091800871",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"duration_test.go\"}"
+							}
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 489,
+			"completion_tokens": 70,
+			"total_tokens": 559,
+			"cost": 0.0001254,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 360,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001254,
+				"upstream_inference_prompt_cost": 0.0000414,
+				"upstream_inference_completions_cost": 0.000084
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

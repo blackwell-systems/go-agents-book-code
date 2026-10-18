@@ -1,0 +1,134 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		],
+		"max_tokens": 16
+	},
+	"response": {
+		"id": "gen-1792092692-bK8rqN284bzUafyLSUPq",
+		"object": "chat.completion",
+		"created": 1792092692,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "max_output_tokens",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SoU7B_Uoz6ctCKsQ_rjChp4x7y9M4TjogZoDskuGVuKVNgDWgmXn85ESqfysFsZAWHeRoebTYRI03g1wsOI357mg_yIHrOcHi6olbA9dZrkcC7d3cwz33res09_zAGaotA4EFRv-VZkOZ9UfUatquSHlnNLWhxk-26BTyNPCVHzmn5L_5LR0Ts5398mS-3cCQsmjY_CrRNMB7gNA-4mN6CDPHsNVX0oTQ2f97G4xqrPnuHGQdiTisCNvb66Njdq7ntHFt_M7W0Bu95Wse72Yu0o49EI1z1RzHGkeb6_xu26Gq-8Gg58KduHCPYtKuabhWGwlucDTf1gCt7RyjeAY-vTtbS3e96wBcznAu0MRi6mk7WQoVFvA9hh_JNCpairj24vwsGWJckzK46dBwHBl_hpZxUpLGMiVunrqlOmqSSqE5MhfkGJpO4baw4PZUX-ft2J1gYu4JNn3GqVoLFzi_CqoLaJYNq2E5ksyDGZQP7DiiWwzs2s7t4fp_McEn4pAXDi4ZM0Ne6xznI4vyMfo8pWjbRqivOwCMt79SYZt5j6-gh3BL-n7FEZeqChaNf-xFeM4lKu_mZKzZtwX91jXlBan5U2_ZC8fJLI1tH5Zk92ocTdZHk5Y4l3iAP6Wa9cLh3m7nHBJZwGHyCmLhdTuUgE3ZTpzUJ9jjfxOOiSf93IJzyUaGSnxsNM6m6wdMADMX-pbuDhc9DF9GRsfPAl3LZiBvyrKly4mRxpt-fK2jtsjjW3qbcgZAFoDPvAbZVVD0Dw7D1qxvFyeE5aHhVHSnyOcmao-TcHGjEaEhyiec8g3lxoYYGjNCrq0uCAzkTwmi-KSplEQskrQFK2B__AU5bn9KHxf20UKDEsTF2iKVV0YWl9fzJgfo09rDZVtcIKyZZc5RGfDD4RUqyk3Fg_e5_qRKBU7LSTHd8HHV6x2u3GVkPqdnaStBrHOpB20gv4wC_aszVVj2WfjT40UARBMZuVWr86gNtrp0xHqFfpSG67dtpbZerxjic5kxNLLOG94Iz8790VXqh2BwHW96LgceCw3Hc7Rzng1tJketwhP7gzBRU6BWp9vLSZFgX5OOCgWP-cWP3XsxF-qLtgDiiDvSRdEA6ZkV7kYnwYCP2cqhv98T6yURY9SBmSnW7fb45XxvKBE8bY8Eq5z-ZIoj6LC1ivz2Jyx87i07neGWXUd3BeSKr27jUl8dh_CJSuixIEyqRuItQ7lFHvBNbye7yb0YJ34YdkC28pl0fyjnpEQ-wkpisOtCz4vf1Yrlr8u1s6wM5QDeDfoCMNB5UiZQK-ehMyse-738Q-Uu7eAj0Ohh37D0EIqfoZSMzjQWKVqyJpfNHx1xzGVs3CWJdSzxhu-ZSSQ9FOclC32KbCJqPfCscGR7p_1IXYFWPQt0_8TV18x-M-.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0127d2c0cb7fa7ef016ad12a14c83487d183c30318090a6ef5",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 0,
+			"completion_tokens": 0,
+			"total_tokens": 0,
+			"cost": 0,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0,
+				"upstream_inference_prompt_cost": 0,
+				"upstream_inference_completions_cost": 0
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

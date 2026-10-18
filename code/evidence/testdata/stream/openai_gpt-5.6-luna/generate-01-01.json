@@ -1,0 +1,73 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092325-mlHaaR2pknnKHZslYGng",
+		"object": "chat.completion",
+		"created": 1792092325,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, `context.Context` carries request-scoped information across API boundaries and between goroutines. Its main purposes are to signal cancellation, enforce deadlines or timeouts, and transport small, scoped values such as request IDs or authentication data. A function receiving a context can stop work promptly when the caller cancels it, preventing wasted computation, blocked operations, and resource leaks.\n\nContexts form a tree: derived contexts inherit cancellation and deadlines from their parents. Common constructors include `context.WithCancel`, `context.WithTimeout`, and `context.WithDeadline`; each returns a derived context and a cancellation function, which should usually be called with `defer` to release resources. `context.Background()` is a root context, while `context.TODO()` is a temporary placeholder.\n\nBy convention, a context is the first parameter of a function, named `ctx`, and should not be stored in a struct or used to pass optional configuration. Values should be used sparingly and only for request-scoped data.",
+					"refusal": null,
+					"reasoning": "**Drafting context explanation**\n\nI need to write about the cancellation deadlines and values defined within the request scope, focusing on propagation rather than general parameters. It's essential to address the Context interface, including aspects like Background, TODO, and WithCancel. I want to ensure my draft fits within approximately 150 words, so I'll count to keep it around 145. Currently, it seems I'm hovering around 149 words, so I should finalize this answer efficiently.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Drafting context explanation**\n\nI need to write about the cancellation deadlines and values defined within the request scope, focusing on propagation rather than general parameters. It's essential to address the Context interface, including aspects like Background, TODO, and WithCancel. I want to ensure my draft fits within approximately 150 words, so I'll count to keep it around 145. Currently, it seems I'm hovering around 149 words, so I should finalize this answer efficiently.",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SinfoPvEYmJBMxGzC6wm1iqZRWBRNtNwa7Th4j-fIHaUxgpstVwaXhzBtAH2bBds8CxR2ItM16CCbAmwTtxgsGvGiR3yJgFg4nEb7_pMIUBK-av3FpWC3zwRlC7DUuTfmtn7eYmuFB38qNVoN04amYk6jIfe7DUjrPeXu0egOCJO7xS6wmN_tt5UUVjZgYdB8zCZdbioZMgfkrU-YrIJVj_z7BIdFnGLCJszJvWdg9jjRWbSFtn6UgQ4EtvOcdhJxOnWbcvNzQv445ECb9GpreGa77JRAOXZgjt1mA5C3ZhKMgapNjaX27t7HYNLcc7sLjuPBcxSJYVYiIrAnZ4UWwgQe2aZxTvGyz9HsLMkgpm_QuIcl04iHW1NgNnn-GOwVAHGuXWRXghLAGi5ZdbpIqpwp8tV_Dynx0mS9nlluhpsTvySgWZ9nwnmYsJmPaP44Mi74vKiMNx4h_dRzlnkUxyU5j1ys483ZkW8oUDpQ4fE-_4kx63lleAfDT_p3r2NtTRko2flbFXMSTYB2ObtZTcz6Fswp2cDoHX4VPVFe0DdIejPhzABKTbr-kMGJiRBMTAXS9zAveFEsMgH2jUSYdgvm_JLVUDC5_QIJC-BBxByhCXjYX-2pc6T0Z3JHj-kXLNB1BzyVcoIRyslkSVnw_To3PeKvQ9JdfUipp_jkXfxsyT7e-l2cPviVSBYYgO_zmdvUVYaxutyz0HzuUnYXrveZnTlNvRN1zhaHgQb8yUIfIQEUilFxXn8xKPFhupzcUyiBY-VnE5NnVUpLXxs33Z6YhANWpnX6IAqlRvq588BR4iTUgyGT74NJ3SaDvSnxybuXa_qqUfIFXAHtBGfZqpRL7RDWJ_8nA2aHxqpCacVodGVQaHA2UTMvLu7nBvJZrorYvc16UFfa9vaBQbLrqfMoq8iQ-1n5Krd8k4jQH6yWX_jatyMAH7BKEDLVkIjhK_l10zLyEDShlbUydjgkGKPhmVqzcHAAga2VEoZuMV_p3M6Uu-KitLl7rq3Cfi4NFA7hXEeNMI1wdI7uGOr--kMaJo3nUFk95X2bfEEbcqKUGMjagystCEc6Ff5o1lVQg7mpLRKE_yhAKvXn91ayxUXJo28w44_PHdzOacT53Cn1mLZT1Yg_rUt1MccCOE0OTvJ0uODuBS1jCsVqGidazMzXXKdaOBdqPnbBbMcqUIifiQee0EPHr5XyNcG8pO8ViRvXmcwyGJUB7G_2jp9aD4rsv-JHkW2lIhN9P7QTc3JbbWpq38lIJl3gljbd28P0UfQ-SVvuOv2T_kgIXf-aOHpUV1l17_mwpwoFZURgL6pndYBLOG0iKrwNurdH-JUBImRGsX3yv8iXt-7ycIkxDLZ6mzmqgKxG8zAQXfVkoUMmiMn6wjfVThmZceewH31JXrZFXWR_8nuE85pcCrLxWzfehdy8LiCjB389q_2yQnXFdDaKOS1GEzK7o-yoSq_t0klK7apYoBPuuUPgrRWGbZDdmyvtAN2WKbkVPkEKTJe9LUfQC4FuCvM7UNuU0OmoX6Af6kkWt6sv5NPWXkSOCmmrW1K3r6BqPBBlYfhKDnAxQUigsTBM3Bw_NHnQr_22id7ggP7auxeV1R2tCWrEaTlSQAabmK33zZkfyLbXS0kf_YnJqxX1fitApSEAajXvq01rpohKWdYCF2hf9-CTLYYTMEFsNPKnqTs5_gq60NoDo6MCSTcyzkrH16leDXPPsdIHzcek53agNrIAJeo2x3v7F7-SsoeuDrw73euT1xOHB4ZQ4tO6sVGLTj4JDD2qH4r_4ZNHw8gjjzabIKTj5hreQ6m8_BN09uWJl_RiH8tLffyOkTZi7hKZSaF0T73nzfAa85j4BcCMvDo6WQULQnWFk5FGUxZpVwUYsp17c_byXR5R9v6sCCxM6e33o5nAapVTFQ6PaBmCoN8MxIJqNZkA5WowuH5_R4umkk26kUO6hw1d2dIQFWixZRRX7gaMiC_ajiSl1xcPwL99Isf-xLhEUHSXLkGodwWQlBr1W66uNbwCsCPQQkk-6KsyN0FnczSK-CrpxiNZiQGEj4akfzW7_bmR4IMJWTBE7ZaAOlizGxC11cXDNoWrW003SoSSNhqyHbDAtgQ5NaeZHaO8pDxeIGSNlE6Q5hf_HY6J5vysqmV4nuVSWx5DUJrCrbRUEkFAhl-ky7TS7wW3YvkqqzQ5FtfpLTS938i15sOCkPvxFUj4JqUxUX7J89LjIa_gJYwz73BNPuo3MqJmtVbwxqoCSitU3vdLwWV9eOmiSRzvpb462q5Edz2M_GmOsVCzzQWkdUTxS1-szIPVEedoHbgShyrPIzmyrjZRahCe8AdRmyvNJojHuVlpNzbUtDXQff0Kz7K6kutyb3zgwrtSeDljX_6Cy7jSXe4-NANk9eMsbvmk9B2O32akHuvJOUNJ4hlewlpo5LYi6ksEehNdqevjnWVzrGsUSszT7xln6xY50=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0b7f128150c7af53016ad128a5ab9887d1ba7e3172c5655740",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 21,
+			"completion_tokens": 275,
+			"total_tokens": 296,
+			"cost": 0.0003342,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0003342,
+				"upstream_inference_prompt_cost": 0.0000042,
+				"upstream_inference_completions_cost": 0.00033
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 70,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

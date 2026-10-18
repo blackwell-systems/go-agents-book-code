@@ -1,0 +1,673 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "crash-reports.jsonl holds crash reports from this service, remind. Find out what causes the crashes and fix them."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_HU0ZODwNCI9P20t4yzUNC137",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.summary",
+						"summary": "**Inspecting files**\n\nI need to take a good look at the files. Let’s figure out what specific aspects I should be examining! Am I checking for accuracy, relevance, or perhaps missing information? There’s a lot to consider here. It’s important for me to be thorough and ensure I’m not overlooking anything crucial. I’ll focus on gathering the necessary details efficiently, so I can give a clear and organized assessment. Let’s dive in!",
+						"format": "openai-responses-v1",
+						"index": 0
+					},
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W6uUYcRcnvuFr0ojBwp5GhwoDbp2_D5OfRGizrnP9GpZZUx0jdB1JpLzsB1QjWZTWe7RsBKY-mIk-P20Yp5XXlBav7KAsb9RJ5HyjGLecW7C6Bdeq4PS3FdM0wtJ7cS6yb0H3ODARF144CaveYLpHTJoYgHB11J0yYPtWX2CSkWjCCFhipSzHgm0v-HMUQSavmBJbzJw-xXQ_0WYpUJ9r4dXOJ0ORE_A_RxjP5nQScwUB1f3ygSPuM6g-pAVPPzSf3czMJCevlxzxY7wPQB-kXIRz9T82TQe4fOCASUa0ImdZEyU5orAc62FX0n5CxOWxZIHDaP-c11SkRIXVP-46GWzONHSHUizNyAqKm2C5ypolATtZq-AJ4EWQl-ZlPKrTL1HWGi75cZ3a1gnAi9mDuJaRyJM5LNj00Lnk7Ra-kFcioe-n7pwYTBtvKN7OuF0p0JY6SEopblpsyxvC6ZH6S-6Sk4_hg9uBbor42nRuhP_PNdzJIkNyx676YcDwnRc4xtJtSOAfQF7KH3ev6xCFRmSj59Fm23j2pUyQNhoLkSgs0yA0RocfcOg402hVjxdCJZusK0Zt3A7rbaApNK0kftehydF5Zp3Mp5tmcYVOKrI8cwgmKo72PWFu0lejuN94n_ufHpO1Jtud0V7x2zAW-GDtsVcPghIRi6STYRSm22TMVeXnnKx4ZJEhDqhYQtk9hugHSJqEwAO95Mrzjl-ReXgipJ8Uy9fyP2yy4nvI7DiHXBBzSBbrcR0YP69_5KDdk-823lCr9h7AfzZplRLbevK05uDwgfxdOckdaZms3_0G5SKWHgJsLvfIceLpG-dEVMGF-4lILPd-raK-pKpEt9Npq4kJD-J57ln8OoEk9e54UmHNvvY0Hx7M0gTwyPOw_e7i3hgJLspqK4huu1W8gSIP-aIGgQbPfr-oURXLtXzB5iOcp8VNuTN-Erg_YOsX7GASq3-5xflDQcBQQHoh6sSKo958Ok-X4OToLISQyjlR3BpGgmnp75WwrQQDQzgbbiiXqYmorqys0phsOZEyjg4oBRm73VkUBYu-WWDkk2HUVEtwiSmxcQfkfGc1ZlEMO5yDMo2LSODZj0EW3PiMSEtxHeH2L7N5v4cAX5uiqRsUahSASN2Ya3tRTqnmmhGImKhpB8uG4cG8m0146wzQ4U7Pollr4p10TcWAvmYezM2nyup7MWtxu-G0_0wx32hYHtmHTJcC27NuP6lPcwDhlwCO-u1CK_-D40H93QbXYpcSK3O5UghZHMspF4FK9VFsgKrVz2iRc2h5EZCEegauhsgboM6rdu0dLfPXKo0vUrsv-45KVls84zB11WepBdideU1Kx9XPqOWRWquiZA19ukqSKlHRHHCKdSDAKtZQ369doZdGJy9hvy4hyqmVtIi6vjKhiShnMPqt7dNv_qrYh0kPSfXwuQnvKfVbP2oPgldtdtLYAklqqMelSVGi1siThsQJlLUe3YejERkiL_8b3SpvatcwNI4n3IgYm5JT-ZJW633ln9PKeJYPvxmhtfFUQEHZzJ3HhZCr6DRdgVEmvbjV-fr1wKUJStxWbmEit73hNIqPabcMgQTqrNNyXPKRcWL6ilnGTABomaj8QZAI5tPRukWaLqjnSVw5es6ndqzikiGZGKOfCutw11GaqX3cxwGhK_BEoGH8gS33WGb87aeg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16eace81487d182a7a017a0d10a5a",
+						"index": 1
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "CHANGELOG.md\nREADME.md\nVERSION\napi/admin.go\napi/api.go\napi/api_test.go\napi/lists.go\napi/reminders.go\napi/search.go\napi/users.go\naudit/audit.go\naudit/audit_test.go\nauth/auth.go\nauth/auth_test.go\ncalendar/calendar.go\ncalendar/calendar_test.go\ncalendar/rrule.go\ncmd/remind/main.go\nconfig/config.go\nconfig/config_test.go\ncrash-reports.jsonl\ncrash/crash.go\ncrash/crash_test.go\ncrash/logring.go\nduration/duration.go\nduration/duration_test.go\ngo.mod\ni18n/accept.go\ni18n/catalog.go\ni18n/i18n.go\ni18n/i18n_test.go\ninternal/must/must.go\nmetrics/instrument.go\nmetrics/metrics.go\nmetrics/metrics_test.go\nnotify/notify.go\nnotify/notify_test.go\nnotify/text.go\nquota/limit.go\nquota/quota.go\nquota/quota_test.go\nschedule/every.go\nschedule/schedule.go\nschedule/schedule_test.go\nschedule/weekly.go\nschedule/zone.go\nsearch/search.go\nsearch/search_test.go\nsearch/tokens.go\nserver/server.go\nshare/share.go\nshare/share_test.go\nstore/store.go\nstore/store_test.go\nstore/users.go\ntextutil/textutil.go\ntextutil/textutil_test.go\nwebhook/client.go\nwebhook/queue.go\nwebhook/webhook.go\nwebhook/webhook_test.go",
+				"tool_call_id": "call_HU0ZODwNCI9P20t4yzUNC137"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_mQnqxknJvCjYfV1akDCNpc34",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"crash-reports.jsonl\"}"
+						}
+					},
+					{
+						"id": "call_ubI8EOLB1c5t8NvV5pmlIFx7",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"crash/crash.go\"}"
+						}
+					},
+					{
+						"id": "call_XBKu50hUK8LOi48sAMGNvTIU",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"crash/logring.go\"}"
+						}
+					},
+					{
+						"id": "call_2UphPVkIE4uUK9TmsTlTSmHi",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"README.md\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.summary",
+						"summary": "**Inspecting crash log**\n\nI need to take a closer look at the crash log to understand what went wrong and gather relevant details. There might be specific indicators that can help me identify the root cause or any patterns leading to the crash. Analyzing this data carefully is essential to pinpoint the issue and figure out how to fix it effectively. I want to ensure nothing gets overlooked in the investigation!",
+						"format": "openai-responses-v1",
+						"index": 0
+					},
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W6wxhMQsq6wqJZzb_RSZJNZtqKXgGdl9uB5PVu-T40UD9fasEy9-FerI14_t04JIB04oJmVmzO-GPI76Tm0t5AAqV6K6_7yoWG3PfGNCsolkpsl2iH5QjNC704a6SadEK4BDXIRYWm9ePsf5TrpH4vkVz0aVgv_0CYSCT4lagQyg6e6TR6LaM70yk5qUqo8VFjY1idSR55Q3tYS_t1I9Z5HrcYM_Q2payGZrgbhmJFN8ienk4DBpyjUz6F08yvjHDuhloNQJuisDhWlVGCMuodlpSeT_fh9buIU69El8EkgUv6-zxxi8tyHBlPQrTmPc0PdYSklX2YpfG9V_QuJ-Vim2rxELVtoJr_qYwfsUDZyXFrd-wNJ55189h-aSwspmoSbcP0w5VR4KvXH3xcXabCqkxqHbh2phawi5YheOUJVK0zWocz8il2CkjjZtwYeRjDif8bTlsEwTOs9_DYrhn3DpIWdzhh7vkaOlUSgJBgSi_6OKefcMFKxOVpTkZwpmvqdsNgrGVoMZyxYXwJ1A43rSuqfBiERz0pcyCt5vbSrPZarQ7VA4VkF0eqvjIZrm33dC6Gu3hAH5tn-oyjwB6YSh6aE3znbTBk-GblIykZYob3vGxkFE0tramIqZWfS6bxvLTcYK4wktbOzzBhOn4Z9jlHJdoVnoM42FFkbyX48F5PL69sQFcPyGEc3QVscz9bZOXJcyTVuYrk7phu69eo5QX8K2hqltMLoKnNga76BesJzye6hoK-NtUUvNtaZGSYg4cO4oDMLaOegIv4jQCZi3zVtCmp7HYfheA9wo5TjtuP17AI6bQaL46ujxtagZ27O8gtiSHxCmDzh41elWCsIgXQs8YlscsKafWZq3pTP6NTuSl-eEGjA0HiRDw8mz81E8k8R_BqZ0uODDdyDWKoCh8eYGB76jpjPNguZiEIiWb8jzA0rzKp2L8FxSgmbO1MmPx4ru-hnJNZnYWy8DuuM__sEatBVhew82F-RIFFvar3lrQvSjanSFVnEm-YG0M_RzmjkY7dNM7bD9tzH52EIEUfOcaNMaL3n0wpgOkw89lamNjQjKqqzocB9Vaegb6NIdGi3IwhiTCk7mvtkKg7SiBC5KTymrRWRxbrld5HP6BZDgonp3UOQJ9Yv4VwZUxhpfP5TAmLxE4H5wKo1iXYAMJHCR-pnfcXeskvd5wObHI4FJe1dGj8GaIt34j8V-ZRfigXRaYgVyot6WkJged9TGXIa8m-pLzzYb7lVpxm5ciPoLPmhErFaUZQQOqOvrGwfibeKw7VflBxpxyE2VWyJsAkzQMDcgskH_GM6fPLqbMQRRXfsLVMRqoOu_GYXvPDuOUoahydb1iiTNffi6EiyEuPEZtaI14JBUlYZos61cuR57egcCmTvcL82rnoROGBomH6wTMUKclKVHeljQuI4TbxhUMnZhKgWjiBNHh8ibTYmx7j5CNehG6CbWt3BSd5l9hvT0B7Yv6lmt5rIl9Nu4EBQfU0fIKiGWpJgVy7hAOiKaLwjiYsp78wzXDYNtgNexfaeJ_m3-0oTCfZpQyyNAmD4nzKeeaDvubuxyRCXER8FqkH8HpHVNdGvd_cU2FMkr6CbyN7H2RHUiEvoeCFGnazWjMrcOx1JOb_u0hOyBikDNhTcWb6htHyOgvotDXtbnSzqupT3xc-xDfveLck0f4NFQ2iVUfLT2TkIlPH5fXKQB5sJ3xReFKEdXcUx04BM.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16eaefbe887d1a81169cca25603c5",
+						"index": 1
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "{\"id\":\"cr_b73dbe\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: index out of range [-1]\",\"stack\":\"goroutine 28 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/duration.Parse({0x0?, 0xc000010350?})\\n\\t/app/remind/duration/duration.go:29 +0x3ec\\nexample.com/remind/api.(*API).snooze(0xc0000104f8, {0xc000010350, 0xc0000106a0}, 0xc000010848)\\n\\t/app/remind/api/reminders.go:197 +0x7c\\nnet/http.HandlerFunc.ServeHTTP(0xc0000109f0?, {0xc000010350?, 0xc0000106a0?}, 0xc000010b98?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/auth.Require.func1({0xc000010350, 0xc0000106a0}, 0xc0000109f0)\\n\\t/app/remind/auth/auth.go:23 +0x9c\\nnet/http.HandlerFunc.ServeHTTP(0xc000010d40?, {0xc000010350?, 0xc0000106a0?}, 0xc000010ee8?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc000010350, 0xc0000106a0}, 0xc0000109f0)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011090, 0xc000011238}, 0xc0000109f0)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011090?, 0xc000011238?}, 0xc0000113e0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011588, 0xc000011730}, 0xc0000109f0)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc0000118d8?, {0xc000011588?, 0xc000011730?}, 0xc000011a80?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011588, 0xc000011730}, 0xc0000109f0)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0xc000011c28?, {0xc000011588?, 0xc000011730?}, 0xc000011dd0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0x10?}, {0xc000011588?, 0xc000011730?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000011f78, {0xc000012120, 0xc0000122c8})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 27\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"POST\",\"path\":\"/v1/reminders/rem_0001/snooze\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_b71e0d94c2a6f358\",\"Content-Length\":\"10\",\"Content-Type\":\"application/json\",\"User-Agent\":\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\",\"X-Request-Id\":\"6ac3ae14-0008\"},\"body\":\"{\\\"for\\\":\\\"\\\"}\"},\"logs\":[\"2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\",\"2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\\\"\",\"2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\",\"2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\",\"2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:09:26.0527Z\",\"last_seen\":\"2026-10-05T14:18:10.0918Z\",\"count\":2}\n{\"id\":\"cr_76768c\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: slice bounds out of range [20:2]\",\"stack\":\"goroutine 24 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/store.(*Store).List(0xc000010350?, {0xc0000104f8?, 0xc0000106a0?}, 0x14, 0x32)\\n\\t/app/remind/store/store.go:136 +0x1e0\\nexample.com/remind/api.(*API).listReminders(0xc000010350, {0xc000010848, 0xc0000106a0}, 0xc0000109f0)\\n\\t/app/remind/api/reminders.go:127 +0xc0\\nnet/http.HandlerFunc.ServeHTTP(0xc000010b98?, {0xc000010848?, 0xc0000106a0?}, 0xc000010d40?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/auth.Require.func1({0xc000010848, 0xc0000106a0}, 0xc000010b98)\\n\\t/app/remind/auth/auth.go:23 +0x9c\\nnet/http.HandlerFunc.ServeHTTP(0xc000010ee8?, {0xc000010848?, 0xc0000106a0?}, 0xc000011090?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc000010848, 0xc0000106a0}, 0xc000010b98)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011238, 0xc0000113e0}, 0xc000010b98)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011238?, 0xc0000113e0?}, 0xc000011588?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011a80?, {0xc000011730?, 0xc0000118d8?}, 0xc000011c28?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc000011730?, 0xc0000118d8?}, 0xc000011dd0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011f78?}, {0xc000011730?, 0xc0000118d8?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000012120, {0xc0000122c8, 0xc000012470})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 23\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"GET\",\"path\":\"/v1/reminders\",\"query\":\"offset=20\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_4f9c2a7e81d03b56\",\"User-Agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\",\"X-Request-Id\":\"6ac3ae14-0004\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\",\"2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\\\"\",\"2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\",\"2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\",\"2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:10:42.0595Z\",\"last_seen\":\"2026-10-05T14:10:42.0595Z\",\"count\":1}\n{\"id\":\"cr_6265c5\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: invalid memory address or nil pointer dereference\",\"stack\":\"goroutine 26 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/api.(*API).owned(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848)\\n\\t/app/remind/api/reminders.go:144 +0xe8\\nexample.com/remind/api.(*API).markDone(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc0000109f0?)\\n\\t/app/remind/api/reminders.go:171 +0x28\\nnet/http.HandlerFunc.ServeHTTP(0xc000010b98?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010d40?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/auth.Require.func1({0xc0000104f8, 0xc0000106a0}, 0xc000010b98)\\n\\t/app/remind/auth/auth.go:23 +0x9c\\nnet/http.HandlerFunc.ServeHTTP(0xc000010ee8?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000011090?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000104f8, 0xc0000106a0}, 0xc000010b98)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011238, 0xc0000113e0}, 0xc000010b98)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011238?, 0xc0000113e0?}, 0xc000011588?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011a80?, {0xc000011730?, 0xc0000118d8?}, 0xc000011c28?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc000011730?, 0xc0000118d8?}, 0xc000011dd0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011f78?}, {0xc000011730?, 0xc0000118d8?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000012120, {0xc0000122c8, 0xc000012470})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 25\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"POST\",\"path\":\"/v1/reminders/rem_0003/done\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_4f9c2a7e81d03b56\",\"Content-Length\":\"0\",\"User-Agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\",\"X-Request-Id\":\"6ac3ae14-0006\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\",\"2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\\\"\",\"2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\",\"2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\",\"2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:15:05.0765Z\",\"last_seen\":\"2026-10-05T14:15:05.0765Z\",\"count\":1}\n{\"id\":\"cr_03654d\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: invalid memory address or nil pointer dereference\",\"stack\":\"goroutine 27 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/api.(*API).stats(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848?)\\n\\t/app/remind/api/users.go:117 +0xa4\\nnet/http.HandlerFunc.ServeHTTP(0xc0000109f0?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010b98?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000104f8, 0xc0000106a0}, 0xc000010d40)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000010ee8, 0xc000011090}, 0xc000010d40)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000010ee8?, 0xc000011090?}, 0xc000011238?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc0000113e0, 0xc000011588}, 0xc000010d40)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011730?, {0xc0000113e0?, 0xc000011588?}, 0xc0000118d8?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc0000113e0, 0xc000011588}, 0xc000010d40)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc0000113e0?, 0xc000011588?}, 0xc000011a80?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011c28?}, {0xc0000113e0?, 0xc000011588?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000011dd0, {0xc000011f78, 0xc000012120})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 26\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"GET\",\"path\":\"/v1/me/stats\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_b71e0d94c2a6f358\",\"User-Agent\":\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\",\"X-Request-Id\":\"6ac3ae14-0007\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\",\"2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\\\"\",\"2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\",\"2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\",\"2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:16:19.085Z\",\"last_seen\":\"2026-10-05T14:16:19.085Z\",\"count\":1}\n{\"id\":\"cr_d80efa\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: invalid memory address or nil pointer dereference\",\"stack\":\"goroutine 29 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/api.(*API).export(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848?)\\n\\t/app/remind/api/users.go:104 +0x84\\nnet/http.HandlerFunc.ServeHTTP(0xc0000109f0?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010b98?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000104f8, 0xc0000106a0}, 0xc000010d40)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000010ee8, 0xc000011090}, 0xc000010d40)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000010ee8?, 0xc000011090?}, 0xc000011238?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc0000113e0, 0xc000011588}, 0xc000010d40)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011730?, {0xc0000113e0?, 0xc000011588?}, 0xc0000118d8?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc0000113e0, 0xc000011588}, 0xc000010d40)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc0000113e0?, 0xc000011588?}, 0xc000011a80?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011c28?}, {0xc0000113e0?, 0xc000011588?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000011dd0, {0xc000011f78, 0xc000012120})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 28\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"GET\",\"path\":\"/v1/me/export\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_4f9c2a7e81d03b56\",\"User-Agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\",\"X-Request-Id\":\"6ac3ae14-0009\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\",\"2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\\\"\",\"2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\",\"2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\",\"2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:20:38.0986Z\",\"last_seen\":\"2026-10-05T14:20:38.0986Z\",\"count\":1}\n{\"id\":\"cr_ed4938\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: slice bounds out of range [20:1]\",\"stack\":\"goroutine 30 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/store.(*Store).List(0xc000010350?, {0xc0000104f8?, 0xc0000106a0?}, 0x14, 0x32)\\n\\t/app/remind/store/store.go:136 +0x1e0\\nexample.com/remind/api.(*API).listReminders(0xc000010350, {0xc000010848, 0xc0000106a0}, 0xc0000109f0)\\n\\t/app/remind/api/reminders.go:127 +0xc0\\nnet/http.HandlerFunc.ServeHTTP(0xc000010b98?, {0xc000010848?, 0xc0000106a0?}, 0xc000010d40?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/auth.Require.func1({0xc000010848, 0xc0000106a0}, 0xc000010b98)\\n\\t/app/remind/auth/auth.go:23 +0x9c\\nnet/http.HandlerFunc.ServeHTTP(0xc000010ee8?, {0xc000010848?, 0xc0000106a0?}, 0xc000011090?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc000010848, 0xc0000106a0}, 0xc000010b98)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011238, 0xc0000113e0}, 0xc000010b98)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011238?, 0xc0000113e0?}, 0xc000011588?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011a80?, {0xc000011730?, 0xc0000118d8?}, 0xc000011c28?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc000011730?, 0xc0000118d8?}, 0xc000011dd0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011f78?}, {0xc000011730?, 0xc0000118d8?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000012120, {0xc0000122c8, 0xc000012470})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 29\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"GET\",\"path\":\"/v1/reminders\",\"query\":\"offset=20\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_4f9c2a7e81d03b56\",\"User-Agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\",\"X-Request-Id\":\"6ac3ae14-000a\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\",\"2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\\\"\",\"2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\",\"2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\",\"2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:21:50.1054Z\",\"last_seen\":\"2026-10-05T14:21:50.1054Z\",\"count\":1}\n",
+				"tool_call_id": "call_mQnqxknJvCjYfV1akDCNpc34"
+			},
+			{
+				"role": "tool",
+				"content": "// Package crash records crash reports: panics in HTTP handlers, and\n// requests that stay stuck long enough to suggest a deadlock.\npackage crash\n\nimport (\n\t\"bytes\"\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"runtime\"\n\t\"runtime/debug\"\n\t\"runtime/pprof\"\n\t\"sync\"\n\t\"time\"\n)\n\n// A Report is one crash.\ntype Report struct {\n\tID        string    `json:\"id\"`\n\tKind      string    `json:\"kind\"` // \"panic\" or \"stuck\"\n\tTime      time.Time `json:\"time\"`\n\tService   string    `json:\"service\"`\n\tVersion   string    `json:\"version\"`\n\tCommit    string    `json:\"commit\"`\n\tGoVersion string    `json:\"go_version\"`\n\tPanic     string    `json:\"panic\"`\n\tStack     string    `json:\"stack\"`\n\tRequest   Request   `json:\"request\"`\n\tLogs      []string  `json:\"logs\"`\n}\n\n// Request is the request being served when the crash happened.\ntype Request struct {\n\tMethod  string            `json:\"method\"`\n\tPath    string            `json:\"path\"`\n\tQuery   string            `json:\"query,omitempty\"`\n\tHeaders map[string]string `json:\"headers\"`\n\tBody    string            `json:\"body,omitempty\"`\n}\n\n// maxBody is how much of a request body a report keeps.\nconst maxBody = 4 << 10\n\n// Reporter writes crash reports as JSON lines.\ntype Reporter struct {\n\tService string\n\tVersion string\n\tCommit  string\n\tNow     func() time.Time\n\tLogs    *LogRing // recent log lines to attach; may be nil\n\n\tmu       sync.Mutex\n\tw        io.Writer\n\tseq      int\n\tinflight map[*inflight]struct{}\n}\n\ntype inflight struct {\n\tstart    time.Time\n\treq      Request\n\tbody     *bytes.Buffer\n\treported bool\n}\n\n// NewReporter returns a reporter that appends reports to w.\nfunc NewReporter(w io.Writer, now func() time.Time) *Reporter {\n\treturn &Reporter{\n\t\tService:  \"remind\",\n\t\tVersion:  \"(devel)\",\n\t\tNow:      now,\n\t\tw:        w,\n\t\tinflight: make(map[*inflight]struct{}),\n\t}\n}\n\n// Middleware recovers panics in next, writes a report for each, and\n// answers 500. It also tracks requests in flight for Watch.\nfunc (rep *Reporter) Middleware(next http.Handler) http.Handler {\n\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tf := &inflight{start: rep.Now(), req: requestOf(r), body: new(bytes.Buffer)}\n\t\tif r.Body != nil {\n\t\t\tr.Body = struct {\n\t\t\t\tio.Reader\n\t\t\t\tio.Closer\n\t\t\t}{io.TeeReader(r.Body, &limitedWriter{f.body, maxBody}), r.Body}\n\t\t}\n\t\trep.mu.Lock()\n\t\trep.inflight[f] = struct{}{}\n\t\trep.mu.Unlock()\n\t\tdefer func() {\n\t\t\trep.mu.Lock()\n\t\t\tdelete(rep.inflight, f)\n\t\t\trep.mu.Unlock()\n\t\t\tif v := recover(); v != nil {\n\t\t\t\tif err, ok := v.(error); ok && errors.Is(err, http.ErrAbortHandler) {\n\t\t\t\t\tpanic(v)\n\t\t\t\t}\n\t\t\t\treq := f.req\n\t\t\t\treq.Body = f.body.String()\n\t\t\t\trep.write(\"panic\", fmt.Sprint(v), string(debug.Stack()), req)\n\t\t\t\thttp.Error(w, \"internal error\", http.StatusInternalServerError)\n\t\t\t}\n\t\t}()\n\t\tnext.ServeHTTP(w, r)\n\t})\n}\n\n// Check writes a \"stuck\" report, with every goroutine's stack, for the\n// oldest request that has been in flight longer than limit and hasn't\n// been reported yet.\nfunc (rep *Reporter) Check(limit time.Duration) bool {\n\tnow := rep.Now()\n\trep.mu.Lock()\n\tvar oldest *inflight\n\tfor f := range rep.inflight {\n\t\tif !f.reported && now.Sub(f.start) > limit && (oldest == nil || f.start.Before(oldest.start)) {\n\t\t\toldest = f\n\t\t}\n\t}\n\tif oldest != nil {\n\t\toldest.reported = true\n\t}\n\trep.mu.Unlock()\n\tif oldest == nil {\n\t\treturn false\n\t}\n\tvar dump bytes.Buffer\n\tif err := pprof.Lookup(\"goroutine\").WriteTo(&dump, 2); err != nil {\n\t\tdump.WriteString(err.Error())\n\t}\n\trep.write(\"stuck\", fmt.Sprintf(\"request in flight for %s\", now.Sub(oldest.start).Round(time.Second)), dump.String(), oldest.req)\n\treturn true\n}\n\nfunc (rep *Reporter) write(kind, value, stack string, req Request) {\n\trep.mu.Lock()\n\tdefer rep.mu.Unlock()\n\trep.seq++\n\tr := Report{\n\t\tID:        fmt.Sprintf(\"crash-%06d\", rep.seq),\n\t\tKind:      kind,\n\t\tTime:      rep.Now(),\n\t\tService:   rep.Service,\n\t\tVersion:   rep.Version,\n\t\tCommit:    rep.Commit,\n\t\tGoVersion: runtime.Version(),\n\t\tPanic:     value,\n\t\tStack:     stack,\n\t\tRequest:   req,\n\t}\n\tif rep.Logs != nil {\n\t\tr.Logs = rep.Logs.Lines()\n\t}\n\t// A crash report that can't be written has nowhere else to go.\n\t_ = json.NewEncoder(rep.w).Encode(r)\n}\n\nfunc requestOf(r *http.Request) Request {\n\treq := Request{\n\t\tMethod:  r.Method,\n\t\tPath:    r.URL.Path,\n\t\tQuery:   r.URL.RawQuery,\n\t\tHeaders: make(map[string]string, len(r.Header)),\n\t}\n\tfor k, v := range r.Header {\n\t\treq.Headers[k] = v[0]\n\t}\n\treturn req\n}\n\n// limitedWriter keeps the first n bytes written to it and drops the rest.\ntype limitedWriter struct {\n\tbuf *bytes.Buffer\n\tn   int\n}\n\nfunc (l *limitedWriter) Write(p []byte) (int, error) {\n\tif room := l.n - l.buf.Len(); room > 0 {\n\t\tl.buf.Write(p[:min(len(p), room)])\n\t}\n\treturn len(p), nil\n}\n",
+				"tool_call_id": "call_ubI8EOLB1c5t8NvV5pmlIFx7"
+			},
+			{
+				"role": "tool",
+				"content": "package crash\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"log/slog\"\n\t\"strconv\"\n\t\"strings\"\n\t\"sync\"\n\t\"time\"\n)\n\n// LogRing is a slog.Handler that keeps the most recent log lines, so a\n// crash report can show what happened just before the crash. It passes\n// every record on to another handler.\ntype LogRing struct {\n\tnext  slog.Handler\n\tattrs []slog.Attr\n\tring  *ring\n}\n\ntype ring struct {\n\tnow   func() time.Time\n\tmu    sync.Mutex\n\tlines []string\n\tsize  int\n}\n\n// NewLogRing returns a handler that keeps the last size lines, stamped\n// with times from now, and passes records on to next.\nfunc NewLogRing(next slog.Handler, size int, now func() time.Time) *LogRing {\n\treturn &LogRing{next: next, ring: &ring{now: now, size: size}}\n}\n\n// Lines returns the kept lines, oldest first.\nfunc (h *LogRing) Lines() []string {\n\th.ring.mu.Lock()\n\tdefer h.ring.mu.Unlock()\n\treturn append([]string{}, h.ring.lines...)\n}\n\n// Enabled reports whether level is kept (Info and above) or wanted by\n// the next handler.\nfunc (h *LogRing) Enabled(ctx context.Context, level slog.Level) bool {\n\treturn level >= slog.LevelInfo || h.next.Enabled(ctx, level)\n}\n\n// Handle keeps a text form of r and passes r on.\nfunc (h *LogRing) Handle(ctx context.Context, r slog.Record) error {\n\tvar b strings.Builder\n\tb.WriteString(h.ring.now().UTC().Format(time.RFC3339))\n\tb.WriteByte(' ')\n\tb.WriteString(r.Level.String())\n\tb.WriteByte(' ')\n\tb.WriteString(r.Message)\n\twrite := func(a slog.Attr) bool {\n\t\tb.WriteByte(' ')\n\t\tb.WriteString(a.Key)\n\t\tb.WriteByte('=')\n\t\tv := a.Value.Resolve().String()\n\t\tif strings.ContainsAny(v, \" \\\"=\\n\") || v == \"\" {\n\t\t\tv = strconv.Quote(v)\n\t\t}\n\t\tb.WriteString(v)\n\t\treturn true\n\t}\n\tfor _, a := range h.attrs {\n\t\twrite(a)\n\t}\n\tr.Attrs(write)\n\n\th.ring.mu.Lock()\n\th.ring.lines = append(h.ring.lines, b.String())\n\tif over := len(h.ring.lines) - h.ring.size; over > 0 {\n\t\th.ring.lines = h.ring.lines[over:]\n\t}\n\th.ring.mu.Unlock()\n\tif !h.next.Enabled(ctx, r.Level) {\n\t\treturn nil\n\t}\n\tif err := h.next.Handle(ctx, r); err != nil {\n\t\treturn fmt.Errorf(\"log ring: %w\", err)\n\t}\n\treturn nil\n}\n\n// WithAttrs returns a handler that adds attrs to every record.\nfunc (h *LogRing) WithAttrs(attrs []slog.Attr) slog.Handler {\n\treturn &LogRing{\n\t\tnext:  h.next.WithAttrs(attrs),\n\t\tattrs: append(append([]slog.Attr(nil), h.attrs...), attrs...),\n\t\tring:  h.ring,\n\t}\n}\n\n// WithGroup is not supported for kept lines; it only affects next.\nfunc (h *LogRing) WithGroup(name string) slog.Handler {\n\treturn &LogRing{next: h.next.WithGroup(name), attrs: h.attrs, ring: h.ring}\n}\n",
+				"tool_call_id": "call_XBKu50hUK8LOi48sAMGNvTIU"
+			},
+			{
+				"role": "tool",
+				"content": "# remind\n\nA small reminders service: users create one-off and recurring reminders\nover a JSON API, and remind delivers them by email or webhook.\n\n## Running\n\n```sh\ngo run ./cmd/remind -config remind.json\n```\n\nThe configuration file is JSON (see `config.Default` for every setting); a missing file means the defaults. Environment variables such as `REMIND_ADDR` and `REMIND_WEBHOOK_SECRET` override it. `users_file` names a JSON file of users to start with (`ID`, `Name`, `Email`, `Token`, `Plan`, `Admin`).\n\n## API\n\nEvery `/v1` route takes `Authorization: Bearer <token>`.\n\n| Route | What it does |\n| --- | --- |\n| `POST /v1/reminders` | create: `text` plus one of `in` (\"1h30m\"), `at` (RFC 3339), or `every` (\"every 2h\", \"on mon,wed at 09:30\", with optional `tz`); optional `priority` 1 (high) to 3 (low) |\n| `GET /v1/reminders` | list, with `offset` and `limit` |\n| `GET`, `DELETE /v1/reminders/{id}` | read or delete one |\n| `POST /v1/reminders/{id}/done` | mark done |\n| `POST /v1/reminders/{id}/snooze` | move it later: `{\"for\": \"10m\"}` |\n| `POST /v1/reminders/{id}/test` | send it now |\n| `GET /v1/me`, `PUT /v1/me/prefs` | your account and notification settings (`tz`, `channel`, `webhook`, and quiet hours as `quiet_from` and `quiet_to`, such as \"22:00\" and \"07:00\") |\n| `DELETE /v1/me` | close your account: deletes your reminders and the lists you own, and takes you off other lists |\n| `GET /v1/me/digest` | the next `days` (default 7) of reminders, day by day |\n| `GET /v1/me/export`, `GET /v1/me/stats` | your reminders as a file, and counts |\n| `POST /v1/admin/users/import` | administrators: add users from the old system |\n| `DELETE /v1/admin/users/{id}` | administrators: remove a user |\n| `POST /v1/admin/dispatcher/stop` | administrators: stop deliveries |\n| `POST /v1/admin/snapshot` | administrators: write a snapshot of the store |\n| `GET /v1/admin/dispatcher/status` | administrators: delivery status |\n| `GET /v1/admin/audit` | administrators: recent administrator and sharing actions |\n| `GET /v1/me/calendar.ics` | your reminders as a calendar feed |\n| `GET /v1/search?q=` | search your reminders |\n| `POST /v1/lists`, `GET /v1/lists`, `GET`, `DELETE /v1/lists/{id}` | shared lists |\n| `POST /v1/lists/{id}/members`, `DELETE /v1/lists/{id}/members/{user}` | share a list (`role`: viewer, editor) |\n| `POST /v1/lists/{id}/reminders`, `DELETE /v1/lists/{id}/reminders/{reminder}` | put reminders on a list |\n| `GET /metrics` | Prometheus metrics |\n\n## Layout\n\n| Package | What |\n| --- | --- |\n| `duration` | parses \"90s\", \"1h30m\", \"2d\", \"1w2d\" |\n| `schedule` | recurring rules: intervals and weekly times in a zone |\n| `store` | users and reminders, in memory |\n| `auth` | bearer-token middleware |\n| `notify` | delivery, previews, and digests |\n| `api` | HTTP handlers |\n| `crash` | crash reports: recovered panics and stuck requests |\n| `server` | wires the parts together |\n| `share` | shared lists and their permissions |\n| `search` | full-text search over reminders |\n| `calendar` | iCalendar export |\n| `webhook` | signed webhook deliveries with retries |\n| `i18n` | notification text in several languages |\n| `quota` | plans, reminder quotas, and rate limits |\n| `audit` | the audit log |\n| `metrics` | Prometheus metrics |\n| `config` | the configuration file and environment |\n| `textutil` | small text helpers |\n\n## Crash reports\n\nPanics in handlers are recovered and appended to the crash file as JSON\nlines, with the stack, the request, and the last log lines. A request in\nflight for more than 30 seconds produces a report with every goroutine's\nstack.\n\n## Tests\n\n```sh\ngo test ./...\n```\n",
+				"tool_call_id": "call_2UphPVkIE4uUK9TmsTlTSmHi"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_rQ1hNQuUvWMICW9vSHUEiuv0",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration/duration.go\"}"
+						}
+					},
+					{
+						"id": "call_5OGkCr2mEizQDLToR6dqeFFL",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"store/store.go\"}"
+						}
+					},
+					{
+						"id": "call_VD9XDifLW0pNAF5oeixECEt4",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"api/reminders.go\"}"
+						}
+					},
+					{
+						"id": "call_EkHvtloCrwKiDU96g5Elu2oM",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"api/users.go\"}"
+						}
+					},
+					{
+						"id": "call_hp4FLvs1hNULZ4xlMN9WOmWX",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"store/users.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W6xRaf-l3gU3p1eCYJ82RDNu77-9VaXvLEInvIsGKV9M-i_sYgUY9q1kgi_0a5BBbm-s8c8md-xxOPKOI3LX7fOFOmYzbJGlFFBkjUTt0k_v-BuQ_TWoljINY9NQi_LTbFI5IxF2lif3q0CW8wvhl8VXDkygGATtKPpk62eqTwB7SVn--zef-iDhk4hfQQD6iU_Y3Ttra7l6qAURgl6RxdabOOphEGl6LY8YFEIz7lmY3I5I-LxXoH7_cdNFVKfRbtt3ZFFZku7AVo7DrAHjebDohfYeu6Y7YBI4ImCkzQNPiHsw5lam2jdOPWJWR5TclbxlcCwGyMZ1K6hV_lKEGo0WzpQYVkiLb8LfTsbZdRKnFZs9hWSoI2ZpqGfryI4ZnNL1RmpreWMD_92G7-2VEM5iHV_hrvsQtPshNlnCAXt7VrIIuqXuxN-s8OkcIt9LY0IWBEp9IZLKAG-pmt_Rt0bJGwKOON4p9VBOyTS6BTtwxrlfA59qXNT9wOMSZGWKaUBk3ohBkCqXlYOIgioinMjlAyqSrwWz4BRJ-02U-MPo3ohP1j5z3q4Ea81CLXCS0ydjL48QYz4Ou7Dcef22J-5ba9_SQOwGoqNsbGgaS_vm52FcAiFo1wXmzCd7MhyhhE5n0hZk-45Qojxq1eQox5W-_Jm-6Z-AmN_uuQrIWJpbgPQrAwwEJWluyPrwNpY6SoQ4PA7S-7Ff5nDStNFdnJ2zDPFISN90L5gGZAVsMTlQuqYs_1kk9q_hReW1OkySntKiOMybc8RhhV1jygylMC4f6FSzuzH4glKxcd3G2sSMJILbm4TTg9EbHscsSaEHjd06QzYDUbqWu9MoKu5GI8WqqhjWerpTDX0EaMqARQK_CuN-qfRqSQbo7i-KqJFqHvBT7iUIGDFH4wWRBJCXBPyOo3wHnlmP-qnww2306xjGUpb7OspFlW82p3bIIFIZmkSvS5wlSsipdd4CvmmunUoL700lWqRDPHvL-Ff_ofdHBIcp2JLQXoHq7LBrMeHqEh0AV_YyZwdF4uKxyLaBUg5sW2pW2WWLz5fyyuqiOUNm1ZdTfuYyKukd12TEjX2h-AZAlQfnPCz9hHVBeXztZVK_q49ED00vBsv8tNXX3XuN_KOVewC4KZ4f06RQ0y6AorgwGELQcsohP1X6CdAFvR4YSk_Vv2n5vLLMhNov-D_5vI5pLz3RCehhCHFaBApdlwDXcR9l7Dl2IITDhe_UhpG4JunVWBRTANhFIQsjTMICMMRLBw8cFXsGI8awaM4zwEGkT4IHD9cRZqO9OyK3RnGig-4FcZe_HXf7M6lEo035AsKqDLuftZ-UEKEdv4LFUUFlDLH-GNY06ob2kRVhhBuARmXz7MiAC-RHPl9Ng4W4ueNMKjp4kq-x-9LrVedl9lXfSYg9euCsIgqAlV0NjkOB0PZzZ4oUt1DXmPXiOQ-lZHV6-kaVnOTMHw8MtSlo-sv6qTd58RqSbv4W9nibEinplyfmRTdStVWXxGb0gKT7YD3CQEcrUioyDH6zVY76sO032OKXAVbpv3aJ_45tsI2Mj7gBnAgHbG_dgBjDWwTJ8ja0y5iI_H7vuen2Ded4LMs9zJTUnac7jgEmdrKCv_821y0XdZZyNIRSVr3xJ0nnMAKlzTjZ8rMuFu9wEAxPl885AlIQF_iWrKjh3JK953oKQ==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16eb0cf8c87d1af48c80b39a18683",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses the human-friendly durations remind accepts,\n// such as \"90s\", \"1h30m\", \"2d\", and \"1w2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"strings\"\n\t\"time\"\n)\n\n// Day and Week are the units Parse adds to the standard library's.\nconst (\n\tDay  = 24 * time.Hour\n\tWeek = 7 * Day\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Minute,\n\t'h': time.Hour,\n\t'd': Day,\n\t'w': Week,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, d (24 hours), or w (7 days). \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\n\t\treturn 0, fmt.Errorf(\"duration %q: missing unit\", s)\n\t}\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: expected a number at %q\", s, rest)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\treturn total, nil\n}\n\n// Format formats d the way Parse reads it, largest units first.\n// Parts smaller than a second are dropped.\nfunc Format(d time.Duration) string {\n\tif d < time.Second {\n\t\treturn \"0s\"\n\t}\n\tvar b strings.Builder\n\tfor _, u := range []struct {\n\t\tsize time.Duration\n\t\tname byte\n\t}{{Week, 'w'}, {Day, 'd'}, {time.Hour, 'h'}, {time.Minute, 'm'}, {time.Second, 's'}} {\n\t\tif n := d / u.size; n > 0 {\n\t\t\tb.WriteString(strconv.FormatInt(int64(n), 10))\n\t\t\tb.WriteByte(u.name)\n\t\t\td -= n * u.size\n\t\t}\n\t}\n\treturn b.String()\n}\n",
+				"tool_call_id": "call_rQ1hNQuUvWMICW9vSHUEiuv0"
+			},
+			{
+				"role": "tool",
+				"content": "// Package store keeps users and reminders in memory and writes snapshots\n// of them to disk.\npackage store\n\nimport (\n\t\"cmp\"\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"slices\"\n\t\"sync\"\n\t\"time\"\n\n\t\"example.com/remind/schedule\"\n)\n\n// Errors callers check for.\nvar (\n\tErrNotFound = errors.New(\"store: not found\")\n\tErrConflict = errors.New(\"store: conflict\")\n)\n\n// maxOccurrences caps how many times Upcoming expands one recurring\n// reminder, so a rule like \"every 1m\" can't produce millions of entries.\nconst maxOccurrences = 50\n\n// A Reminder is one reminder. Recurring reminders have a Rule; one-off\n// reminders have only Due.\ntype Reminder struct {\n\tID       string\n\tUserID   string\n\tText     string\n\tRule     schedule.Rule\n\tDue      time.Time // the next time it fires\n\tDone     bool\n\tPriority int  // 1 (high) to 3 (low); 0 means normal\n\tDeleted  bool // kept as a tombstone so sync clients see the delete\n\tCreated  time.Time\n}\n\n// An Occurrence is one future firing of a reminder.\ntype Occurrence struct {\n\tReminderID string\n\tText       string\n\tAt         time.Time\n}\n\n// Store holds all users and reminders.\ntype Store struct {\n\tnow func() time.Time\n\n\tmu        sync.RWMutex\n\tusers     map[string]*User // by ID\n\ttokens    map[string]*User // by API token\n\treminders map[string]*Reminder\n\tbyUser    map[string][]*Reminder\n\tseq       int\n\tonChange  func(*Reminder)\n}\n\n// New returns an empty store. now is its clock.\nfunc New(now func() time.Time) *Store {\n\treturn &Store{\n\t\tnow:       now,\n\t\tusers:     make(map[string]*User),\n\t\ttokens:    make(map[string]*User),\n\t\treminders: make(map[string]*Reminder),\n\t\tbyUser:    make(map[string][]*Reminder),\n\t}\n}\n\n// OnChange registers a function called whenever a reminder changes.\nfunc (s *Store) OnChange(f func(*Reminder)) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\ts.onChange = f\n}\n\nfunc (s *Store) changed(r *Reminder) {\n\tif s.onChange != nil {\n\t\ts.onChange(r)\n\t}\n}\n\n// Create adds a reminder for a user. For a recurring reminder, Due is\n// computed from its rule.\nfunc (s *Store) Create(userID, text string, due time.Time, rule schedule.Rule) *Reminder {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tnow := s.now()\n\tif rule != nil {\n\t\tdue = rule.Next(now)\n\t}\n\ts.seq++\n\tr := &Reminder{\n\t\tID:      fmt.Sprintf(\"rem_%04d\", s.seq),\n\t\tUserID:  userID,\n\t\tText:    text,\n\t\tRule:    rule,\n\t\tDue:     due,\n\t\tCreated: now,\n\t}\n\ts.reminders[r.ID] = r\n\ts.byUser[userID] = append(s.byUser[userID], r)\n\ts.changed(r)\n\treturn r\n}\n\n// Get returns a reminder by ID. Deleted reminders are not returned.\nfunc (s *Store) Get(id string) (*Reminder, error) {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tr, ok := s.reminders[id]\n\tvar err error\n\tswitch {\n\tcase !ok:\n\t\terr = ErrNotFound\n\tcase r.Deleted:\n\t\tr = nil\n\t}\n\treturn r, err\n}\n\n// List returns a page of a user's reminders, oldest first.\nfunc (s *Store) List(userID string, offset, limit int) []*Reminder {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tvar out []*Reminder\n\tfor _, r := range s.byUser[userID] {\n\t\tif !r.Deleted {\n\t\t\tout = append(out, r)\n\t\t}\n\t}\n\tend := min(offset+limit, len(out))\n\treturn out[offset:end]\n}\n\n// Count returns how many reminders a user has, not counting deleted ones.\nfunc (s *Store) Count(userID string) int {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tn := 0\n\tfor _, r := range s.byUser[userID] {\n\t\tif !r.Deleted {\n\t\t\tn++\n\t\t}\n\t}\n\treturn n\n}\n\n// Update calls f with the reminder locked, then records the change.\nfunc (s *Store) Update(id string, f func(*Reminder) error) error {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tr, ok := s.reminders[id]\n\tif !ok || r.Deleted {\n\t\treturn ErrNotFound\n\t}\n\tif err := f(r); err != nil {\n\t\treturn err\n\t}\n\ts.changed(r)\n\treturn nil\n}\n\n// Delete marks a reminder deleted, keeping a tombstone.\nfunc (s *Store) Delete(id string) error {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tr, ok := s.reminders[id]\n\tif !ok || r.Deleted {\n\t\treturn ErrNotFound\n\t}\n\tr.Deleted = true\n\ts.changed(r)\n\treturn nil\n}\n\n// Due returns reminders that are due at or before now and not done.\nfunc (s *Store) Due(now time.Time) []*Reminder {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tvar out []*Reminder\n\tfor _, r := range s.reminders {\n\t\tif !r.Done && !r.Deleted && !r.Due.After(now) {\n\t\t\tout = append(out, r)\n\t\t}\n\t}\n\tslices.SortFunc(out, func(a, b *Reminder) int { return a.Due.Compare(b.Due) })\n\treturn out\n}\n\n// MarkSent records that a reminder fired: a recurring reminder moves to\n// its next time, and a one-off reminder is done.\nfunc (s *Store) MarkSent(id string) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tr, ok := s.reminders[id]\n\tif !ok {\n\t\treturn\n\t}\n\tif r.Rule != nil {\n\t\tr.Due = r.Rule.Next(r.Due)\n\t} else {\n\t\tr.Done = true\n\t}\n}\n\n// Upcoming returns the times a user's reminders fire in [from, to),\n// sorted by time. Recurring reminders appear once per occurrence.\nfunc (s *Store) Upcoming(userID string, from, to time.Time) []Occurrence {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tvar out []Occurrence\n\tfor _, r := range s.byUser[userID] {\n\t\tif r.Done || r.Deleted {\n\t\t\tcontinue\n\t\t}\n\t\tif r.Rule == nil {\n\t\t\tif !r.Due.Before(from) && r.Due.Before(to) {\n\t\t\t\tout = append(out, Occurrence{ReminderID: r.ID, Text: r.Text, At: r.Due})\n\t\t\t}\n\t\t\tcontinue\n\t\t}\n\t\tt := r.Rule.Next(from)\n\t\tfor n := 0; !t.IsZero() && t.Before(to) && n < maxOccurrences; n++ {\n\t\t\tout = append(out, Occurrence{ReminderID: r.ID, Text: r.Text, At: t})\n\t\t\tt = r.Rule.Next(t)\n\t\t}\n\t}\n\tslices.SortStableFunc(out, func(a, b Occurrence) int { return cmp.Compare(a.At.UnixNano(), b.At.UnixNano()) })\n\treturn out\n}\n\n// Snapshot writes every user and reminder to w as JSON.\nfunc (s *Store) Snapshot(w io.Writer) error {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\ttype reminder struct {\n\t\t*Reminder\n\t\tRule string `json:\",omitempty\"`\n\t}\n\tsnap := struct {\n\t\tUsers     []*User\n\t\tReminders []reminder\n\t}{}\n\tfor _, u := range s.users {\n\t\tsnap.Users = append(snap.Users, u)\n\t}\n\tslices.SortFunc(snap.Users, func(a, b *User) int { return cmp.Compare(a.ID, b.ID) })\n\tfor _, r := range s.reminders {\n\t\trr := reminder{Reminder: r}\n\t\tif r.Rule != nil {\n\t\t\trr.Rule = r.Rule.String()\n\t\t}\n\t\tsnap.Reminders = append(snap.Reminders, rr)\n\t}\n\tslices.SortFunc(snap.Reminders, func(a, b reminder) int { return cmp.Compare(a.ID, b.ID) })\n\tif err := json.NewEncoder(w).Encode(snap); err != nil {\n\t\treturn fmt.Errorf(\"store: snapshot: %w\", err)\n\t}\n\treturn nil\n}\n",
+				"tool_call_id": "call_5OGkCr2mEizQDLToR6dqeFFL"
+			},
+			{
+				"role": "tool",
+				"content": "package api\n\nimport (\n\t\"cmp\"\n\t\"net/http\"\n\t\"strings\"\n\t\"time\"\n\n\t\"example.com/remind/auth\"\n\t\"example.com/remind/duration\"\n\t\"example.com/remind/notify\"\n\t\"example.com/remind/quota\"\n\t\"example.com/remind/schedule\"\n\t\"example.com/remind/store\"\n)\n\ntype createRequest struct {\n\tText  string `json:\"text\"`\n\tIn    string `json:\"in\"`    // from now, such as \"1h30m\"\n\tAt    string `json:\"at\"`    // an RFC 3339 time\n\tEvery string `json:\"every\"` // a schedule spec, such as \"on mon at 09:00\"\n\tTZ    string `json:\"tz\"`    // for weekly schedules; defaults to the user's\n\t// Priority is 1 (high), 2 (normal), or 3 (low); omitted means normal.\n\tPriority *int `json:\"priority\"`\n}\n\nfunc (a *API) createReminder(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\tvar req createRequest\n\tif !a.decode(w, r, &req) {\n\t\treturn\n\t}\n\tif strings.TrimSpace(req.Text) == \"\" {\n\t\ta.fail(w, http.StatusBadRequest, \"text is required\")\n\t\treturn\n\t}\n\tpriority := 2\n\tif req.Priority != nil {\n\t\tif *req.Priority > 3 {\n\t\t\ta.fail(w, http.StatusBadRequest, \"priority must be 1, 2, or 3\")\n\t\t\treturn\n\t\t}\n\t\tpriority = *req.Priority\n\t}\n\tvar (\n\t\tdue  time.Time\n\t\trule schedule.Rule\n\t\terr  error\n\t)\n\tswitch {\n\tcase req.Every != \"\":\n\t\tzone := schedule.LookupZone(cmp.Or(req.TZ, u.Prefs.TZ))\n\t\trule, err = schedule.Parse(req.Every, zone, a.Now())\n\tcase req.In != \"\":\n\t\tvar d time.Duration\n\t\td, err = duration.Parse(req.In)\n\t\tdue = a.Now().Add(d)\n\tcase req.At != \"\":\n\t\tdue, err = time.Parse(time.RFC3339, req.At)\n\tdefault:\n\t\ta.fail(w, http.StatusBadRequest, \"one of in, at, or every is required\")\n\t\treturn\n\t}\n\tif err != nil {\n\t\ta.fail(w, http.StatusBadRequest, err.Error())\n\t\treturn\n\t}\n\tif err := quota.CheckReminders(planOf(u), a.Store.Count(u.ID)); err != nil {\n\t\ta.fail(w, http.StatusForbidden, err.Error())\n\t\treturn\n\t}\n\trem := a.Store.Create(u.ID, req.Text, due, rule)\n\tif priority != 2 {\n\t\terr := a.Store.Update(rem.ID, func(r *store.Reminder) error {\n\t\t\tr.Priority = priority\n\t\t\treturn nil\n\t\t})\n\t\tif err != nil {\n\t\t\ta.writeError(w, err)\n\t\t\treturn\n\t\t}\n\t}\n\ta.Search.Add(rem.ID, u.ID, rem.Text)\n\ta.Log.Info(\"reminder created\", \"id\", rem.ID, \"user\", u.ID)\n\tw.Header().Set(\"Location\", \"/v1/reminders/\"+rem.ID)\n\ta.writeJSON(w, http.StatusCreated, map[string]string{\"id\": rem.ID})\n}\n\ntype reminderView struct {\n\tID       string        `json:\"id\"`\n\tText     string        `json:\"text\"`\n\tPreview  string        `json:\"preview\"`\n\tDue      time.Time     `json:\"due\"`\n\tSchedule schedule.Rule `json:\"schedule,omitempty\"`\n\tPriority string        `json:\"priority\"`\n\tDone     bool          `json:\"done\"`\n}\n\nvar priorityNames = [...]string{\"high\", \"normal\", \"low\"}\n\n// priorityName names a stored priority; 0 is normal.\nfunc priorityName(p int) string {\n\tif p == 0 {\n\t\treturn \"normal\"\n\t}\n\treturn priorityNames[p-1]\n}\n\nfunc viewOf(r *store.Reminder) reminderView {\n\treturn reminderView{\n\t\tID:       r.ID,\n\t\tText:     r.Text,\n\t\tPreview:  notify.Preview(r.Text),\n\t\tDue:      r.Due,\n\t\tSchedule: r.Rule,\n\t\tPriority: priorityName(r.Priority),\n\t\tDone:     r.Done,\n\t}\n}\n\nfunc (a *API) listReminders(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\toffset, limit, ok := a.page(w, r)\n\tif !ok {\n\t\treturn\n\t}\n\trems := a.Store.List(u.ID, offset, limit)\n\tviews := make([]reminderView, len(rems))\n\tfor i, rem := range rems {\n\t\tviews[i] = viewOf(rem)\n\t}\n\ta.writeJSON(w, http.StatusOK, map[string]any{\"reminders\": views})\n}\n\n// owned returns the caller's reminder with the request's ID, or answers\n// 404 and returns nil.\nfunc (a *API) owned(w http.ResponseWriter, r *http.Request) *store.Reminder {\n\tu := auth.UserFrom(r.Context())\n\trem, err := a.Store.Get(r.PathValue(\"id\"))\n\tif err != nil {\n\t\ta.writeError(w, err)\n\t\treturn nil\n\t}\n\tif rem.UserID != u.ID {\n\t\ta.fail(w, http.StatusNotFound, \"not found\")\n\t\treturn nil\n\t}\n\treturn rem\n}\n\nfunc (a *API) getReminder(w http.ResponseWriter, r *http.Request) {\n\tif rem := a.owned(w, r); rem != nil {\n\t\ta.writeJSON(w, http.StatusOK, viewOf(rem))\n\t}\n}\n\nfunc (a *API) deleteReminder(w http.ResponseWriter, r *http.Request) {\n\trem := a.owned(w, r)\n\tif rem == nil {\n\t\treturn\n\t}\n\tif err := a.Store.Delete(rem.ID); err != nil {\n\t\ta.writeError(w, err)\n\t\treturn\n\t}\n\ta.Search.Remove(rem.ID)\n\tw.WriteHeader(http.StatusNoContent)\n}\n\nfunc (a *API) markDone(w http.ResponseWriter, r *http.Request) {\n\trem := a.owned(w, r)\n\tif rem == nil {\n\t\treturn\n\t}\n\terr := a.Store.Update(rem.ID, func(r *store.Reminder) error {\n\t\tr.Done = true\n\t\treturn nil\n\t})\n\tif err != nil {\n\t\ta.writeError(w, err)\n\t\treturn\n\t}\n\tw.WriteHeader(http.StatusNoContent)\n}\n\nfunc (a *API) snooze(w http.ResponseWriter, r *http.Request) {\n\trem := a.owned(w, r)\n\tif rem == nil {\n\t\treturn\n\t}\n\tvar req struct {\n\t\tFor string `json:\"for\"` // such as \"10m\"\n\t}\n\tif !a.decode(w, r, &req) {\n\t\treturn\n\t}\n\td, err := duration.Parse(req.For)\n\tif err != nil {\n\t\ta.fail(w, http.StatusBadRequest, err.Error())\n\t\treturn\n\t}\n\terr = a.Store.Update(rem.ID, func(r *store.Reminder) error {\n\t\tr.Due = a.Now().Add(d)\n\t\treturn nil\n\t})\n\tif err != nil {\n\t\ta.writeError(w, err)\n\t\treturn\n\t}\n\tw.WriteHeader(http.StatusNoContent)\n}\n\nfunc (a *API) testNotify(w http.ResponseWriter, r *http.Request) {\n\trem := a.owned(w, r)\n\tif rem == nil {\n\t\treturn\n\t}\n\tif err := a.Notify.SendNow(r.Context(), auth.UserFrom(r.Context()), rem); err != nil {\n\t\ta.fail(w, http.StatusBadGateway, err.Error())\n\t\treturn\n\t}\n\tw.WriteHeader(http.StatusNoContent)\n}\n",
+				"tool_call_id": "call_VD9XDifLW0pNAF5oeixECEt4"
+			},
+			{
+				"role": "tool",
+				"content": "package api\n\nimport (\n\t\"net/http\"\n\t\"net/url\"\n\t\"regexp\"\n\t\"strconv\"\n\t\"time\"\n\n\t\"example.com/remind/auth\"\n\t\"example.com/remind/internal/must\"\n\t\"example.com/remind/notify\"\n)\n\nfunc (a *API) me(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\ta.writeJSON(w, http.StatusOK, map[string]any{\n\t\t\"id\": u.ID, \"name\": u.Name, \"email\": u.Email, \"prefs\": u.Prefs,\n\t})\n}\n\nfunc (a *API) updatePrefs(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\tvar req struct {\n\t\tTZ        string `json:\"tz\"`\n\t\tChannel   string `json:\"channel\"`\n\t\tWebhook   string `json:\"webhook\"`\n\t\tQuietFrom string `json:\"quiet_from\"` // \"22:00\"\n\t\tQuietTo   string `json:\"quiet_to\"`\n\t}\n\tif !a.decode(w, r, &req) {\n\t\treturn\n\t}\n\tp := *u.Prefs\n\tif req.TZ != \"\" {\n\t\tp.TZ = req.TZ\n\t}\n\tif req.Channel != \"\" {\n\t\tif !notify.ValidChannel(req.Channel) {\n\t\t\ta.fail(w, http.StatusBadRequest, \"unknown channel \"+strconv.Quote(req.Channel))\n\t\t\treturn\n\t\t}\n\t\tp.Channel = req.Channel\n\t}\n\tif req.Webhook != \"\" {\n\t\tif hook, err := url.Parse(req.Webhook); err != nil || hook.Scheme != \"https\" {\n\t\t\ta.fail(w, http.StatusBadRequest, \"webhook must be an https URL\")\n\t\t\treturn\n\t\t}\n\t\tp.Webhook = req.Webhook\n\t}\n\tfor _, t := range []string{req.QuietFrom, req.QuietTo} {\n\t\tif t != \"\" && !clockPattern.MatchString(t) {\n\t\t\ta.fail(w, http.StatusBadRequest, \"quiet hours must look like 22:00\")\n\t\t\treturn\n\t\t}\n\t}\n\tif req.QuietFrom != \"\" || req.QuietTo != \"\" {\n\t\tp.QuietFrom, p.QuietTo = req.QuietFrom, req.QuietTo\n\t}\n\tif err := a.Store.SetPrefs(u.ID, p); err != nil {\n\t\ta.writeError(w, err)\n\t\treturn\n\t}\n\ta.writeJSON(w, http.StatusOK, p)\n}\n\nvar clockPattern = regexp.MustCompile(`^\\d{1,2}:\\d{2}$`)\n\nfunc (a *API) digest(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\tdays := 7\n\tif s := r.URL.Query().Get(\"days\"); s != \"\" {\n\t\tn, err := strconv.Atoi(s)\n\t\tif err != nil || n < 1 || n > 31 {\n\t\t\ta.fail(w, http.StatusBadRequest, \"days must be between 1 and 31\")\n\t\t\treturn\n\t\t}\n\t\tdays = n\n\t}\n\tloc := must.Get(time.LoadLocation(u.Prefs.TZ))\n\tfrom := a.Now()\n\tocc := a.Store.Upcoming(u.ID, from, from.AddDate(0, 0, days))\n\td := notify.BuildDigest(from, days, loc, occ)\n\tif u.Prefs.QuietFrom != \"\" && u.Prefs.QuietTo != \"\" {\n\t\td.QuietHours = notify.QuietHours(u.Prefs.QuietFrom, u.Prefs.QuietTo)\n\t}\n\ta.writeJSON(w, http.StatusOK, d)\n}\n\n// closeAccount deletes the caller's account and reminders.\nfunc (a *API) closeAccount(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\tif err := a.Store.DeleteUser(u.ID); err != nil {\n\t\ta.writeError(w, err)\n\t\treturn\n\t}\n\ta.Log.Info(\"account closed\", \"user\", u.ID)\n\tw.WriteHeader(http.StatusNoContent)\n}\n\nfunc (a *API) export(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\trems := a.Store.List(u.ID, 0, 1000)\n\tviews := make([]reminderView, len(rems))\n\tfor i, rem := range rems {\n\t\tviews[i] = viewOf(rem)\n\t}\n\tw.Header().Set(\"Content-Disposition\", `attachment; filename=\"reminders.json\"`)\n\ta.writeJSON(w, http.StatusOK, views)\n}\n\nfunc (a *API) stats(w http.ResponseWriter, r *http.Request) {\n\tu := auth.UserFrom(r.Context())\n\tnow := a.Now()\n\tvar open, done, overdue int\n\tfor _, rem := range a.Store.List(u.ID, 0, 1000) {\n\t\tswitch {\n\t\tcase rem.Done:\n\t\t\tdone++\n\t\tcase rem.Due.Before(now):\n\t\t\toverdue++\n\t\tdefault:\n\t\t\topen++\n\t\t}\n\t}\n\ta.writeJSON(w, http.StatusOK, map[string]int{\"open\": open, \"done\": done, \"overdue\": overdue})\n}\n",
+				"tool_call_id": "call_EkHvtloCrwKiDU96g5Elu2oM"
+			},
+			{
+				"role": "tool",
+				"content": "package store\n\nimport (\n\t\"cmp\"\n\t\"fmt\"\n\t\"slices\"\n)\n\n// A User owns reminders and authenticates with an API token.\ntype User struct {\n\tID    string\n\tName  string\n\tEmail string\n\tToken string `json:\"-\"`\n\tAdmin bool\n\tPlan  string // \"free\" or \"pro\"; empty means free\n\tPrefs *Prefs\n}\n\n// Prefs are a user's notification settings.\ntype Prefs struct {\n\tTZ      string // IANA zone name; empty means UTC\n\tChannel string // \"email\" or \"webhook\"\n\tWebhook string // URL for the webhook channel\n\tLang    string // language for notifications, such as \"pt\"; empty means English\n\n\t// Quiet hours, as \"22:00\" and \"07:00\": reminders due in between wait\n\t// until the end.\n\tQuietFrom string\n\tQuietTo   string\n}\n\n// DefaultPrefs returns the settings a new user starts with.\nfunc DefaultPrefs() *Prefs {\n\treturn &Prefs{Channel: \"email\"}\n}\n\n// AddUser adds a user, giving it default preferences if it has none.\nfunc (s *Store) AddUser(u User) error {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tif _, ok := s.users[u.ID]; ok {\n\t\treturn fmt.Errorf(\"add user %s: %w\", u.ID, ErrConflict)\n\t}\n\tif u.Prefs == nil {\n\t\tu.Prefs = DefaultPrefs()\n\t}\n\ts.users[u.ID] = &u\n\tif u.Token != \"\" {\n\t\ts.tokens[u.Token] = &u\n\t}\n\treturn nil\n}\n\n// ImportUsers adds users in bulk, as exported from another system.\n// Existing IDs are skipped. It returns how many users were added.\nfunc (s *Store) ImportUsers(users []User) int {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tn := 0\n\tfor _, u := range users {\n\t\tif _, ok := s.users[u.ID]; ok {\n\t\t\tcontinue\n\t\t}\n\t\ts.users[u.ID] = &u\n\t\tif u.Token != \"\" {\n\t\t\ts.tokens[u.Token] = &u\n\t\t}\n\t\tn++\n\t}\n\treturn n\n}\n\n// SetPrefs replaces a user's preferences.\nfunc (s *Store) SetPrefs(id string, p Prefs) error {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tu, ok := s.users[id]\n\tif !ok {\n\t\treturn ErrNotFound\n\t}\n\tu.Prefs = &p\n\treturn nil\n}\n\n// User returns a user by ID.\nfunc (s *Store) User(id string) (*User, error) {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tu, ok := s.users[id]\n\tif !ok {\n\t\treturn nil, ErrNotFound\n\t}\n\treturn u, nil\n}\n\n// UserByToken returns the user with the given API token.\nfunc (s *Store) UserByToken(token string) (*User, error) {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tu, ok := s.tokens[token]\n\tif !ok {\n\t\treturn nil, ErrNotFound\n\t}\n\treturn u, nil\n}\n\n// DeleteUser removes a user and all of their reminders.\nfunc (s *Store) DeleteUser(id string) error {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tu, ok := s.users[id]\n\tif !ok {\n\t\treturn ErrNotFound\n\t}\n\tdelete(s.users, id)\n\tdelete(s.tokens, u.Token)\n\tfor _, r := range s.byUser[id] {\n\t\tr.Deleted = true\n\t\ts.changed(r)\n\t}\n\treturn nil\n}\n\n// Users returns all users, sorted by ID.\nfunc (s *Store) Users() []*User {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tout := make([]*User, 0, len(s.users))\n\tfor _, u := range s.users {\n\t\tout = append(out, u)\n\t}\n\tslices.SortFunc(out, func(a, b *User) int { return cmp.Compare(a.ID, b.ID) })\n\treturn out\n}\n",
+				"tool_call_id": "call_hp4FLvs1hNULZ4xlMN9WOmWX"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_q2aPusCmyf9xBAjReTSdW3Zd",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"api/api.go\"}"
+						}
+					},
+					{
+						"id": "call_7d5WEec5xoUWsZTOeWchd2IY",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"api/api_test.go\"}"
+						}
+					},
+					{
+						"id": "call_F1whwuPAhyDXkQCJE5rNngcc",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"store/store_test.go\"}"
+						}
+					},
+					{
+						"id": "call_ihc5boJBUCxZ0YQ0SgMWqHwa",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration/duration_test.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.summary",
+						"summary": "**Evaluating crash causes**\n\nI'm looking into the crashes and it seems they are caused by an empty indexing duration. There's an issue with the list offset being greater than its length. It seems nil Prefs might mean ImportUsers isn't defaulting correctly. Also, maybe the priorityName is invalid with a value of zero? I'll need to focus on obtaining crash reports, and thinking about how to handle negatives in the list offset or page validation. Inspecting the API pagination and authentication seems necessary too.",
+						"format": "openai-responses-v1",
+						"index": 0
+					},
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W60QTfoycMpuRxdA0eQ2ucv6lbaslwvbMTlmWVQ32M1RNIoTKf9N1weEX2WUxpc0tsj3rp0vuOTEwd99wUvWjYG9t4BVnwmblScp6B0gp0jiN3KKCKzYs0MqELOlCSJT_mrJOCKr_UTfwG7QjeJDqVhTBOy988XlhRlmmaIvRIWl-1-GYDVsoKr3FeLmJP04xTcUdZeY3q4c_gGW3dQx2MLlzRXB9bknAZGYmOayx_aZQXh1W-De-WWY8EbMeppvyVf0W0tpJSQxvlMhsKdzFE_2brFk-4dvRF_6EyxmF8XQtN3C-4phzU6S1xnA9k9A1Cir4HieuDwEGRBDzZxbvuwhJJmw8J1xMcZLuMT0GC-KJp3krWlqvIeKrbx-TSzoqOblHWpC4fRxS9R2MSrQ8yq9RD05C4PUCpGjKYT9UykKA-3sioGqdP3i6ydBohvhzHCrlfsGd3odAunUeHblvjIN8e96YB_CzovL6ityopNl9l2Jw0GRZSZ2kYRqrS6gs8RXUHFKWqR_11mIo5_OZTriNtIlYkCkkldld4hj1RHzNw4AYMZPOzB7yOlc849KoY7jvQ2xXT6kXE6G9D4QKWrt0gY9gGasHUPr4lo4Y5T8F96eSh5h8br_LdLlg_zDKyZxdjZMrVIPJokkXJ1rNl23u_FMbzlouGjGfhE6BYuiQi5O87uXy0xab4xD09hiitA54l6TotD8JasQDtcJPOg0ClRXje4XXik1TGPf-_EPaE3EIgKM0a143rcoJHg8yQuWVkSWubN84FeVLYYrfMdmOINEdsd0PWcB1AHTetdMudUEZZcMnECSBw_U3Aaw8QngWvf6AJXPUSzZz0N6cjvwAX6W2iFd9gM2crtYY9zYP7saZROI4C7Gj4zfx2eAk0td7ihpPrHKrjfVwd9CVCsSxni2wk9c-XLv8p9nKgI1_ByC41T6U09oxoYQATRoAdj17vuIUGBAh_WsJWiGikjyQzEWUBNrmyf8LL3O1Dr5UoxH9GWjmiXj7C-23bwEzW_JRJ4EDTtxLqkO6yb2M-Gc-hmeQj2D_3yODmy8KJOqAs3OqTa9ZdnS1YKfqT-yet7la0BcBeaB3IXG9eGS3vC1Hnz_IF6xmD6pdWcyRhUCzSMj68sNHm_BliPHRUQuLEqfR-rQPlLt0vwdm18LLE5ja-nE3MXwy2YaBTtIj1oioro5_jd49ugOsfdojfXpGiEY0M0SmgsPJFByxpuySnnYWBaifzSzSWhmjip7pP1avEHVE5yuzo7KZdUD9hQrVGzDvHB8XIJi2WWZPINjQkYAfAdGnOZWKJADwWNqzF9oM3OpwNZ3m1ss0EneC_OzAd7k3ACNWYHB5vP015pvtfcYlbGfFqRIls4pTRTajeCxeO0gS4GJcdiRfqivXUPVANKSmcNtUNTsx3hmaUe3huj5G-MMRqHa-AHr0AdgwChBuhPr-66mVItcB8kAILqSrY36ni89iVgQOJppRgRUBu3PEnsAOvOipV7cQ_frPdWYnPwq8fKXnP_UvMvUNelJG3lnuuB1r5lrR7WztMMFjb3R5C4hzmdRfbSDN-6y39jphytmIr_t9GIJFzkFklXD4Ri_02tMl7Mtzo4JgxqZXIAjamtYIDGfnPymiqYk08kys0m9ptQkekyKOh3pxlksw3Y1GEPbgkBP07v-SIiXpC2EeWRwyGuv1M7M9qSzmKpL9mrkE_EQrg3I-Y3mJIRObDfEVw3IzCJqKHhUHwBVkULOzaMSieN38-fJQgZkJs0td4p5uB1FoY-tZppkOvMncfZu7mVdUpRG3o5e7EGWeWLz9f34yXNd3fC5Mhf_HKMMjF9LLB8B9do9jH5-AMZ2R2tlQzS-T_EB60jHVPG6WPna8xWQurAVnj_bNM9zgrRYNDcHs76_ZYvz-yPd-QApMW3vDHvndaj-mZm1qzJINGIQ-gkJF3iZQdVZaPK1PTgZJkIS9Z_fGfURrxFWUlw_yVtvngVKX1gGc0WRauBxP1AMkAwtPOGDGSZbj2X79pfodqSXxYjVHxAnqW-7x3Wlc30tPYPwmwLSYhzq8Yj_aa_9G-CcllUH_OB37FXf_JG2Ospl_KNmBr7ZnvgxD-QDeYnTzW7FX0SUt1095MhVnx7YJ8_HnABKcnvlOugpZJzG8Ie-81-R5CPlzcwEC6XNYRF3TDDQkGKVb5tI411MnHf3FVn6r2T6Vs-FGuWziWgaSVH4HPc1tYffB2tnYzxP1SCnehVcl3kkxDHAxCP1CyRHfv8Cy-S2bamXKXAenGmZEiUT-6ML4cOpCgexXob4k36NDks3unCGYg8LSDWstQ7T615---VjAdwDtaOxpDmgjX7AMvN7F4UF02Eh-kyEsJ_0UrtpfII_KUnrMKcAY3t4OcDrJ_6m6XSoGGPRT-lMr4=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16eb2658087d1a5e66fbf1a7eca00",
+						"index": 1
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package api serves remind's HTTP API.\npackage api\n\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n\t\"io\"\n\t\"log/slog\"\n\t\"net/http\"\n\t\"strconv\"\n\t\"time\"\n\n\t\"example.com/remind/audit\"\n\t\"example.com/remind/auth\"\n\t\"example.com/remind/notify\"\n\t\"example.com/remind/quota\"\n\t\"example.com/remind/search\"\n\t\"example.com/remind/share\"\n\t\"example.com/remind/store\"\n)\n\n// API holds what the handlers need.\ntype API struct {\n\tStore    *store.Store\n\tNotify   *notify.Dispatcher\n\tLists    *share.Lists\n\tSearch   *search.Index\n\tAudit    *audit.Log\n\tLimiter  *quota.Limiter // per-user rate limits; nil turns them off\n\tMetrics  http.Handler   // served at /metrics if not nil\n\tLog      *slog.Logger\n\tNow      func() time.Time\n\tSnapshot func() (io.WriteCloser, error) // where admin snapshots go\n}\n\n// planOf returns the user's plan, defaulting to the free plan.\nfunc planOf(u *store.User) quota.Plan {\n\tp, err := quota.PlanByName(u.Plan)\n\tif err != nil {\n\t\treturn quota.Free\n\t}\n\treturn p\n}\n\n// limit applies the per-user rate limit, if there is one.\nfunc (a *API) limit(h http.Handler) http.Handler {\n\tif a.Limiter == nil {\n\t\treturn h\n\t}\n\treturn quota.Middleware(a.Limiter, func(r *http.Request) (string, quota.Plan) {\n\t\tu := auth.UserFrom(r.Context())\n\t\treturn u.ID, planOf(u)\n\t}, h)\n}\n\n// Routes returns the API's handler.\nfunc (a *API) Routes() http.Handler {\n\tmux := http.NewServeMux()\n\tuser := func(h http.HandlerFunc) http.Handler { return auth.Require(a.Store, a.limit(h)) }\n\tadmin := func(h http.HandlerFunc) http.Handler { return auth.RequireAdmin(a.Store, h) }\n\n\tmux.Handle(\"POST /v1/reminders\", user(a.createReminder))\n\tmux.Handle(\"GET /v1/reminders\", user(a.listReminders))\n\tmux.Handle(\"GET /v1/reminders/{id}\", user(a.getReminder))\n\tmux.Handle(\"DELETE /v1/reminders/{id}\", user(a.deleteReminder))\n\tmux.Handle(\"POST /v1/reminders/{id}/done\", user(a.markDone))\n\tmux.Handle(\"POST /v1/reminders/{id}/snooze\", user(a.snooze))\n\tmux.Handle(\"POST /v1/reminders/{id}/test\", user(a.testNotify))\n\n\tmux.Handle(\"GET /v1/me\", user(a.me))\n\tmux.Handle(\"DELETE /v1/me\", user(a.closeAccount))\n\tmux.Handle(\"PUT /v1/me/prefs\", user(a.updatePrefs))\n\tmux.Handle(\"GET /v1/me/digest\", user(a.digest))\n\tmux.Handle(\"GET /v1/me/calendar.ics\", user(a.calendarFeed))\n\tmux.Handle(\"GET /v1/search\", user(a.search))\n\n\tmux.Handle(\"POST /v1/lists\", user(a.createList))\n\tmux.Handle(\"GET /v1/lists\", user(a.listLists))\n\tmux.Handle(\"GET /v1/lists/{id}\", user(a.getList))\n\tmux.Handle(\"DELETE /v1/lists/{id}\", user(a.deleteList))\n\tmux.Handle(\"POST /v1/lists/{id}/members\", user(a.addMember))\n\tmux.Handle(\"DELETE /v1/lists/{id}/members/{user}\", user(a.removeMember))\n\tmux.Handle(\"POST /v1/lists/{id}/reminders\", user(a.addListReminder))\n\tmux.Handle(\"DELETE /v1/lists/{id}/reminders/{reminder}\", user(a.removeListReminder))\n\n\t// Read-only views of the caller's own data.\n\tmux.HandleFunc(\"GET /v1/me/export\", a.export)\n\tmux.HandleFunc(\"GET /v1/me/stats\", a.stats)\n\n\tmux.Handle(\"POST /v1/admin/users/import\", admin(a.importUsers))\n\tmux.Handle(\"DELETE /v1/admin/users/{id}\", admin(a.deleteUser))\n\tmux.Handle(\"POST /v1/admin/dispatcher/stop\", admin(a.stopDispatcher))\n\tmux.Handle(\"POST /v1/admin/snapshot\", admin(a.snapshot))\n\tmux.Handle(\"GET /v1/admin/dispatcher/status\", admin(a.dispatcherStatus))\n\tmux.Handle(\"GET /v1/admin/audit\", admin(a.auditLog))\n\n\tif a.Metrics != nil {\n\t\tmux.Handle(\"GET /metrics\", a.Metrics)\n\t}\n\n\tmux.HandleFunc(\"GET /healthz\", func(w http.ResponseWriter, _ *http.Request) {\n\t\ta.writeJSON(w, http.StatusOK, map[string]string{\"status\": \"ok\"})\n\t})\n\treturn mux\n}\n\n// decode reads a JSON request body into v, answering 400 on failure.\nfunc (a *API) decode(w http.ResponseWriter, r *http.Request, v any) bool {\n\tif err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<20)).Decode(v); err != nil {\n\t\ta.fail(w, http.StatusBadRequest, \"bad JSON: \"+err.Error())\n\t\treturn false\n\t}\n\treturn true\n}\n\nfunc (a *API) writeJSON(w http.ResponseWriter, status int, v any) {\n\tb, err := json.Marshal(v)\n\tif err != nil {\n\t\ta.Log.Error(\"encode response\", \"err\", err)\n\t\thttp.Error(w, \"internal error\", http.StatusInternalServerError)\n\t\treturn\n\t}\n\tw.Header().Set(\"Content-Type\", \"application/json\")\n\tw.WriteHeader(status)\n\tif _, err := w.Write(append(b, '\\n')); err != nil {\n\t\ta.Log.Debug(\"write response\", \"err\", err)\n\t}\n}\n\nfunc (a *API) fail(w http.ResponseWriter, status int, msg string) {\n\ta.writeJSON(w, status, map[string]string{\"error\": msg})\n}\n\n// writeError answers with the status that matches a store error.\nfunc (a *API) writeError(w http.ResponseWriter, err error) {\n\tswitch {\n\tcase errors.Is(err, store.ErrNotFound):\n\t\ta.fail(w, http.StatusNotFound, \"not found\")\n\tcase errors.Is(err, store.ErrConflict):\n\t\ta.fail(w, http.StatusConflict, \"conflict\")\n\tdefault:\n\t\ta.Log.Error(\"request failed\", \"err\", err)\n\t\ta.fail(w, http.StatusInternalServerError, \"internal error\")\n\t}\n}\n\n// page reads offset and limit from the query.\nfunc (a *API) page(w http.ResponseWriter, r *http.Request) (offset, limit int, ok bool) {\n\toffset, limit = 0, 50\n\tq := r.URL.Query()\n\tvar err error\n\tif s := q.Get(\"offset\"); s != \"\" {\n\t\tif offset, err = strconv.Atoi(s); err != nil || offset < 0 {\n\t\t\ta.fail(w, http.StatusBadRequest, \"offset must be a whole number\")\n\t\t\treturn 0, 0, false\n\t\t}\n\t}\n\tif s := q.Get(\"limit\"); s != \"\" {\n\t\tif limit, err = strconv.Atoi(s); err != nil || limit < 1 || limit > 100 {\n\t\t\ta.fail(w, http.StatusBadRequest, \"limit must be between 1 and 100\")\n\t\t\treturn 0, 0, false\n\t\t}\n\t}\n\treturn offset, limit, true\n}\n",
+				"tool_call_id": "call_q2aPusCmyf9xBAjReTSdW3Zd"
+			},
+			{
+				"role": "tool",
+				"content": "package api_test\n\nimport (\n\t\"encoding/json\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"strings\"\n\t\"testing\"\n\t\"time\"\n\n\t\"example.com/remind/server\"\n\t\"example.com/remind/store\"\n)\n\nvar t0 = time.Date(2026, 9, 7, 8, 0, 0, 0, time.UTC) // a Monday\n\ntype client struct {\n\tt   *testing.T\n\tsrv *server.Server\n}\n\nfunc newClient(t *testing.T) *client {\n\tt.Helper()\n\tsrv, err := server.New(server.Config{\n\t\tNow: func() time.Time { return t0 },\n\t\tUsers: []store.User{\n\t\t\t{ID: \"ana\", Name: \"Ana\", Email: \"ana@example.com\", Token: \"tok-ana\"},\n\t\t\t{ID: \"bo\", Name: \"Bo\", Email: \"bo@example.com\", Token: \"tok-bo\"},\n\t\t\t{ID: \"root\", Name: \"Root\", Token: \"tok-root\", Admin: true},\n\t\t},\n\t})\n\tif err != nil {\n\t\tt.Fatal(err)\n\t}\n\treturn &client{t: t, srv: srv}\n}\n\n// do sends a request as the user with the given token and decodes a JSON\n// reply into out, if out is not nil.\nfunc (c *client) do(token, method, path, body string, out any) int {\n\tc.t.Helper()\n\tvar r io.Reader\n\tif body != \"\" {\n\t\tr = strings.NewReader(body)\n\t}\n\treq := httptest.NewRequestWithContext(c.t.Context(), method, path, r)\n\tif token != \"\" {\n\t\treq.Header.Set(\"Authorization\", \"Bearer \"+token)\n\t}\n\trec := httptest.NewRecorder()\n\tc.srv.Handler.ServeHTTP(rec, req)\n\tif out != nil && rec.Code < 300 {\n\t\tif err := json.Unmarshal(rec.Body.Bytes(), out); err != nil {\n\t\t\tc.t.Fatalf(\"%s %s: decode %q: %v\", method, path, rec.Body.String(), err)\n\t\t}\n\t}\n\treturn rec.Code\n}\n\nfunc (c *client) create(token, body string) string {\n\tc.t.Helper()\n\tvar out struct{ ID string }\n\tif code := c.do(token, http.MethodPost, \"/v1/reminders\", body, &out); code != http.StatusCreated {\n\t\tc.t.Fatalf(\"create %s: status %d\", body, code)\n\t}\n\treturn out.ID\n}\n\nfunc TestCreateAndList(t *testing.T) {\n\tc := newClient(t)\n\tc.create(\"tok-ana\", `{\"text\":\"call the dentist\",\"in\":\"1h30m\"}`)\n\tc.create(\"tok-ana\", `{\"text\":\"stand-up\",\"every\":\"on mon,wed at 09:30\"}`)\n\tc.create(\"tok-ana\", `{\"text\":\"stretch\",\"every\":\"every 2h\"}`)\n\tc.create(\"tok-bo\", `{\"text\":\"not Ana's\",\"at\":\"2026-09-08T10:00:00Z\"}`)\n\n\tvar got struct {\n\t\tReminders []struct {\n\t\t\tID, Text, Preview string\n\t\t\tDue               time.Time\n\t\t\tSchedule          struct{ Spec, Zone string }\n\t\t}\n\t}\n\tif code := c.do(\"tok-ana\", http.MethodGet, \"/v1/reminders\", \"\", &got); code != http.StatusOK {\n\t\tt.Fatalf(\"list: status %d\", code)\n\t}\n\tif len(got.Reminders) != 3 {\n\t\tt.Fatalf(\"list = %+v, want 3 reminders\", got.Reminders)\n\t}\n\tif want := t0.Add(90 * time.Minute); !got.Reminders[0].Due.Equal(want) {\n\t\tt.Errorf(\"due = %v, want %v\", got.Reminders[0].Due, want)\n\t}\n\tif s := got.Reminders[1].Schedule; s.Spec != \"on mon,wed at 09:30\" || s.Zone != \"UTC\" {\n\t\tt.Errorf(\"schedule = %+v\", s)\n\t}\n\tif code := c.do(\"tok-ana\", http.MethodGet, \"/v1/reminders?limit=1&offset=2\", \"\", &got); code != http.StatusOK || len(got.Reminders) != 1 {\n\t\tt.Errorf(\"page: status %d, %d reminders\", code, len(got.Reminders))\n\t}\n}\n\nfunc TestCreateErrors(t *testing.T) {\n\tc := newClient(t)\n\tfor _, body := range []string{\n\t\t`{\"text\":\"\",\"in\":\"1h\"}`,\n\t\t`{\"text\":\"x\"}`,\n\t\t`{\"text\":\"x\",\"in\":\"1h30\"}`,\n\t\t`{\"text\":\"x\",\"every\":\"daily\"}`,\n\t\t`{\"text\":\"x\",\"at\":\"tomorrow\"}`,\n\t\t`not json`,\n\t} {\n\t\tif code := c.do(\"tok-ana\", http.MethodPost, \"/v1/reminders\", body, nil); code != http.StatusBadRequest {\n\t\t\tt.Errorf(\"create %s: status %d, want 400\", body, code)\n\t\t}\n\t}\n\tif code := c.do(\"\", http.MethodPost, \"/v1/reminders\", `{\"text\":\"x\",\"in\":\"1h\"}`, nil); code != http.StatusUnauthorized {\n\t\tt.Errorf(\"no token: status %d, want 401\", code)\n\t}\n}\n\nfunc TestOwnership(t *testing.T) {\n\tc := newClient(t)\n\tid := c.create(\"tok-ana\", `{\"text\":\"mine\",\"in\":\"1h\"}`)\n\tfor _, tt := range []struct{ method, path string }{\n\t\t{http.MethodGet, \"/v1/reminders/\" + id},\n\t\t{http.MethodPost, \"/v1/reminders/\" + id + \"/done\"},\n\t\t{http.MethodDelete, \"/v1/reminders/\" + id},\n\t} {\n\t\tif code := c.do(\"tok-bo\", tt.method, tt.path, \"\", nil); code != http.StatusNotFound {\n\t\t\tt.Errorf(\"Bo %s %s: status %d, want 404\", tt.method, tt.path, code)\n\t\t}\n\t}\n\tif code := c.do(\"tok-ana\", http.MethodGet, \"/v1/reminders/rem_9999\", \"\", nil); code != http.StatusNotFound {\n\t\tt.Errorf(\"missing reminder: status %d, want 404\", code)\n\t}\n}\n\nfunc TestDoneSnoozeDelete(t *testing.T) {\n\tc := newClient(t)\n\tid := c.create(\"tok-ana\", `{\"text\":\"water plants\",\"in\":\"1h\"}`)\n\tif code := c.do(\"tok-ana\", http.MethodPost, \"/v1/reminders/\"+id+\"/snooze\", `{\"for\":\"2h\"}`, nil); code != http.StatusNoContent {\n\t\tt.Fatalf(\"snooze: status %d\", code)\n\t}\n\tvar got struct {\n\t\tDue  time.Time\n\t\tDone bool\n\t}\n\tc.do(\"tok-ana\", http.MethodGet, \"/v1/reminders/\"+id, \"\", &got)\n\tif want := t0.Add(2 * time.Hour); !got.Due.Equal(want) {\n\t\tt.Errorf(\"due after snooze = %v, want %v\", got.Due, want)\n\t}\n\tif code := c.do(\"tok-ana\", http.MethodPost, \"/v1/reminders/\"+id+\"/done\", \"\", nil); code != http.StatusNoContent {\n\t\tt.Fatalf(\"done: status %d\", code)\n\t}\n\tc.do(\"tok-ana\", http.MethodGet, \"/v1/reminders/\"+id, \"\", &got)\n\tif !got.Done {\n\t\tt.Error(\"not done after done\")\n\t}\n\tif code := c.do(\"tok-ana\", http.MethodDelete, \"/v1/reminders/\"+id, \"\", nil); code != http.StatusNoContent {\n\t\tt.Fatalf(\"delete: status %d\", code)\n\t}\n}\n\nfunc TestPrefsAndTestNotify(t *testing.T) {\n\tc := newClient(t)\n\tvar prefs struct{ TZ, Channel string }\n\tif code := c.do(\"tok-ana\", http.MethodPut, \"/v1/me/prefs\", `{\"tz\":\"Europe/Lisbon\"}`, &prefs); code != http.StatusOK {\n\t\tt.Fatalf(\"prefs: status %d\", code)\n\t}\n\tif prefs.TZ != \"Europe/Lisbon\" || prefs.Channel != \"email\" {\n\t\tt.Errorf(\"prefs = %+v\", prefs)\n\t}\n\tfor _, body := range []string{`{\"channel\":\"pigeon\"}`, `{\"webhook\":\"http://example.com/hook\"}`} {\n\t\tif code := c.do(\"tok-ana\", http.MethodPut, \"/v1/me/prefs\", body, nil); code != http.StatusBadRequest {\n\t\t\tt.Errorf(\"prefs %s: status %d, want 400\", body, code)\n\t\t}\n\t}\n\tid := c.create(\"tok-ana\", `{\"text\":\"test me\",\"in\":\"1h\"}`)\n\tif code := c.do(\"tok-ana\", http.MethodPost, \"/v1/reminders/\"+id+\"/test\", \"\", nil); code != http.StatusNoContent {\n\t\tt.Errorf(\"test notify: status %d\", code)\n\t}\n}\n\nfunc TestDigest(t *testing.T) {\n\tc := newClient(t)\n\tc.create(\"tok-ana\", `{\"text\":\"stand-up\",\"every\":\"on mon,wed at 09:30\"}`)\n\tc.create(\"tok-ana\", `{\"text\":\"dentist\",\"in\":\"30h\"}`)\n\tvar got struct {\n\t\tDays []struct {\n\t\t\tDate  string\n\t\t\tItems []struct{ Text string }\n\t\t}\n\t}\n\tif code := c.do(\"tok-ana\", http.MethodGet, \"/v1/me/digest?days=3\", \"\", &got); code != http.StatusOK {\n\t\tt.Fatalf(\"digest: status %d\", code)\n\t}\n\tvar texts []string\n\tfor _, d := range got.Days {\n\t\tfor _, it := range d.Items {\n\t\t\ttexts = append(texts, d.Date+\" \"+it.Text)\n\t\t}\n\t}\n\twant := \"2026-09-07 stand-up|2026-09-08 dentist|2026-09-09 stand-up\"\n\tif strings.Join(texts, \"|\") != want {\n\t\tt.Errorf(\"digest = %q, want %q\", texts, want)\n\t}\n}\n\nfunc TestAdmin(t *testing.T) {\n\tc := newClient(t)\n\tvar res struct{ Added int }\n\tbody := `[{\"id\":\"cy\",\"name\":\"Cy\",\"email\":\"cy@example.com\",\"token\":\"tok-cy\"},{\"id\":\"ana\"}]`\n\tif code := c.do(\"tok-root\", http.MethodPost, \"/v1/admin/users/import\", body, &res); code != http.StatusOK || res.Added != 1 {\n\t\tt.Errorf(\"import: status %d, added %d\", code, res.Added)\n\t}\n\tif code := c.do(\"tok-cy\", http.MethodPost, \"/v1/reminders\", `{\"text\":\"hi\",\"in\":\"1h\"}`, nil); code != http.StatusCreated {\n\t\tt.Errorf(\"imported user create: status %d\", code)\n\t}\n\tif code := c.do(\"tok-ana\", http.MethodPost, \"/v1/admin/users/import\", \"[]\", nil); code != http.StatusForbidden {\n\t\tt.Errorf(\"non-admin import: status %d, want 403\", code)\n\t}\n}\n\nfunc TestHealth(t *testing.T) {\n\tc := newClient(t)\n\tif code := c.do(\"\", http.MethodGet, \"/healthz\", \"\", nil); code != http.StatusOK {\n\t\tt.Errorf(\"healthz: status %d\", code)\n\t}\n}\n",
+				"tool_call_id": "call_7d5WEec5xoUWsZTOeWchd2IY"
+			},
+			{
+				"role": "tool",
+				"content": "package store\n\nimport (\n\t\"bytes\"\n\t\"errors\"\n\t\"strings\"\n\t\"testing\"\n\t\"time\"\n\n\t\"example.com/remind/schedule\"\n)\n\nvar t0 = time.Date(2026, 9, 7, 8, 0, 0, 0, time.UTC)\n\nfunc newStore() *Store {\n\treturn New(func() time.Time { return t0 })\n}\n\nfunc TestCreateGet(t *testing.T) {\n\ts := newStore()\n\tr := s.Create(\"u1\", \"water the plants\", t0.Add(time.Hour), nil)\n\tgot, err := s.Get(r.ID)\n\tif err != nil {\n\t\tt.Fatal(err)\n\t}\n\tif got.Text != \"water the plants\" || !got.Due.Equal(t0.Add(time.Hour)) {\n\t\tt.Errorf(\"Get = %+v\", got)\n\t}\n\tif _, err := s.Get(\"rem_9999\"); !errors.Is(err, ErrNotFound) {\n\t\tt.Errorf(\"Get(missing) error = %v, want ErrNotFound\", err)\n\t}\n}\n\nfunc TestCreateRecurring(t *testing.T) {\n\ts := newStore()\n\trule, err := schedule.Parse(\"every 2h\", nil, t0)\n\tif err != nil {\n\t\tt.Fatal(err)\n\t}\n\tr := s.Create(\"u1\", \"stretch\", time.Time{}, rule)\n\tif want := t0.Add(2 * time.Hour); !r.Due.Equal(want) {\n\t\tt.Errorf(\"Due = %v, want %v\", r.Due, want)\n\t}\n\ts.MarkSent(r.ID)\n\tif want := t0.Add(4 * time.Hour); !r.Due.Equal(want) {\n\t\tt.Errorf(\"after MarkSent, Due = %v, want %v\", r.Due, want)\n\t}\n}\n\nfunc TestList(t *testing.T) {\n\ts := newStore()\n\tfor _, text := range []string{\"a\", \"b\", \"c\"} {\n\t\ts.Create(\"u1\", text, t0, nil)\n\t}\n\tif got := s.List(\"u1\", 0, 2); len(got) != 2 || got[0].Text != \"a\" {\n\t\tt.Errorf(\"List(0, 2) = %v\", got)\n\t}\n\tif got := s.List(\"u1\", 2, 50); len(got) != 1 || got[0].Text != \"c\" {\n\t\tt.Errorf(\"List(2, 50) = %v\", got)\n\t}\n}\n\nfunc TestDelete(t *testing.T) {\n\ts := newStore()\n\tr := s.Create(\"u1\", \"a\", t0, nil)\n\tif err := s.Delete(r.ID); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tif got := s.List(\"u1\", 0, 50); len(got) != 0 {\n\t\tt.Errorf(\"List after Delete = %v\", got)\n\t}\n\tif err := s.Delete(r.ID); !errors.Is(err, ErrNotFound) {\n\t\tt.Errorf(\"second Delete error = %v, want ErrNotFound\", err)\n\t}\n\tif err := s.Update(r.ID, func(*Reminder) error { return nil }); !errors.Is(err, ErrNotFound) {\n\t\tt.Errorf(\"Update after Delete error = %v, want ErrNotFound\", err)\n\t}\n}\n\nfunc TestDue(t *testing.T) {\n\ts := newStore()\n\tearly := s.Create(\"u1\", \"early\", t0.Add(-time.Hour), nil)\n\ts.Create(\"u1\", \"later\", t0.Add(time.Hour), nil)\n\tgot := s.Due(t0)\n\tif len(got) != 1 || got[0] != early {\n\t\tt.Errorf(\"Due = %v, want [early]\", got)\n\t}\n\ts.MarkSent(early.ID)\n\tif got := s.Due(t0); len(got) != 0 {\n\t\tt.Errorf(\"Due after MarkSent = %v, want none\", got)\n\t}\n}\n\nfunc TestUpcoming(t *testing.T) {\n\ts := newStore()\n\trule, err := schedule.Parse(\"every 1d\", nil, t0)\n\tif err != nil {\n\t\tt.Fatal(err)\n\t}\n\ts.Create(\"u1\", \"daily\", time.Time{}, rule)\n\ts.Create(\"u1\", \"once\", t0.Add(30*time.Hour), nil)\n\tgot := s.Upcoming(\"u1\", t0, t0.Add(3*24*time.Hour))\n\tvar texts []string\n\tfor _, o := range got {\n\t\ttexts = append(texts, o.Text)\n\t}\n\tif want := \"daily once daily\"; strings.Join(texts, \" \") != want {\n\t\tt.Errorf(\"Upcoming = %v, want %s\", texts, want)\n\t}\n}\n\nfunc TestOnChange(t *testing.T) {\n\ts := newStore()\n\tvar seen []string\n\ts.OnChange(func(r *Reminder) { seen = append(seen, r.ID) })\n\tr := s.Create(\"u1\", \"a\", t0, nil)\n\tif err := s.Update(r.ID, func(r *Reminder) error { r.Done = true; return nil }); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tif len(seen) != 2 {\n\t\tt.Errorf(\"OnChange calls = %v, want 2\", seen)\n\t}\n}\n\nfunc TestUsers(t *testing.T) {\n\ts := newStore()\n\tif err := s.AddUser(User{ID: \"u1\", Name: \"Ana\", Token: \"tok1\"}); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tu, err := s.UserByToken(\"tok1\")\n\tif err != nil {\n\t\tt.Fatal(err)\n\t}\n\tif u.Prefs == nil || u.Prefs.Channel != \"email\" {\n\t\tt.Errorf(\"new user prefs = %+v, want the defaults\", u.Prefs)\n\t}\n\tif err := s.AddUser(User{ID: \"u1\"}); !errors.Is(err, ErrConflict) {\n\t\tt.Errorf(\"duplicate AddUser error = %v, want ErrConflict\", err)\n\t}\n\tn := s.ImportUsers([]User{{ID: \"u1\"}, {ID: \"u2\", Name: \"Bo\", Token: \"tok2\", Prefs: &Prefs{Channel: \"email\"}}})\n\tif n != 1 {\n\t\tt.Errorf(\"ImportUsers added %d, want 1\", n)\n\t}\n\tif err := s.DeleteUser(\"u2\"); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tif _, err := s.UserByToken(\"tok2\"); !errors.Is(err, ErrNotFound) {\n\t\tt.Errorf(\"token after DeleteUser error = %v, want ErrNotFound\", err)\n\t}\n}\n\nfunc TestSnapshot(t *testing.T) {\n\ts := newStore()\n\tif err := s.AddUser(User{ID: \"u1\", Name: \"Ana\", Token: \"secret\"}); err != nil {\n\t\tt.Fatal(err)\n\t}\n\ts.Create(\"u1\", \"a\", t0, nil)\n\tvar buf bytes.Buffer\n\tif err := s.Snapshot(&buf); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tif strings.Contains(buf.String(), \"secret\") {\n\t\tt.Error(\"snapshot contains a token\")\n\t}\n\tif !strings.Contains(buf.String(), \"rem_0001\") {\n\t\tt.Errorf(\"snapshot = %s, want the reminder\", buf.String())\n\t}\n}\n",
+				"tool_call_id": "call_F1whwuPAhyDXkQCJE5rNngcc"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t\t{\"1w2d\", 9 * Day},\n\t\t{\"0m\", 0},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"1h30\", \"h\", \"10y\", \"1h-30m\", \"1.5h\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n\nfunc TestFormat(t *testing.T) {\n\ttests := []struct {\n\t\tin   time.Duration\n\t\twant string\n\t}{\n\t\t{90 * time.Minute, \"1h30m\"},\n\t\t{9 * Day, \"1w2d\"},\n\t\t{500 * time.Millisecond, \"0s\"},\n\t}\n\tfor _, tt := range tests {\n\t\tif got := Format(tt.in); got != tt.want {\n\t\t\tt.Errorf(\"Format(%v) = %q, want %q\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "call_ihc5boJBUCxZ0YQ0SgMWqHwa"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_0mg0FOhSGwuczPS1PjIxMNGo",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"duration/duration.go\",\"old\":\"func Parse(s string) (time.Duration, error) {\\n\\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\",\"new\":\"func Parse(s string) (time.Duration, error) {\\n\\tif s == \\\"\\\" {\\n\\t\\treturn 0, fmt.Errorf(\\\"duration %q: cannot be empty\\\", s)\\n\\t}\\n\\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W64BT0lcKe2R0-TNWYuXQlA351rhQaMQHmy_Tgfcduj9sibnZYHk2RJ4Qd8htAKMPUUpfLkYV4qiQBlRBaz48yM7YvQfMhGerfo2vpBuuSYU99EersbojiHSeQIMeSanbXLBJQv0myxUdJVn8MvpTyQWqzhNLevXqlghHOuAO5bVh-MjYt0xFzvgtT2UDt3aMEV3mD4m1vAyMfvLiEpzwiA34Hbx5XRW9Bcff2x0PbshGUPq1vpcQet-p_tev8znArEWEG17rVvDs2WkNH25kIbL5J9ryIbHZo0Y3K7RPQRWHzVeHwQ_ZXhXzCtyUWrlzt5HZ42r3InAWui7SyoFokQTsSaX1cUHQTmNFU7JZhb4zos113TvrUCMUY-OdAjBfJq7jMhxxheV247B2VUEpXZc99xj1cgowg95rcTgJtLFBA98wRVbLX_L1inEsP2hUh0Vy3jyPEPlCDEUptYty6LzFj-scKtKIls7tIbXhOfYTeEeuW75fNbncpUVhqA_ahIrhzwEXtRoWhQ2aF-LzhEHdTxxQlO9TlHntZNSP5C4QbWyVkwadfUOSfzeTeId5vHqzwt5xMUDpBXTduyivLIp6ZO9spGp5O0jfGO-2hGr5XOxQ9_Fb7r36Y0HyIGZqS3CYvEezC1jCo66rM3yrq0HBdcUm8tGDFztWmJNsadc-j81QQtEIKUcl--eMnFbNfPz2AFjxfnvQjq_gE7xSKR7kXB2x_mRE1ur4aN6MEGuCVYkCaoipLI4hhO8Y5Im8vjTlHMBP6BWRG1w35HGwsVIpRZw47EzNPzuKyYG_6IQITwNZPRgAal1LjzXo9DoWo20PVB-_NodIUOxyZNSweXhtHg6lVX2BdJ2NRpgouNSB7qDrFKHdAjOxCxydHQRpJBWL0bd3CucubTlXNkNExNH8i6WfcaEVTn52F6OdBYTyTDji84h3MUJIMmyjATJki4uPHKiG5c6Bre3cZRi6m34mpQvIHPFFLiNvkLvw_3HB9SmCI8d9rVUIt5ITyZlZWp3G4pBYMefKxuBmXUQL-_v4su951IFXChaSmoUb5I1XQSLnU_f1TC6oQNi7YL33ZRqh8yGSMvrRwchaIzbNfWTE2D5UpM1_DDD3-oNLUUKFqHX4wBgqyvowkKTzwl1jRyf3lvFGCGPtXRKKrpuQcJySuAnatNieP8wp-TE-GpojCSlcPHgMXMtFQdU5SmaeeuaV2JGvYy21ibsV5OLy3thKGzIoU_9mIJPRlIO8sCpFXi5orNFaKPcF_RN9zNr2aIFJGXqsiPtAjtuvFeob8fUEGEXGeNl5msiMJJmJaYyJIlLwqLuPlAyoFQOpBtuptsHHbPAWVXXZR3tVQmorIi_kcOdCtIJx2lrKwcs1zr76sI4FpSvUE-TqHCx7ov67CkNhJtSF__lf_E_wDwDYTkHg1J_PSusLwllKajn63-a1Au1IzaY3N1YGngcO5mr-6kQMlTrMTFhEYBPA_sU6iKNi4oQ6gYAeGmlB-KZGv3GAX5_PXDaT2eBxi5netOfWit-_7ZLHEfB-P_6OJHVyAUokrnSz0ve0QDzlOD3DRSrx62_iaVMOiSkSTDMb-Gg0UH3IB_V0rL4ldeE2FjiGNjdlREGUTk8c_NHIn4K74S4FH0SLqgWObrwaB0Vm1krkd08k8N5UcXf3rouqOGP83OmDZA-8Az30lXrpCCK7kq_DhKK2ZXBwpsMDiBH2oQfnX-cJFvHKSSCqSzSWrXD8PAysnAEQD7viHsi1c1oTWReAbTzVUS6I4L0Ge4SxmDqIevar2juMrZkPc-LTaosPdrvcFWOUQmx05Ln3tFfkJgw7_nJUyeKzAVUzeRjYUb7pxhf3kl-StavNLSbYkDtCMpZTvpCZYUBUnZHnssYTtC-iu8Asw8--Wy6QY9EZOfY3OKVczQXZOXTN5EisbxLbrolvZt0sxiZBBP75PtBOPeQaYy3hqYIKDAtwJwvCrwdh7Yfse8JXpqonPDumv-shhGQW6WhBaUI0zN-pCunn91NjJI85CaSaSvSh6_Q8Kz7X---uirJ6mVS71DhoInwOC42oS3p9JPzLgDwGrMLWGPtC6JvUbrE-LvVZx3G2peGFMpdBLzCPhkdpWT2lPMnCwKU8CIO2XAMohB4e3I05FQ6SHZpIpC9OCPQF0FAazEF0rJ1eQr-kCqtmfUaXBNwuqzLQPY8g_Xqq5Tcv5BeFCocPSAwE3V-noCMF5pIoni0xPzQlBBVbLdXm74HYoWFb8vGioj9_cV2FHu4dLq9rxroeRIVkHrixz3gLuw2gpz157MTu-kwIsXi7nCS-BiVUNrKepT5UqMqHvxJ5-ilm6O9gKBQ7a5kgIRbg7wSawZFXBvGysrWgx3sWMcMlfPPp_7OD5-XrHYm-pP1xEa63fq7DJa7hzZ56MfATdknxvGTQQyqbfkNauJgb5ZqFnOtIY2y4m9vRyzBMQbf_n1hVQd-TaYpId650H3FlzI6CQmiCcQo9xFgOaC0lQiarDnw_72A97dLWnOnNz4_S8_SZaSMeEDZf6-Vsdo3eyKjR_VgXxU0vyu7fSgn4_5_tO53TCLO6DY7eQ5POFQ4YtOlmidmcEsBxTyn-JQCkGC4eVBgJSGHPsULAfBV3GGKaQMIEgJrjculGLnFhrtx9QIKiB6vmC-GsOGEtx57XtIJ3PE5OWuRYEaZ0u78jG5Exo478UNqm3o6LwSZAjV10BFH6Mx1nw566IiJo2w3zvzXWwOHX0E4koyhF0xhi1SQsLCZccxv7Jmj1q7Q4sA0XqL74vgslyAWgIAS0oJNhBs4g-KVRFhQ4g41-loqPi3JhIrBB5f0P0LmthFxAkwyQRuIbLQw7nnXxLmxmVnX8m6j_J9_HajMfvoolfC0Cr6QLbYqk03diU32FH_pfzo7aUNVV640Z7Ig8unrFBLo5IbS6VPqBdBp4HtLuw2Ti6JTu48xhus4hyObS7Zb-y8e0yMqrUptmZ0R-bx4Q0mqzoyOJ53MBdGOUkg_9-AkzE1NLlMj7ZUD2y82roDoFypdXBCPtmaCCmitFMkFg8EYUFAHvPVqgKqeVwqdoHWgtBHNRZ8O7bMJjmryGmBfYNhjdj-GtyqEShmu7GVwQ6CIZpizCqxyN-Z4AZpUTFkAqKctXPYncSPdRshqipCoevNilujOO9SDK5CZGncYGiL10VPkHkj_V7vdP-FPffr3lDosCOnrzMxdhhcTolseXHUi5vQ22lccIIIxPR9cmrb2IUsKwB-jik9bj4KVwps4NgVozDXrcbQoL7TabENHrhMC_CN6ImhxC1vxtFcOvLdfqy_h3_yVzePq2JnL-dkWAvN-Pvk3VbtH2fH2pKQkfXpSSuRZC0B_R-H0u_ZScTmy0Kst-bAMRIFjcf5Jl7JIwb3PB3aLW3qSAv5HRfVuPaZAu3AGacMEGloyLRBnyfdn9RkDgXqZ8rfqP4PijmVEPgVqn-16prbrRKKInrLpkQvMbk0ixTkGXIOLM21qipoeOueORn9hu4fZQUoOYl-GhD-oioorJ9tC7Qer-J1iSNesigb4CayB18qfNOdfJFxqOiAuj3EcmxuD3m1zZ4mtfjFMG6LfiLAocfc2WBFeO35V51aFVya2FM_MHCreHjeedCujAN7hN9Wh9ESP3nge6LrZxbiFuSdJpR5JjCxm7HlyY5hpAlECzNwn8xWpDQrPvP6xtnEx7LId1zjsHHargBx-NeHJWEPg4-MNWwyikO77eE6pVAEnceZ3mcWYXEM5LZCZdCYB_MwoTfzRSqSP8CgaSE9nQQ5ImgRyXYhUs3X3TIfjxvLRklSeVVrV94bZZPRWdQDoapdNVMfjyXfGsGzhD6wkPLQNA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16eb697e087d1a145cd1f2a68c161",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited duration/duration.go",
+				"tool_call_id": "call_0mg0FOhSGwuczPS1PjIxMNGo"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_TACeizm1nydbNklNkXxV9hXC",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"store/store.go\",\"old\":\"\\tend := min(offset+limit, len(out))\\n\\treturn out[offset:end]\",\"new\":\"\\t// An offset beyond the available results is an empty page, not an\\n\\t// invalid slice.  Clients commonly request the next page after the\\n\\t// collection has shrunk (for example after a delete).\\n\\tif offset >= len(out) {\\n\\t\\treturn nil\\n\\t}\\n\\tend := min(offset+limit, len(out))\\n\\treturn out[offset:end]\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited store/store.go",
+				"tool_call_id": "call_TACeizm1nydbNklNkXxV9hXC"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_hUOLk63WrDSJPhI7i5BwVPci",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"store/users.go\",\"old\":\"\\tfor _, u := range users {\\n\\t\\tif _, ok := s.users[u.ID]; ok {\\n\\t\\t\\tcontinue\\n\\t\\t}\\n\\t\\ts.users[u.ID] = &u\\n\\t\\tif u.Token != \\\"\\\" {\",\"new\":\"\\tfor _, u := range users {\\n\\t\\tif _, ok := s.users[u.ID]; ok {\\n\\t\\t\\tcontinue\\n\\t\\t}\\n\\t\\tif u.Prefs == nil {\\n\\t\\t\\tu.Prefs = DefaultPrefs()\\n\\t\\t}\\n\\t\\ts.users[u.ID] = &u\\n\\t\\tif u.Token != \\\"\\\" {\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited store/users.go",
+				"tool_call_id": "call_hUOLk63WrDSJPhI7i5BwVPci"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_TZaRhrs2MkADGhlCMXo81Clu",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"api/api.go\",\"old\":\"\\t// Read-only views of the caller's own data.\\n\\tmux.HandleFunc(\\\"GET /v1/me/export\\\", a.export)\\n\\tmux.HandleFunc(\\\"GET /v1/me/stats\\\", a.stats)\",\"new\":\"\\t// Read-only views of the caller's own data still require authentication.\\n\\tmux.Handle(\\\"GET /v1/me/export\\\", user(a.export))\\n\\tmux.Handle(\\\"GET /v1/me/stats\\\", user(a.stats))\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited api/api.go",
+				"tool_call_id": "call_TZaRhrs2MkADGhlCMXo81Clu"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_WeQTiFSUjG3IMdY1dPcoEDtj",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7B9yp2uRzHWM0NRw2jwp0rMMhLnNcPFtyR-2HbObDnEI24NUm2cIa5meU8sVs7mp7hKRxqYInxfkW5D5J38M9n1V0c0Rp8F4Zet4IA1T8YqUNupoBv0r70l9sv2GTh4vwNaYRzZklCyINbee-B83sK710n0fItR5T6D9I1JxlYezGCVpnOVEDrB5_LpBxEGxEmIVDuB-XahqnNQoz0H0ePg3azmyk5C2JHtYMNJmwmcpso7fDM8ttQXpXou4U71HJN97-VHwgI1eZewWjwN3VORdxbRGXCy9ODCteMURqQO5aRz-uSSO4aqYRd8eWqbWLTBTFJHlas855nnDJLR5GxdO-W48xKd4t2u4U3qVNdkiy62A1xD5iCxwAYqIS0MlNAmhoyDPf4el6SFAZWY-mYGbHQjV5lvvLkmlXjlTcxVHp-JbXpZSAILVjvpDHh2LyZjsBmuxH_me0oNwgpYnCXhGcUWbqrvfCNel0RvIkbAiD1fNtJLC2ZfILtLKLFZPFoCsHQlckCoHbGnzoqftYILVodczV5JC13qAS7Njj_gdUwNiRKAus961DUJ5-u_ch3JwO5CNhPJI4gwCu9ksie55jSyWf528UBDYJAtxrCIjPZ9d5k8HmivXF_LxnOYTvhGpvMboY12jrp9iaNz-DGSm70wFr9r-JiZZ_CntgKGyVgd5c_LILRKe4_TRvxmVpJE9mDFIFZvZjAJhPpfBsM60hAS-HNd4AcqjBvfIvJZKlKGRGVUecKlzRaryys3PXg2pZbTpIqXlJrCxNLcj7i2K1I7DLkhpS4RQ9AEUvKWmgLgJu2ECizs-HxUY3XjVDTl3QE0_LiQX5kkwPChO5wbCJWFT8x7m2D6csfUjNuA5cT56Nj1crnjx-3kD7MGeSuNAbCGjMMKkkKTa8NFyoyyJkMsKKpt2pGEYpWRa8smnMQNx8QAQFyOcu6pDu5PXv6BrWHjhPXrdFzAY4dyOl5SFacOPkCD5AVBVpxrfIPkY_qkhXbb6XIISoEpd6I_1YKcJYg5eD819_CxE0UkvRjjVzW-ytGJzXrlm_33VpG2lrGYaVYM6us5hRK7xTfzc6F163QdgvEkCPSfPj1igoQUf0Rn_yRD2Fg974WrXDGJVQPPwiguke6-10u11YRQVQME4sqASks2FO1THO3dNKKCA6fB38sQhO33mqiQOGKIxi4LEt5TCL_mHxszuuhHsHjfldMvEoRimRxf_MMnp5qUGA9z6adN0UHrUJRzj3r-H8OToH21hYV142Q3gX04m1gGFOJiQg7sp9Y2DlCtuRkGP2eZFtPx-8CBEXbQ36MwK73dvWd75V6D5V0HYp6-u1BDshtlSqRIMm4yCQ61GIOBNcDXxaCBvzkyEk3qGkv6idmq-j9Q7e25yKng_S_3FmZMIWaQhuHICWJyhbRoqasaDIiu8rtnryeUn16SxpBEp0mdfnIJcJDMQIFMU-iNYEf8-fdvpRt3solm5mQgmuIaKBOc4bla5dV-60GGNSOukgzawrhbAE8cAZvBTlPtGDJ66wOcxqHaKi2zQMG2FWj8jkE0kplI3rWKaLS4qr5pz3rs20xQAyh1T2LJYOgLXTC1U9g4910gwI8NO60wa-qTdUH-qf1pKFZI052mMXXOSjPe9JNhjy9P4hwvRkjhGwwHh7wxLnC-hcsCj_Wcq7g441QJ3AbKIYcR1L0yMNfrUU_IbeV8WOC2GgziCiCuDGLgcH_2R2BmOyCfnDDULWOyg0569pWR7ipjC_pz6tz3nTAu-rnL7bK34_FHWjkLH8qZwc3H9O2fvwIFKgrkkA2smMdQgqODcenwawbm3-dJU4yQ1MMATMC0GN2mC1rNPTmL0IdRfteShE2oD5URtKLSSeAOoPYzDE9duKSDxRKpDdb1stDFZoDWsc0yrN926NIXPc72Bbgrky73BOqgXYH7WCSUyqbJNiVrChyAaQqAZCIX8h2K8nF0opKOanhSi_zqpQT44pKEbB5f9-VmQHofIFdvkCA5Eh_AU_nomPfuipMQH-jyicVaIbptX18jOlwz8Q907ta0dd1aKGz8lOqjxcYhpLJnBl5MGq3IFFqxZXpvQBhY355rCu6AOmH4syE7MD4JwMlFPmfN_l9-_dmf0k9uWY6UYC88g9jxWGsA5ZJYanozqe5IzsPQcRijWjmQzI8oZXSBiUU9OT1X3IfQKHzdVnLqcx7ZGRDbwr7Xm97fPjVuNaJ9VUvBBFRZYYCakrBu9WZcETEG5tQZsiCesa213ZMcaDo9MCh08aZC7ucNGOJMaPBuYuylye_OmbIu1cnA3Sf7cFWyLyFtYIqKlP-5Sx2F2FHsMYjKksQwmmrFnRap0m4LF4tS3H5WpmhcqMGoazaSCNbhsbkKY28Yx-PdYLJQmjxs_inWS218VJCbdr8TWAR04ofDTo5-13PZnHtFn6gnae4sOaSHswANhOfpqieujzd0K7YUvWgAciLkEZxwpdY3c8Fka8IsNUYIRGltdPeF1AjH8xK6LtbJZyk14ppaA2xeDr35EH1o3UeP02VmisjNZHC78Dm8K_Q1wnPo1pPzU7VbkmZXFGMAF5N0XDM0f1clnkBY6510_zDEvbhaxRCSZHXZbqKAMXBYHmv19JJvLEXO4wU2Yml4_jKdsrTTx8E_Kk2U7LH5uQYvf3f0fOR9t0g7SsjpxC1KFW0Nus1L27ur_HcmUwgsK-VNY629FKoBHIwTd5jqBwS7sqYPIjJJLioDo04gEOg4nxgQ6nqj6Jl5VBTGauZ6g==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16ec0162887d1944bd913fa97d51a",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "Error: run_tests: write files: openat api/admin.go: no such file or directory",
+				"tool_call_id": "call_WeQTiFSUjG3IMdY1dPcoEDtj"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_UEb6DvBRliVstTk1Z1aryAzR",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7DfhX6Ua3kvonef5qdG2V7jjfRvwjcJ1CBNvXRygFXZbkwhC2jwV-vATg0wMuE6weq-ehSRV9-HTf5kPexZjmrtZwKXEhvyDgMbbjOFYk8ry1aJkSqgDtqJ5FnsVkrQapJBBsY0QSlFK22NuDSmI92FT-lZjg7e6pftEpQ767tVlPmKNXhQvJ6NNce0klmTX3P2-rYIWoG5dtmwuAgvLduzvhITAcjnl5K8UmKPm3A-Ys0jrDVSGOqXb_YiVO_7NvobMe_WQY8dmeM9TsY1oiNpJCDLgHXzjlxj0jnbkta4KASTAzXXmM5m6LklO3T0XUPTvPReJwseoqqfdfX5umfnDP9Y2MLNYiHeuLoR9jmYB6cpVDzGYtqnKmvO3dOakEhaLc5K4wn0uDr8HOGM6dIXi9kYag0Q1wSlYzq8GJVQyVoi221nbx9vXVU9OsHaSfaI3RRV36zIXeNoNOSEwrXRLH-7RpJMNNZF6S8SePvR3xTZQOgdCTI6Cph0La-Bv2pUVOibmGRXV-9PEMZ-qmBPn_1-PvwxtR1TCDgN3-hNRihyOhPzj4zcYxwwmDpnJnfPs65zx29sKOWrOIlFAW1BN6gYnUE7EMNY9GWaH4aF3NTNviXztyWZ65XhnLcQ8WN2dP0MKYfO46flG95dGUcwxDG4YLtVkx6-J_MSY5MnXxDjUSh_33Wy2VTJuiThqKGMIZSuLqklgnksC8qyZXT0KwWl1K_0DHf6jrn4ABWJI5HvyMIOq8giJiRZ2-MNre2gnZ2BtemPl-FKd-zMepvxax6HG4qTOEVIO7mPUFfysdyDInHy_OkrGOT_5636d3i9oAmlVlYUZfDpa7ijgqYz-he9F3t4FsIjfmhsC5eON8o7IjEcNVXGUkZaza69MqZpmunr04JY96PZf3oYMrLgdE2jKWwMANHMg-rw7tkq74MjJ0wya0zykpH_SUonoiy2xyY3TofJSTLYICGZCxRqm3kBAsMYBkPmBhLal9SfBA11cP4rY9BYJArqzv9nnZhSnGDtGBWK0mysVRpS3rDoupZvP2Dbe47vJumxkiP_K3OowFFzjgGnZvJnFcQ_xMvRUL7owk2WyQfc0XJaTmuL1GS7A1JciY-WhBXkliHTKAMWckyKuk1Ycc37lCfmNcxAzj8cfpOCO-utQIyV_rxb5FZTSxKkdOviR_1m8-KFd423lmGZZnQOwmOOd2usDim5ihPAnoNnypmpvnu_2WybK7RbwU_NsTtOwZ_UW6WIUP6nNEveX7qCXWp5IKMlVxzdqkDCkLMghGPFfwpe1jdzjuCOm7UYo_7XmGhuk0AF_5si-XxSRFgKiM9UBYxrWSPCotuOQ4mLqDVxxWswh59amUvD6_ZzUT8GsR3s_FAaEP_P_zJYRCK0OKviPbpNVE4MK1teGy-josgz8ns56HfEON2sAaxpS8qaDAI0x13LfDcQUkDoaORsBatXhySi0mma5DF5LcG8gKvjd0RWUQtzX3ef78xg7y03hk_1vd_BLtfVTwoxhaIXF6eu6FmM1rYTOkEAQASu1S_k7OWeToAtNh5bqUgyc6mY5F1GFLLC6OJOHN-U7di172-70e3_9ZZN8xWePcEvGqHa-ghdeGYP3v8A2wqzkNoZOihEyLJakCy73ys4eh1PvEGFrLToKJI9dDpr5RtgOLbxi_i4gioH2ORmw7YfXoGvLxneLid5W02SAXVmyxSTGjN8mnDLAZE.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16ec2b16887d18c3c8573f9c20cc5",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "Error: run_tests: write files: openat api/admin.go: no such file or directory",
+				"tool_call_id": "call_UEb6DvBRliVstTk1Z1aryAzR"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_NbnGpNjevjwNqdgCRXOdYArX",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"auth/auth.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.summary",
+						"summary": "**Inspecting tool bugs**\n\nI need to consider that there might be a bug with the testing tool. The user is asking for a fix, so I should inspect the logs for any crashes. There are four areas to check: empty duration, list offset, owned nil due routes that are unauthorized, and stats/export showing nil auth.\n\nFixing the first three seems like it could be enough, but I wonder if nil preferences might impact authentication in the user context too.",
+						"format": "openai-responses-v1",
+						"index": 0
+					},
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7FuNepNT2RF6ynLxPU1UUOEw7R0-4bnJVyIVk-whobMjg0daJ5edwliIFADo6uQZr_W0gPSDNkP7y68igJisaEsw2A6J5HD-1dlU4TR0vUywfk6ix2Bd1cqJR0w4xret98-jXkFTzWajPD5UXS1XL_JmmY7pj3Qb-r9YvcxrKZDU07J2v6mRS6hseedTbABsTOXwmHMjFq_f3c2x8wH08WyYiWBJCYLEW1Z_BKJY3hyLUcGw8RhkINAgMW8BWfhzMDHr7fGjQhwHNitj1cZKC052vAT1BH7lqWOgp-aBB0YWT93ZA1JGjv1Du4ZLgJgLUquWY7JCPzW8A2wuH7vAA3g4_ykzXWDO6uCLVwNJiK6xYJs7iJyaDbja30RbPGx7uoZ1FnAekTp_eoLlnsEiHT3683e56aSbFVC77oW1JO0fWRCaiehWftWrqhnOw0uPPIzK8G2QBxolQf8LeXKeNIrDJ5WkxAWia3kGDkCH2gEYrjpRQGek71RZEdPxQnq6flsIHI5ss8brXNlQjaLM04tdAdcf784RChb_FaiTjiTJid4WCKUQWo2gVit3RhDALKJXttoXAEsEEK0M-sq5GxZsEhplNmo4Zzq6DjLm-bFTSFyEbaBBHKpjYCbWVbZ_wtWqY7i3ALDNtb2mDtci0cbKNmZZzB354rKzqTnwNoM3L9Gjb2yz1xshyTtZCn-GPYM1tGyM1CyvtK5RTWn2XBgSalFVnHM5jv1P6-ItReTpdBcfGs5zZt2Z_ykp2wCctcJEwRxdDhlq3zggPgvrhr54mw7gEmZsRaHIH25j-1H8-kOkJWQMhCy0gQ4erDPwouMwu87v_GshngB-oxryHOJn0wtFm5eJA-B1obzTWD8P7dhb1niFu2QRJylViJIIF1VXQa6w6XOXsgL44IQwtsxHgRXWjUn-z2jMhUU2-GLRC-25TVda6sxUJBDE0_5ZPwgFIqd0HgRfKp7jXypCzmwJNAKSDSaIQ7Mu0DZv73NH3HxeOnkMMEUo8uvPmUmSmjOUkQDF5yNSsZ2-CIc5M2hvOy_d_OqWZQ5_KtZb7jWapoWO-gMm8TpH1eQfG74Y04dSPedEfue6lONWkRwzlBsbmgxSHwFzIHFQ-9gNbNU__EjfkCiXbYgjVRWhzH5SacLMgdSEfy9kHhEkNA3m7QZj77snNaED15ODrXjk1m1OP8dFKrt8e8r1hPEgD6PtTZUtZOKDYoHuv5XVlT28T7e-aoyHzbtATNlhSmTRsmPaeCKgvUZ44w5kJ5qh-eazrWr9iNqrKjjEsK-Y5AP2z6hvgApGMyKQa9DeXFIhazmGZgIoj03k25BUBP84bGq_ZFMvN-A7aMr1hQfweXzGp0-0IwaTqH3iqMQdWD71qp9j9rlie9GjJAV68YqtZwfNk1ugH6HbWDUMaHDUjWfZqyHHLAyrD3v82cKsZRqQVpzoXYqehELLkiq7EspbiT0-HKNLnR92A5I36u0-XQ09vFtAEoK4Kj1HYsBcVUKVNSWwrMlV8pcXHrg9WKqWlVE_EoQU6ykJ86679sZlQp3auLAN7ObUnJws1sgBXbAMfrJR1OZ3PyHeO44MQbaI1urs8C07MERJAgxNWhsuq5JNk4ShwfuHsnM93RxW0yn697bjk77crr-m-Sk037YJQTEFrDuXZ6wJylOSG1T2y5FjdzjlGXTuqLjgsxlYg_ZBtuXYjNETUIbik_fMT-ITQTkpWKmGeaDPm9ZFgOHfXBxfjW7sWHHVtxGGIwzJyzg4S5hUBygbk7CD8W7k-v83rnyzNsvLuf2KbGW1afvhqYbWBnyOxA9fNZmw_2ZSRxuuXh28HpR0MQHzw6Csm6ltXGM4uhH6qX-j4q7suqpkheJCKRz2xSpy8u-dnFTqjTP2Ku8SZBaj15nO6fH6YV-X4IHcG4wN4dqmHNWu8krDZXPZG6DoVo_TlueKH-we6_I3HbYitX-u8R919xfAwfeCetii3euXIZP_XYiSVhfJTizOZ2fQxw2-GHGJ88F9aYOF_f3-HuEale1gd_PwOWLZ_Y2lSWpH9t4Zw2y3gxV5YExp2ITeU-P3K8_7k3y_Ymu9M2JQjl4x-YICwMYb7agDUpud7irRaiPX8Tnko7cE_89HmxtY8LsoNlxgmI6Hl2cFSc4oljx5-vd2bHr7FK73WHR30tJGGrF9JZYqUMOakWtbsiCDMTg7hprMBwQZJwJuIfERzgbYfEuc4knV2QKHbD64FQmkip8Ky1xraFXD2v9OCx-rPRZE8qWB7cgKUPIsuMQ7obwXkkTJFO6GkYXVow7vPS1n18GUWJBU_dh3mYAFhYDA9kUESTpZEx1c-luOdBfO1j0Okq0AkiKDiTvgte5hnw4fariQXPRzlU_hrc7rg_doeoTwMdR7FET7Uv_Ip9Bx7DlTxYEPDp7ptU2Rk-M7bvgiqcNr2Qwzn_N1URUmEyTETjeDG89jkgo2O8lZQZlXE=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16ec40c5887d1b9eff08231f65f29",
+						"index": 1
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package auth authenticates API requests by bearer token.\npackage auth\n\nimport (\n\t\"context\"\n\t\"net/http\"\n\t\"strings\"\n\n\t\"example.com/remind/store\"\n)\n\ntype userKey struct{}\n\n// Require lets a request through only if it carries a valid API token,\n// and makes the token's user available through UserFrom.\nfunc Require(s *store.Store, next http.Handler) http.Handler {\n\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tu, ok := authenticate(s, r)\n\t\tif !ok {\n\t\t\thttp.Error(w, \"unauthorized\", http.StatusUnauthorized)\n\t\t\treturn\n\t\t}\n\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, u)))\n\t})\n}\n\n// RequireAdmin is Require for administrators only.\nfunc RequireAdmin(s *store.Store, next http.Handler) http.Handler {\n\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tu, ok := authenticate(s, r)\n\t\tif !ok {\n\t\t\thttp.Error(w, \"unauthorized\", http.StatusUnauthorized)\n\t\t\treturn\n\t\t}\n\t\tif !u.Admin {\n\t\t\thttp.Error(w, \"forbidden\", http.StatusForbidden)\n\t\t\treturn\n\t\t}\n\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, *u)))\n\t})\n}\n\n// UserFrom returns the authenticated user, or nil if there is none.\nfunc UserFrom(ctx context.Context) *store.User {\n\tu, _ := ctx.Value(userKey{}).(*store.User)\n\treturn u\n}\n\nfunc authenticate(s *store.Store, r *http.Request) (*store.User, bool) {\n\ttoken, ok := parseBearer(r.Header.Get(\"Authorization\"))\n\tif !ok {\n\t\treturn nil, false\n\t}\n\tu, err := s.UserByToken(token)\n\tif err != nil {\n\t\treturn nil, false\n\t}\n\treturn u, true\n}\n\n// parseBearer extracts the token from \"Bearer <token>\".\nfunc parseBearer(h string) (string, bool) {\n\tif !strings.HasPrefix(h, \"Bearer\") {\n\t\treturn \"\", false\n\t}\n\treturn strings.SplitN(h, \" \", 2)[1], true\n}\n",
+				"tool_call_id": "call_NbnGpNjevjwNqdgCRXOdYArX"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_mp3LGZhVfdcSYCx2rxvUdBUQ",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"auth/auth.go\",\"old\":\"func parseBearer(h string) (string, bool) {\\n\\tif !strings.HasPrefix(h, \\\"Bearer\\\") {\\n\\t\\treturn \\\"\\\", false\\n\\t}\\n\\treturn strings.SplitN(h, \\\" \\\", 2)[1], true\\n}\",\"new\":\"func parseBearer(h string) (string, bool) {\\n\\tif !strings.HasPrefix(h, \\\"Bearer \\\") {\\n\\t\\treturn \\\"\\\", false\\n\\t}\\n\\ttoken := strings.TrimSpace(strings.TrimPrefix(h, \\\"Bearer \\\"))\\n\\tif token == \\\"\\\" {\\n\\t\\treturn \\\"\\\", false\\n\\t}\\n\\treturn token, true\\n}\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7It20NhkE6nATXUt-W1jumiH1B-GSwdZ0FZQiS1Cqne7T3EKlCuYxVt9MrbLm77oqrP1DLXVMGrLdakfrHe3n4J4uCelCJs9JqVWvWPyR8_q1vBKXLaQtIj8DQihuLHU9EterzsijZ6HyTC8WVVwYxSUp-uTPUFAcGPCc5__pZTtHbxESlzRmlqYNBcwNUl-qPRjehkZLyD4NGi9FPL6jJiba2iKoMUv8qZSMXVotxwwzDDXE5r8kuEwMRjGgGAyEgRKzJtbBjWLh7N7ORD4IjWaAkiXmc_pycoiUOtlILA583buX4BuXDiPaZopfxBeoq4t-b59a6zs3lJOzTBTeTseTKoFVJz03ilKD57ecqFJPeIQU10cGG58ZhDq0J3BIpDYpa5BtxBwosCE0a3Qe1vGfhsJiAS1UyJElxAih8c3Iz0UwVUIRdneUTBmp5uK3v5jNleSl0yDD9mHlgjCcw8bsB1INCtKg0wVh7Xud25Mx7dbK8jrZgygQ-enJToAdfparEiHeLApwalFaHSfO0kjI9d0zNkueU9hCLBuTM_NW9SC9yhk1NgLHsHV5G9FPXRdwYz0qhH5D1X46tGZhBU1j6ygBSobBRd9TXsAvgt6lgZFVpzIwskFYSdbTsOs_YUAEXYW5jFWEYDxj_Wn53I4GMtR6s5MgJes0PM_8BNPOeKJ4QSUh-h7onkDdG-jvij-sizDj8n1sHKc3jNzuJ02OMoq8IzoQOLHfdpRzYjCtzKYSsXElm4vJY4gp7qPFHBcRzNvhbrTrQrISzhzygStomgoX36biS3Y1ZjoszOLODlGRo3_ERT4WQoOShex520z0vNS9mDu1-oY_72HaGcksBpRj4f74Pl6iJcHZYmwioqB-iwCg4CaFyGeO6yvp98RWfMMGJj0uxEVpmFJwVtNrvATZ0h4dc9kQCbhX38vtQ4WcPSnbOA85Ydi-auhd-dvuWzHkZMpEjHrizzwNzD4lzLkEbWp5CJgwMBngUdgVS5YX9VbThnt-QyPP4STM2cfSQHtzUlprfMiOjLCgmf2MR8qSl7hMIM9bTsNka7t1J8u0U3SMGHAFWo7haNmXUl8DwiXTPnbMCQlZiNGGOgmANMlA7flQbkNBsoMIrdmv00t4Yrd-3z9Rawpl8dGxW7d1pWJPuaHqIKjJlJolxmmUeAOBjPjuRbAfwRCZuOaDIRmkXsWeUj7qxAvsGcead81aw0r1nVZWVPJym_frRJAw6juQOE3U9_BYQOiTTigzihwooApWe-GEH2h243uI7fWTUSIGZdGmO72zy2JP8hVc1K2iKlr6KPazuC_1hxVtAEV0RqlRg2mbiu7AcBLDNV6kVSR-xq2OXR8v4xfB9ktn60RbDwmFdDVf7QIczilvb2zlqdosQW1XgqNIp_eCn8skh_lV4_gCemVfs7qm95weLXD5641Y7Cm4n5u55lMn69BASRPQxku-QrpYrdL-gw3nf3Z1q48einoxkklFG_rWaXI5SRcKkH9dZjSHY9D8XSSRm0WpgymhNbDXT0EuB4tmQPVUgVjZrmJtK0T2tIUv5hJ-j4S_vxx-OvTqbbwkRu67AQFcdusK2RYxhSeZJ-mMxIh-t7GznDrIxVZHARp-oMw3SLWmEdbIAViqbHy77X3efIvdEXxM_fZMqZrsywoAaI53up6LHLliMrmv7g0Z9AUyHKfYX_59Wv8xo_0jVF1kRW9OGAQ1zQvMihJVZiz1zWfaXGhIKLuoZfW_UG3yqhMiMBhfNuXNfolqTC2N6n3DKqvH1cJRsaSo-SdPuZJ9WQI5ZM2_7S_Ngs569uRg4VLcmRzczTuEMbiBRR2tGGaylWAcDksLNqdabuMfmFITwDTDdt_QKGc998rsfBUwMXQoekTUmxXqJexMZ01xLJTqqZj2PmTge6fuv0NyVV-AD5pr0e4wCbVPJi8FpXdxXa8_9YzHgMPizLmJxXpp0AqPeKwkxL4WE2AhfqvdgyEyBySuN83EKyKJDohe9sQ2pRI3GXzs8aLFlFEY1xQLAoEqdoEIW5K-7Uu5e2F5EtjXTHUwGxJD_xMPs2P2Ce6jSIUUIe7RfL4xd9LOQrkDmEpC0VLLPrgRQNvZWHAD1N5CAQoC4xrPI-M199niavyWuuXffhf3DL6xvpheikAdBIAaP3bwJBPyZ2WXdBvNLDY7NgxyKsWvErvr_2sXy5vMdhP94bZ6bRyJKE3J18kdQ1kzv9vjyRByQF7Tcyx11NEVzTNj0Jx1-8goDkdUYb4aqAx5dJQsPKVJoFM0vEISU2CHmClA8vrkRkS_i-UWfI1GWAVCAXmWtevmRCVqfUFR_U31qKmjvZvCcNtN4tu9G8iQLY88d-Oa3zcacJ2CtDbAG3DOwwe0VBHLvHKjfaUT1EVFBox5beCHzLCvFUViSZDil6Ddlf077MsXuR-8izXYHJojnIJVXzlz5XO1ZwKK1n-4MrfF1ENbwrP5Hw7fEp8HQCU1fNt3LBqPFNmOpzAVaHfBE-0RVbPwaXaz0UFo2aRuf7Q2ckSW-nhXhwp4WoloOrpTpAFThkAZTvEhDuDruCBsvyyZ5sMy-iZ67rvh421olqpoHy_dU46zNb_bk5i4O_w6I9n-WFi_e3ouhI8qWkR1_GGzKwQ6H12Keg8m8Oc59oZSuh5m_qsAoHnpENCc0kZjEaw8Gzi9nkJtr54Idx4Dkrbma1QguAqK-ON70-vPBkVDCjbkld-EAr-ekY8CChhCCCQNib9aV4HiPJIUxSdMlqaqi6DmI63VxKbFMJBSyzRFasz0J7KcWUme3JhCcUSdSpxr7PkoTENw20N7t9G7vLJCnfev7JFRjjaZTSD5saCcHen6Z7OpxMaDymjgrgby87Dl6MhyMp-a-6uylvIoj4wYwJUFY0HebW1T98A-3FFNsHeVXM9HTOmVNUn3KtYjhE0UzO_LZxyxloqTucnmGiNf9vHQNtBE2ZN7SxVgmDbfLNZTrk1YTi9HHvG-a20tGEKVLmnIxNVt4pu-P0x2j41Xs68HK2DNlS3m-vKQoUwc6siO66IbQGFywrGL64nK2LseiHb8Gc0NDu3hzc0hX4fgOGRcjUlT06-83lnim-6nE2W96y0Aw2sydx0ViVOlb3q1-OM4ENbWLZym353ADGThmxnNmDpwkyF9UXpQxV8DV3fepmPSJ2nY_KRs6erPtiWnIAacYUOgnu9YZe_YVCmbR1Sa_Ir6yo-gnSHxtkfXBepiXZx4lUKPBsnrDXst5i5wlF0t9hGbHLrQ2GR-5CtBtqO_9U1HuGxg_blwAPmFaghKr2SSKxcQMqcT67_7o_deNBMOfz-wppHU97c9CMOeoTbhrshITd0QVGYG_fUBxcO5zQdqL4U8fC3k-9EOITk3D6gEbQ-p15GxQwLpLZq4GB7k0OyG60g==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16ec6cef487d19ab43541ef50fc7c",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited auth/auth.go",
+				"tool_call_id": "call_mp3LGZhVfdcSYCx2rxvUdBUQ"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_ymm4miHEtMMVRcruEUAIdqkX",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"api/reminders.go\",\"old\":\"\\tif req.Priority != nil {\\n\\t\\tif *req.Priority > 3 {\\n\\t\\t\\ta.fail(w, http.StatusBadRequest, \\\"priority must be 1, 2, or 3\\\")\\n\\t\\t\\treturn\\n\\t\\t}\\n\\t\\tpriority = *req.Priority\\n\\t}\",\"new\":\"\\tif req.Priority != nil {\\n\\t\\tif *req.Priority < 1 || *req.Priority > 3 {\\n\\t\\t\\ta.fail(w, http.StatusBadRequest, \\\"priority must be 1, 2, or 3\\\")\\n\\t\\t\\treturn\\n\\t\\t}\\n\\t\\tpriority = *req.Priority\\n\\t}\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited api/reminders.go",
+				"tool_call_id": "call_ymm4miHEtMMVRcruEUAIdqkX"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_2JzZ7lpvbsGAwHPaSgQ0ZGDo",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"api/reminders.go\",\"old\":\"func priorityName(p int) string {\\n\\tif p == 0 {\\n\\t\\treturn \\\"normal\\\"\\n\\t}\\n\\treturn priorityNames[p-1]\\n}\",\"new\":\"func priorityName(p int) string {\\n\\tif p == 0 {\\n\\t\\treturn \\\"normal\\\"\\n\\t}\\n\\tif p < 1 || p > len(priorityNames) {\\n\\t\\treturn \\\"normal\\\"\\n\\t}\\n\\treturn priorityNames[p-1]\\n}\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7NUTuN8VP121Sny0D5-4EmzLF2MwiXuyaPiCAL9QZvmGdPoBMzj2QyragcUfxtiPqQzJKGMNkJaPk77U6WbrVN4Z9CWtm-Ft2MMuorlEd3Enf04VeVE9hX8bvFIEE-1v5f-GBv6BMs7os2UDkOxaa7KAAXBurlwJVY0DL3mtBaBAUPTD4ItBGgYCzPpSlm63jQfmC2zwvO3OU5Ft_Wm_GJZoDbwJBUmPA1HlVH5mqtFfZpWpwp1CNU50mDYRjy3q84BGohqdKiEQxEOpdFTpdJz9ErJPYnbwHVMlOMv3tLTFCQJkSMQnWLdxlLz25utrdNAw7IFp6I5_BqZkpuKQcMiUV35DqHDjyK_YKaVnqDT08yMIiYW2D8yN7xGWXiE1OzkouYNhjatQ2TwlnL6-MD7yDG9o_TBo9c3s29uvsFYFf1x0C17uvDwv5wjul-VfvINnNXYiG_a9mOS_9MJqfm4U0e0Nn3LAeMMFM--0jisj57VXq_yCpAm5BdWSNRwrlxibf1Vl__ERoPipfLtJmsNepw5NPDtIrYkM0l9btS5_MTjgzIrnFtDBEcmZbqnRQZwAnNAyF1x966GDMrhvrAwBbBFxqaLrenDpcnYw-BLbsH6FtcaY5KA5sd_tbm9OO7-8tCXE6IJviVydZOL1uZEQXwH6lzsMYQGFN6Kn5uAe0vgoaEcdiT9p5orKNpfSWcnkv7uoCar_W6DskBH6-NwDZgTmTTulMMXhelJv6ORdts8Do655DB9b8-0sovlSEqlyATsET5vjh0DU0VjWdZZN5yZFbL-pSWqY58WNeB1tVtpFykS5qVyXpptvQ4_SLPXEYjP-ZDFHRxAv94e7Uk3jwDa1yQ3oiSidTuHTZWPIPi6qilgbAJLiQttDN5AgVbwsh_Lemi6rqlfxdx7VifkOS6ZwHPVn2kGMf0smKCudEdhrTn3Y7Ym4VHTKpMVlyl1c0o_j1vX0dw2B7vQC1FkK8pXOw_5Ec4iI6CIPd4OiKLgX1Csz5l9aryf3n_NgKg2b1jpMLjGhpFJwsqLrjINgQbZns0I0g5WEydk0uft3axFFdrJYms990DEh7RrAg5nmsC-x0qIWIbrw0jTTCjfwOXPt9FUbClRgBvnLHsB5k2YwRgkR8XHI7VYKuowJNaU7Jvrygb3gQioAJ-mkYNZdG4GVhWEVEDRmUFC71ZMmRH1rhQXRVSqh768YmjDi--yhkdEoYQaFsO5Hl8UO-j6b0VI31NLF3XaBg6BSstmCFPAjke9hruXk0ezpoRRzwdXlEeDxZo2w9powjekvVSF62ESrpGDV72syRnfDMM1olgfRLQrAHzuQ83wVKptCzBFpBaDd9zDFiKfetBS9IhFOdVIBA7XpIMdet_uueaC_0aXAOhzEGRbAbk33Jisll2HyAG2ZNCiNbA8v0auSiKWMNRBw-YIkr_VbhjLHZdHcc5WL97LeYWq5VinFftyKUTDRIfEHup7FuDL3vjJKIUfp_5iRdNuoCWYZ2y6wG9jSysBvjJa0FPAPZHaEdoBkg0WKCgDzQ0ZwooYOYRwJX3pYGXZ5wqukaSgPHhHb71T9LA94ddyz35uQ2GhfWKw1BXMOHoE6PwrkDBZqOqnRZKt56RDvTbOLq-tiK4aSz6F4nGi5TprrmSQSmNitzxYH1HtDJ5JxuUwLeLmxNfDlKtPZYfV-tUoaxK2k-j3LahfxfAxKEYAlc8MhnTP1IQtbsXc18FsOGM8xsud2yyElObIIexrN3tCJDM3_IZrdYlCSsJ6w5dfENh9AqJXZdds3XB87esXLgK0A4OH0rqbCxwmg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16eccad3087d19c0aae09e93daa5d",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited api/reminders.go",
+				"tool_call_id": "call_2JzZ7lpvbsGAwHPaSgQ0ZGDo"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_nTkAB7wlWyCYcOZn6QZ5DOyn",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"store/store.go\",\"old\":\"\\t// An offset beyond the available results is an empty page, not an\\n\\t// invalid slice.  Clients commonly request the next page after the\\n\\t// collection has shrunk (for example after a delete).\\n\\tif offset >= len(out) {\\n\\t\\treturn nil\\n\\t}\\n\\tend := min(offset+limit, len(out))\\n\\treturn out[offset:end]\",\"new\":\"\\t// An offset beyond the available results is an empty page, not an\\n\\t// invalid slice. Clients commonly request the next page after the\\n\\t// collection has shrunk (for example after a delete). Keep this method\\n\\t// defensive too, since it is also used outside the HTTP pagination\\n\\t// validator.\\n\\tif offset < 0 || limit <= 0 || offset >= len(out) {\\n\\t\\treturn nil\\n\\t}\\n\\tend := len(out)\\n\\tif limit < len(out)-offset {\\n\\t\\tend = offset + limit\\n\\t}\\n\\treturn out[offset:end]\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.summary",
+						"summary": "**Evaluating API export issues**\n\nI'm thinking that the API export route issue could arise due to crash logs where the authenticated header is nil. If the request header has a malformed entry, it could panic. I need to validate that list limits are handled correctly to avoid panics, so the method should manage cases where offset is negative or limits are zero or less. If the offset plus limit overflows, I should ensure safety checks to return nil appropriately when those conditions aren’t met.",
+						"format": "openai-responses-v1",
+						"index": 0
+					},
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7Q1HsPaYJtVGT9c5vILPaZRl3_2I1yhfiFVifH9O1M7fplWP_TKk_72P3Ruo3qqNLEKSuu0eX42e8gHTv78VzS87_k6kUOMc99iwzDVEyrbPtFb_rO6ushtJoH_vMNDsKT31OpXtcfwCbhGB8oRsvRpv1BD-3qTa1o7YykArsDaFO1zxlrofpHfQUnJZpL9r8hC0e_TItj2kU-9aFZejevi9Qn8hrn7VQqEo71orO-8DSfaSS7htaMOZLwdF8yq2ZfGyqjgvxZQyeoX5e0jZPzooB-nRKUTBf1w2ru5Ez0VdmNlg3hkClo8Ybq2mQEGmmJz2BLFKxqjQCSlBQ70AiTXhhw6LlVxRhIQRkoiczf7W3hgo4mEYag06tXE_NB7WczI8KRm4AOn4zn14JOyfllrvpPuJDg0lbqBHYLQ2rBefcp3IbvW17AXyaXwimQMkqA4lgVHCo-34z-fF66e-Tkx4rcZghIEjhev_AoH70S7aAqdWlMwiS0MKe0loV_JolY9xXCHtEcj2P1RsROxybffJty1CqleHeqFAN4hirXoo6kifARTdOsS3-WjxoeFyQHdOGlq6xyx6lyyAqnjSYgxpRwuHsiM6r5wJqV0yaFeOCcT7ElZJP8gYt-o1BYZk2jzvbP3TXgdur0upvThWZf2krD_-VI4ubxfjmtscRR_FE-3qI-9ALh0i4nPO0VTPbXWgbAJ7Oz7QwntsobnZJKEj59ASKFzOZOD5AiRdaHxQLF2NwIze6wC50iLbPRgdHs8uXd31X-jI6tz8VAZ3X3ki-UaclZFKV8EQ-D1Vo-HNUXBbTuNmimpiXmSuUvfrGYeXY50FsAewhOuptEoduX2bTXgMTRjoFo3tWUIbbe4EjMR89S7YLBmmy_EzH80LnAZPDJS8rJ2ppzGHZ9sjRgA61pzImxtaGS1jKPJvgKmEIIutu6v2MPd3tHgKEyE-xqPcs1Ddjmk6QWyXTYle6d8bTHrh76CZln43cwQNTnKCndqMnuaNdgBfBYejK-psxORUy-Vx14CdXCv27wTVn8hmMM14hMnzEHpacgfGaCW181_JfE8mpD96iX15pTql4GXhhtkV-zp7fPSB_CNgA4WyH3wyzsxtSKbH5Zj5i-OpPpsNk6WOlS4wMO4_nMyeW1B0ONa9Wra1bU5G0kLDEEBAvt3b3lB_JtGfqUaC5GqGJbjNdtWL5RRSZz0RKy0EDkLrOUAzvCeaAFHJcAqRHv_GDynz8uBmETAw9yOnv1r3FiuWubE6Hax_oV7s6_TrrqWfaE2ft0KR_FLGp3j5EuzFGkXXPJ6tuXOjVo6piOZfIIk5rCXbvtxUdodWtLXnLTvci1FKfp4Gz1JXmMqP_3IQgdutrq1PC1-3pDXIe1mH3pXyTETY20ryw4titKFXJdN7PjwtwDcocj5_FaaeegmAuf5EZ2iYmZInoCEJuGcumgUG0Eu2Y5kI6hC5GDqjfE5vayp4F2RyyjVKi7qDPgCCEKfl3lVT1FcV9new4fX_ITfK8SZv9lr-o8keM-4TeGWmiINvDJfKTL8sl7JBo3eE0d_jhxwII7XG7RAZ0wCdZdBqK8SQ19a0hyn0pCf54o7DGx7-VI5nTMOVF3uoKkfRDIR-c5FflC9FM9efsdgOnetNNJG9GiWt7rMZOlADODNYDDo2Uf8Evsyvn6dHuS4Ki-J7CoXWhI2-Nx70iAkmXL63pjL2S6WYEYdx2GvUTp6W5hk2q8MGdi2SDuNrvpax7b1IegurHCmZi3YTsImSBPKKUigewUgIlCembX3c-P5tzjAMY7YmQ-pnWgAaqfp72aZM0IaDRFeDhlTeGDQx0aHuLsebXGm2O5fvs-DQAUIokikKcWhLqVHmM2HNWNkAhMCqy3ESNso7UQmJ8fN3iDugBMSL-bEKvr5p5dj8zgOortEKZV5KSX1pVRRPCYOMltpCHxfcCjojofnd_IgOs9IFDZKeM8ExB4B76ktQsFku_27lgSObyYRwMwl8D3LA75YXE9hTJ_EkGx4btf1MjHBqpnx-I-us4APK76r_kIip1DKxLLdfVdmTN_REly5JPpvc62DM6ugVS4ZCJ41lpy0xjlimgLdszZHLrk4eDr-vQTR4-hpn-IPhh6MHttDEwL8Pr5DuxHcfgIkyTgfkR5TMMSDY2CjxYkjlsjTuaLXRWDHm1Z52GrF4eObdQNe_zrLZdi_7tjLawbYHixxgFTMacHeagR43aw6_mUU3WKnBcLDKany6SaWQvdcE89LQ5iiTUffjYcqCfgcoOajdNmdKIzQzXb9v53xf3pHTPDBXUxrazI4UFfUduTi44A_m_PfXCcSVCOV0E0gCBsmopBkFyAxhaJQImyWvZ9d8czcGBVcblYucturaVeEqVn2PIdYvOOfE9ZrhjVVjlIAcORPCw6JVDHpcUkLTh_w6Q0gFJ3SQZn-xclV4x4s-4ypZLJTvapsPDuJ2ex9juUAzoPXbqII8-Fjeeee6dPQhYVsq0DzQYxJb_7rxJx_6u2hFf7-RNksQ6thlsk9O7RRMqdQkVnuwurSTIPnZKgi8ctcwgM_51Ly8XEmRtBEojuKKE66zIDu1Q-Tcw_kNaSdEACGYhNnuu9ZvcVeFi0b-gUyYO1Go8F6p-JvkOR_S793TrAICLYd6kRe1LmBjjyqHw8pe0OoduzCrC157nkk4xPGoO0GLW2Qq8DWvsCDvmsi1Ls7xCdUHONJ7FSbWXi87roxshyUBAAKyWuxT2M4USHjdPibUFJvuab1ASm_Z64IJg5Q1NH991zjvr02Vfrhf25dsOMKNnjMQkFOy5JQGO_Uri2nNHydmx96CMHDOkpgoLixl90Iwl8Adog7nLt8IhOwQoVlwSqp65vZG17EAH8tmSCTNi9xP1c18zPY0nD7E5uNrHdyBblMsSmezb1UbD5fOS9FJQDlpCr6plolsTr7zxZc_94989KP1css9fXBOtgoq6_e3o71qMwD-BTEeJqhX8uWfOkt4l49_QHeyMieLOCAFI3ebYCuLCjyUmpQQ==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_034aeda449fbe477016ad16eceb67887d1bfed4c3d841d2b73",
+						"index": 1
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited store/store.go",
+				"tool_call_id": "call_nTkAB7wlWyCYcOZn6QZ5DOyn"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792110289-fxNpsWJaxoqEu7hrUlRU",
+		"object": "chat.completion",
+		"created": 1792110289,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_xfZ1fG3gdUO2HROPXYYUB12I",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"api/admin.go\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0W7TAA_xe0xKUiRByugwZh3WHid8pmlJpAk03spLeBqYxoDIHPLJlw_1iUF4hWmZvHjCLXcSIgnmgCdd3mhFpeVApBO0MkcFxihlM9b6emKHDl-g6_x2k6DHRY9aI6w2h5_hGLvR0L88k0A2GhuF4aPTmSsoKhM-FjGWrdyAuf4Wd4hmNvDcJm3BdGQ3rXh8KHRU1QzoY9ThtN6HF2efsyHngjOxYxozS9xJJU_fIkOaDo6wpdSjoY9J_WcByHdbl-bm_cCo1LhFeq9W7E7TIcvCcBoxXIfFqGkTcRv1mS0Lyfar8VKIqiKnuebRVI05nKz9zoeYFH-U3PvnUVcs9Ii2usxKfbBLDR4_qh0c7-6xwoXC36RSPrWxDOOJdEta1ZBtb_1HVuWXKC0c3A-EF4RyTmmB5zVUo7_XyIllUS1nHomjScrrvpO_oKTWSpLJjYPLF6bieLCjEImiGDu2IXpHH5ANYymjfPJbFqj8XnyB2EIUfnQmX5cpBkoLJv49RyLcYXPefNW9MBVFOvLG_5zuEfh0oYwtVm82sOLngZtYY2cMlN3CzpnKnAHuGN4ZpScCXxFInB7W1q2DbqVNTeMOMciCO256Nm80fk0yYKxGKS-0lvvM8ELAX-Q8czsE2q_ykbL-UG-xoLUPmfYSRpPCc782-I3d-aUwWGX1827vHemz-7zU2WbMQbIvkTapVghcIj-zXvdLZAjxpJg6-weJfhINhfULc6BQYiuxvZotGkbMHeTIkDM2dc5-HJYhbLmwkWwHYfRUvn96aEHLUlEnj92dt9ejek3R8n6-VusZS8fxHtFQ-Erm1q-LyoeY-2rvWVCK0tWi0eNK_BW_OODFcDJT69fWw5Z35X6NzcLw19uV6yJgwkNLF1qqZiv0mpAj36Dc1dG5RAVFna9_033eBsAa0vbEjGpBYhBbs2KqQqvS-SGVJHiS-qD0EkZ0AR79dTN-qRV1JAWEQX70EKGcxfbEzfZm3QfQYSxph5rwc-aRT_TXQK7p8JbXRS4YnCrisGZskBP-7PA89i9MzdpjlfXYiNYN3T9rAAj-TDkn3G4Sb09jTl4LMJ_CS5uaAKIDGjpOfzPPDP2iko-b3e4wdyzW-uNVessj0vlOywY7X86DrmzLqHwIYSLti49rg507QVO_gMI_0-13Xzowwpy6lW0a8WRVUSIOlMKrkbAi-u1JSFMg7PCH_48e5NVNEA3UCq-aFPI5J_JcrxexhfIfvXDhGLqZzkBtsYuCqFHvGorkiDUekP_KRywk3Jp7I6OGvm2IBfBrCMwwOicvIJiMXYpubbdi1YR5c0SJXpBssgZxG_U2iwLKi7-r5NLdrGSDPGrg-bg8zxfRlfthFWDjGjCokccRxdQtNhVOlJa_812sIHRtpj1Xh9b_tGMzuJ5MHHxKTDdKKhZIJKB0Q3qhXKOWtz_u8FWDAwwwKm_et6CjzfIrcewuxzRZemKqV5HSsB7p0aSzhfrJBs8AU7XSCUnNGUoISrMB7HJI6S-nAyQHwbkUFIakAEynjQOz5qkqV1kaWLwMwKZLcB1KmwA5p1vPg9ghfbCG17_u7Qm-l85t8-LAa7TmZ75VYfTJW20Mr7gsrmgSPeEZQt2SpNDCRHCqIezk6bi5hKvi5w-9g_hrMmPf8RI5ECk_hgIhMJkaqM4fvHQL1DJ923wslXSMT82EWbo7VWX_TL02TOGKsIgBzkIzsvtezIWiKHCs8qcqrvcfLV3Fj9SbJ7mvYWdgShN-m3SHTFbTnl8_IuDqMRvlN1TmqpGeRzhSk5DVrEY7SrLqiIxEZPtLm4Ua_BcQ6w7tzR_pUn4GqdqMnIByk8gMGojFGgES8Epc3tD-pndFfzk37mwQ8vV24kBpnTBqxZQw67_vw5XzKFNY9Kz9S-5jvf9rct2V-gvlDOlPx6pnMRSSzVbfo_yz4ClieQFDgd_wj_N2RE7CWp8oWcb2mwWIW_YJztHHsTDxegEyNQxX3FupeAbm59ZhZ3yrsEX1ESOyc6lhqj-kUP5KAShcN5w4QTwckEwVCGSDR0jCJtCsUsJ6BemUkt7_Li9Gr0Ou_z510OCEEsL83SOXAVl7vV50KHv4U3HAie9bXCfcdnCWS7jSTrJ3CDXWe4QycX87W14MRt8CCQjNC65NckvtFLHn7qnbs7caYVMIDqYt3QDFj6kGdWJx80p5rnEvYZ6LvWGhCozS_tvxT9mhri3u8tMgykZVNpAttkGW_48MLCFVCyfb9MnwH1EO_U3fchiLk78HYVZcLJA7Jt8wjtQUJPFrm_pYfy1YFHYBemelaQjKJw2rSqv2ZZLbfMw826GoWt1ZU4ALLSnVJed2TN6qaQYQNmUqXJDILsiTKtMHyyB5yooRNHfLZeh2IfHe01flbup-47w0jJsF0MAMQ2MQWgRNLYRb-2IkZeTdZqeeWzoAkw-TPt2rZ8vJ540uaZFAn8Aky2lM7r1Ockd5B2xHvYGrfcGYrmdBdJPaQPj0dPPI_qB_ogQCU7H3UYhLfvAZnjUond-MRl0BNklvQ8HV3ZRL7f24Ao-gGlaAVjbdnprQl97nlkS9T6MD24nmYOkafhJLkVG_3ucfNMxxYec1eNT9NH21PrkcUVLV8NEndETG6hQvKC5GQCIo1-e4Iae8ZMxBnWss_QVaJqtuThdWEsk3LXXm9u3-Ogw2QJSMQbyqDRu5NkvjJwsLWrDyUTsZAJcIpQnIugi574G5xHbQ1-nQdmeJBu62HZyC81ULhacnpT6lvHIk2oOPqJJgAp3XYUcZVyn-4XBvqb-NLsRW5FRaGG8famQ1Emb8La9y4Q42Lems-GfvjXT05xoqb1ITLnVmNzJivwMjgr2DEM1XLqGRzmpOtL_8UkPWSVteZk96YZHTRUJ2mSVISFdz1p3SmNqjrwy7moDPraCera_7PxQ-nEJIAn82suoUim68qxhCZYqbHcX8J1oS7IGLn2S4A4LfDNgTr3lIocEbbHzsHlIrgVqSsY9WyDs6FMKh9fqgHmsbnnBxrlqRpD-fwbraLr42Yx3dtN6SK0yMbVWN9Sz23mFxo_vR5MS5nWwN0puinPXW2l7LSwKIxpcaZMWOUIXqZVAzVQzbLwN6iqXBUIeHVzqXfUnGNynjRQi1rk3aCg0_K79DPZxOg7_Gn2gekTXbdUfJQepdk-inQd6L-zACV-T1-3CxQHXeLUv6iH1K7ucain1eZzs36vx8--EDgNjOOUec9cE88wLliaaP5V-cEXxh1fVx9h41T_sJyLxllyiF6-EH3XEDRKLIDKaKgYoNbm39jV5GLHrLamt7o9R_dpm41uMoLJVNdyPFOD3-UJAEYljogOU7z1j-bOLsBQau9uN4WgZBxSQd_JqfU_-j6NokdlX_gicTLzj2nNCT2HJ-C1f84o7drLZcbkodXQPizrteUSFlJDIhps8C7eQ7lIg_4CQz16PCwK3Hw2mv3H4IrmROj5wesYxYV6bkXGAvZtlFa5HlIz5LgxwUuDIoZOfCxPwDGU7-UhZ1XwRuJXXR1_6hc1U1dQ1u2MlR48HoKnNCIQXawac24nuZlcwWhQ0e5NVgjfSnQQ9VcxVcBjJsbbrhuQqy9WE3N13HBkY3dTI1U3elBXqa_T7KH8E=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_034aeda449fbe477016ad16ed267f087d1ad86f3d838ed19ef",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 27049,
+			"completion_tokens": 180,
+			"total_tokens": 27229,
+			"cost": 0.0008417,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 26680,
+				"cache_write_tokens": 366,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0008417,
+				"upstream_inference_prompt_cost": 0.0006257,
+				"upstream_inference_completions_cost": 0.000216
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 158,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

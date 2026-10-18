@@ -1,0 +1,736 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You triage crash reports for remind, a Go web service. Its source is in your workspace; paths are relative to its module root, such as store/store.go.\n\nFor each problem:\n1. Group the crash reports that share a cause.\n2. Find the root cause: the function whose code is wrong.\n3. Write a test that reproduces the crash: a new _test.go file whose test fails on the current code.\n4. Fix the code, then check that your test and the whole test suite pass.\n5. File one issue for the cause.\n\nHow to work: start with crash_list, then read reports with crash_read, crash_logs, and crash_goroutines. Investigate with code_search, code_list, and code_read. Change code and create test files with code_patch, and check your work with run_tests. Search the issue tracker with issue_search before filing with issue_file. Don't change or delete existing tests.\n\nWhen you are done, call submit_diagnosis once, with one entry for every group. If you can't find a cause, file an issue with what you found and give the group the status needs_human.\n"
+			},
+			{
+				"role": "user",
+				"content": "Triage the crash reports: group them by cause, then investigate, fix, and file each cause that isn't filed yet."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_sw4IHronI1lXbcdQIQIQ8sBh",
+						"type": "function",
+						"function": {
+							"name": "crash_list",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7uug_dNBdHxkqB2T2Uy2i4QY5E7sc5Jkw135u7zvt5DahP4A8YOHqGjF4OAJRqi67D1CUPIy2rxHV0VcSEIPUyvJAnd78HdO4SoaWGNK1Qk6NRo5BBAAw-SpiOItBR3SC8zRXRZti5vILj2B8K5jcMNUl6Xh6hJTgCzDcHQwgdQINTp9wgKOO7BaOxS9HwJ6RcXhojczFd40OL62yseMJ46Tubqu9dVMXa0pOwbbIHMa6u2i-x_diJpoBWGYRNMO1MCYjoZpUpt9vGffOoVbh29fNxlz3B38x-czQxplSqeTYkD36ZsKH06l2RtpisrectSKIQDwZEFVvC4mEdvKGTvENlMJLtnOt4NMm69hBp0sS5y-5j8u3h22LZexYSecdZxY9RFpwu246am0WJ8jTSblKddQoTWCLDLDJ5vjmpEgTXx7lJZURrcHd1dsVvHlsuJM8flNPx7fYn_9TUtBxpwcCk_iE4NRNIx9_fY0wPjkACJwqbu6CWUhLmFrtu-wrkHQz8RcZmMjQ4Al4z8ssZwygqybGJv1YobvpXN3uQP6D6RiueXb1E8aZUZQOm_eikGyhWEf1LivmcnomPH0_fnSoWG3i3dmVfIqaWOif5VHuRPGIHBEM14Y_oY9aCOHeBL8aAph_SO4PbEjOrA0mNTDrZbbZbTCl10xGeA5iwDQec4q17l_I-vcyUDHQw7j5tLto1hS-pIozxzTA9TQWydPyPmuTkLcrh9lPFBmNz-pbSaFhxVpuUi6Qfu9mupZjMMUoOlPRvq3T1Qud39NKObK7WqrT3WuJwVmRdE8L8aXcbH_PD7lke-7C2nBPm-Q_yRynviPPrBTUn-_LbcwcWCwwcIvgPyfGYB-s7EZplWRhxQ6XBy1tWHGYt_Lt4g0HDwU19t9h4BvM5P3US2GFwkqQ01mOmMfWdfCJHattmdGJU-3S4-S-UL_pKNjTYxZyM7WMRbW5CWtyabcfYHNlzkw42jaxKN-f95bXDc_5oKf3OqOhCTkTIV6q0sHHuq1s1VxlCGFbXSkLH60LVEbwLCuoRkhritHYJt0xUfQPc87m-NX22mzEu9LrzNq68AAEUGrBAmO4t7-eK3l8tib_Oiv6e0AV-NqWCAJVUaycd4Cr3uE0hrl87BkwdAkeVc-ftWV14F-f9goMAYq8vjNLgqx-vvaS8B3QASCcaDP_M09WFnmoTcWro7rTll13YhQh-ASurmWcZdZh3K2zOABebKoA2KYbyj1TMxxDM21uIOoG7UeSPJKMNzPTawPAhD_GCGub0hqe87U2KqWqPVOTeYlrjcKR3uFE-M-F6znptFJ6aTPdD1CHbiwqCFZ2kDiaJJTXU1SEoiFf-7vkB6vmPzAkg0_zxmsIkZ2ON5djWV-xwOLxdwab13ki3UA1ruW-WwUCOuw9nx1UvGBGjz-elOR7J2BzWYCnhEfx8sUhSypbet6TupZe4fcrFpd5MKZhYfkZL4ay6cZ_H9lVKjlFJZLJGqt1Y5-p5vTCWFBWzMUEpKyuiiXoD573lw4VDHg6dIYNEy20JaCR1gPV1ya9XM9V85VOx8Lhg5zOzYKL1WmbfycGzbw-TxdJsWqapCiijXAXtGtXuHkJD7NtSzGr_tKGwueMjkL2BbT1MQBOXScizKkgZW5N0i-SFk6DHF03bkddUCTvKnWJa4r0FxeVcSNED8xZIHnM9uHnPNm_8Mvc=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_0b96102eeaacbce1016ad16eedd9f087d180d5781abe6ed689",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "6 reports:\ncr_b73dbe fp_34f681 x2 panic v1.4.0 duration.Parse: runtime error: index out of range [-1]\ncr_6265c5 fp_4828a6 x1 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_76768c fp_6a569c x1 panic v1.4.0 store.(*Store).List: runtime error: slice bounds out of range [20:2]\ncr_ed4938 fp_6a569c x1 panic v1.4.0 store.(*Store).List: runtime error: slice bounds out of range [20:1]\ncr_d80efa fp_86f99d x1 panic v1.4.0 api.(*API).export: runtime error: invalid memory address or nil pointer dereference\ncr_03654d fp_9e9c4e x1 panic v1.4.0 api.(*API).stats: runtime error: invalid memory address or nil pointer dereference\n",
+				"tool_call_id": "call_sw4IHronI1lXbcdQIQIQ8sBh"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_h0UlNwuifnRXj3J696K3mzkl",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_b73dbe\",\"full\":false}"
+						}
+					},
+					{
+						"id": "call_qluLreCVsq0MTgHSC9rE8wDl",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_6265c5\",\"full\":false}"
+						}
+					},
+					{
+						"id": "call_fZ1gnnfyKIDqedkuONmHUx9x",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_76768c\",\"full\":false}"
+						}
+					},
+					{
+						"id": "call_0CvGnv0VQyrZaMcujtBnopXo",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_ed4938\",\"full\":false}"
+						}
+					},
+					{
+						"id": "call_thkyWoxns1UsPiqot1pKZMne",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_d80efa\",\"full\":false}"
+						}
+					},
+					{
+						"id": "call_HxUbE89WhVCz5RbUYRqNiwvd",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_03654d\",\"full\":false}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W7wUHko-Y2mBFmQ2cqWQRPjaVuYdigzBCzLsdkWUfnLsuoLxU9aOtyQdtt2-zMm2nAVEjwlPTkVf3cN1HuLqjGhbW7QKorBtMRqC1cAVIRgu2mZbbti58SXPrSQk9nkr8pSX1U_IqRpcYGcmsdUWsVeCRRCMsTvLmt-M1CMGNJH46yJ_Kk5n9iV5X4eEyKV9DMnwgyqKvLK3Wm9Znwpbgg3IEYN0t-7qXh3VJVmr4xJwbevRv_C6ZRqcwdAjqJQPP23sGpbRZO_P5ZgUyNQtTB-BqQ9e9wiSdDuSx5lapNIldEH-coRahJtMl3sjQs0qkWe-WuH4vRCCHhKOWNDV5xcuqryl2kmil8rivLJ74-cY0RxMPTTgOW-ovscPKlVhuaHeFEifDFEdKyYKqjanuPMN82ek3s7oav9QiAE0HGMCb12CT7HyN9k4ndUeD4vYGqIILSLUAJ0Sa_f2FlXfd1esq4GtjafggZk3ExcjCVWYpPb6A5cKNCrQyPE5p0F9Oe5kSa1pg1IRvZ13q9ERWjERF7hWIfgCgb0hlNIh3jksXOYQPZ7MvDtzXy5CoIWwHbePx0lupb41gnyyZSfbQjUm_874eMIo9gsYvnLI548bynhgkoTqnlJ6nVsUn9snD6HSiP5grof_s1Y4uoKppmN6I3RTisC5Chi3BdE8Yp0RXZ0Of-HlDQHQx-QuJlhZRU_LWD5y1Rq44iXkX7h-sbFs9SATkqZRh3sIAqfDqu1ex8Wvjjh_uFQ76X51gN4k6sGBt-pSsxFOvVxbX6dS5rV2IlGQpvLadHn4rRSpLPbu0GT8fyalNJ2Fg3Uos-cobhtGUjbGpvYM2yOcsTwZUWFUiOLez4gBPX4cbvV6StupHerxFU8F-EKd6Mdx7B6BIWxOos3_AVlwg5Zw22rU8B9MXtED9qfmOYDxgF_zf2z2Imr79HtSzrbhMZYwjIiwXu2H75gZMZ5kzCHCbjCEJ8aSprYjIbxMUun-aM0P0V1ZutL_29hYzBWPkJE8Dql0ArB3I6fKrvISVnddbOXwqzUGYHCzsDv5cF2p4UMpxZmua3hcwog1XFfSs6tv1b9YG2jcl_UXeYZjxoNMwZC5nyWnaQVNmXz4l5Ryu-jS7X8Nr9EgXEF8Qu5nfFFESv2iUHNyTp7sSCc2448euMIfbUCJPGkFETwYmVIxMBcl_t83uW-jy1Ncs0JSfTBJEY0B-VM6Nh9fYuoeAHWiUaiMOgVF13n57a0qqcGf0RQyCrPmHdmR2lXhtATHN_VKijWdrNyqDi7wk4_aYP1hf2TerFYyXQ39UR60oDQ-aHgKReFff7GLMWT1ac1Rcuxlcsff-TuR-YZkeGGuh5tCfA3ZNm0CujsnEOCUdoc0ePNokfILzfvYXq5b5L7darc8C2H9SpV0yQ4VmDhnbWR0LYDktkZq0OV1Izz7PHXFmKmR6KLTDoJG-6CZvYANRNS6n5f4iby9iDH7ZTsvZsdV6y41REKXdki4OjYv4qYhmQGUJt_kd1qofCW1jy6JkrbH072Jf0LigTm00fsgPpXl0T9sz9ImgnzGcxE5NZtSCU-_blLKGMhpqIKt0XgnGjtZsqNkmZGXpey6jBlUEQYmkJSgFgFhtBk49fBPj-uKNbFIpwbApYadYC4NHmQhDmPfK6_phtS-sOwgp2GfPAZpW-G_yqVOW9Aa9sXL8yrQWWJZwruUJUmv1kOQvoAOLFapdNPpCL-XDXqJ7vg-Ry2yGWOVMM19z2FW1D7wK7f1575d5VyfGzrlmCwz5xyc5dizjhQpB34nQllol0DlEIGzWaKYaSN7Ov8LTY1Nwq9kYMDx4JW_fI=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_0b96102eeaacbce1016ad16eeef73487d1bb9f2d5b9107cc56",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "cr_b73dbe: panic in v1.4.0 (commit 9c41e7a), 2 times, 2026-10-05 14:09 to 2026-10-05 14:18\nfingerprint: fp_34f681\npanic: runtime error: index out of range [-1]\nrequest: POST /v1/reminders/rem_0001/snooze\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 10\n  Content-Type: application/json\n  User-Agent: remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\n  X-Request-Id: 6ac3ae14-0008\n  body: {\"for\":\"\"}\nstack, remind's frames, innermost first:\n  duration.Parse  duration/duration.go:29\n  api.(*API).snooze  api/reminders.go:197\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "call_h0UlNwuifnRXj3J696K3mzkl"
+			},
+			{
+				"role": "tool",
+				"content": "cr_6265c5: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:15 to 2026-10-05 14:15\nfingerprint: fp_4828a6\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: POST /v1/reminders/rem_0003/done\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 0\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0006\nstack, remind's frames, innermost first:\n  api.(*API).owned  api/reminders.go:144\n  api.(*API).markDone  api/reminders.go:171\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "call_qluLreCVsq0MTgHSC9rE8wDl"
+			},
+			{
+				"role": "tool",
+				"content": "cr_76768c: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:10 to 2026-10-05 14:10\nfingerprint: fp_6a569c\npanic: runtime error: slice bounds out of range [20:2]\nrequest: GET /v1/reminders?offset=20\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0004\nstack, remind's frames, innermost first:\n  store.(*Store).List  store/store.go:136\n  api.(*API).listReminders  api/reminders.go:127\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 6; read them with crash_logs\n",
+				"tool_call_id": "call_fZ1gnnfyKIDqedkuONmHUx9x"
+			},
+			{
+				"role": "tool",
+				"content": "cr_ed4938: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:21 to 2026-10-05 14:21\nfingerprint: fp_6a569c\npanic: runtime error: slice bounds out of range [20:1]\nrequest: GET /v1/reminders?offset=20\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-000a\nstack, remind's frames, innermost first:\n  store.(*Store).List  store/store.go:136\n  api.(*API).listReminders  api/reminders.go:127\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "call_0CvGnv0VQyrZaMcujtBnopXo"
+			},
+			{
+				"role": "tool",
+				"content": "cr_d80efa: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:20 to 2026-10-05 14:20\nfingerprint: fp_86f99d\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: GET /v1/me/export\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0009\nstack, remind's frames, innermost first:\n  api.(*API).export  api/users.go:104\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "call_thkyWoxns1UsPiqot1pKZMne"
+			},
+			{
+				"role": "tool",
+				"content": "cr_03654d: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:16 to 2026-10-05 14:16\nfingerprint: fp_9e9c4e\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: GET /v1/me/stats\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\n  X-Request-Id: 6ac3ae14-0007\nstack, remind's frames, innermost first:\n  api.(*API).stats  api/users.go:117\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "call_HxUbE89WhVCz5RbUYRqNiwvd"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_list",
+					"description": "List every crash report, one line each: its ID, fingerprint, how many times it happened, the version that crashed, the function inside remind where it happened, and the panic message, cut short. Reports with the same fingerprint usually share a cause, but check. Start here.",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": [],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_read",
+					"description": "Read one crash report: when and how often it happened, the panic, the request being served, and the stack. By default the stack shows only remind's own frames, with file and line; set full for every frame. Log lines are in crash_logs.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							},
+							"full": {
+								"type": "boolean",
+								"description": "show every stack frame, not just remind's"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_search",
+					"description": "Search every crash report for text, ignoring case: panic messages, request paths and bodies, stacks, and log lines. Lists each match with the report's ID and where it was found.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "text to look for, such as a function name, a path, or words from a panic"
+							}
+						},
+						"required": [
+							"query"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_logs",
+					"description": "Read the log lines remind wrote just before a crash.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_goroutines",
+					"description": "Summarize the goroutine dump of a stuck request: goroutines with identical stacks are grouped and counted, so a dump of thousands reads as a few groups. Use it for reports of kind stuck.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_list",
+					"description": "List the files under a directory of remind's source, with how many lines each has. Use it to find your way around; use code_search to find where something is defined.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"dir": {
+								"type": "string",
+								"description": "a directory such as \"store\"; empty lists everything"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_read",
+					"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "a file path, such as store/store.go"
+							},
+							"start": {
+								"type": "integer",
+								"description": "the first line to show; default 1"
+							},
+							"end": {
+								"type": "integer",
+								"description": "the last line to show; default 200 lines after start"
+							}
+						},
+						"required": [
+							"path"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_search",
+					"description": "Search remind's Go files for a regular expression and list the matching lines with file and line number. Use it to find where a function is defined or called.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"pattern": {
+								"type": "string",
+								"description": "a Go regular expression, such as func \\(s \\*Store\\) Get"
+							},
+							"dir": {
+								"type": "string",
+								"description": "limit the search to this directory"
+							}
+						},
+						"required": [
+							"pattern"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run go test on remind's code, as it is now, and report failed tests, build errors, and each package's result. Run one package while you work; run ./... before you finish.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"package": {
+								"type": "string",
+								"description": "a package pattern, such as ./store or ./..."
+							},
+							"run": {
+								"type": "string",
+								"description": "run only tests matching this regular expression, such as ^TestGetDeleted$"
+							},
+							"race": {
+								"type": "boolean",
+								"description": "run with the race detector"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_patch",
+					"description": "Change a file by replacing one piece of text, or create a new file, such as a test, by leaving old empty. Read a file with code_read before changing it, and copy old exactly from what you read. After a change, the package and its tests are compiled, and you see the result.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "the file to change, such as store/store.go"
+							},
+							"old": {
+								"type": "string",
+								"description": "text copied exactly from the file, appearing in it once; empty to create a new file"
+							},
+							"new": {
+								"type": "string",
+								"description": "the text to put in its place, or the new file's contents"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_search",
+					"description": "Search the open issues in the issue tracker, by words or by fingerprint; with neither, list them all. Issues that contain more of the words come first. Check here before filing, since a crash may already be filed, perhaps by a person, with no fingerprint and in other words.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "words to look for in titles and bodies, such as parseBearer index out of range"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "a fingerprint from crash_list"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_file",
+					"description": "File a new issue for a crash group, once you know its cause. Search the open issues first; don't file a problem that is already filed. File one issue per cause.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"title": {
+								"type": "string",
+								"description": "one line naming the problem, such as \"store.Get returns a deleted reminder\""
+							},
+							"body": {
+								"type": "string",
+								"description": "the cause, the evidence, the fix, and the reports it covers"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "the crash group's fingerprint, from crash_list"
+							}
+						},
+						"required": [
+							"title",
+							"body",
+							"fingerprint"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_comment",
+					"description": "Add a comment to an issue, such as new crash reports that match one already filed.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "integer",
+								"description": "the issue number, such as 101"
+							},
+							"body": {
+								"type": "string",
+								"description": "the comment, such as new reports of the same crash"
+							}
+						},
+						"required": [
+							"id",
+							"body"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "submit_diagnosis",
+					"description": "Finish the job: submit one diagnosis per crash group. Call it once, at the end, after filing an issue for each new cause. For status fixed, the reproducer test must fail on the original code and pass on yours; this is checked.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"groups": {
+								"type": "array",
+								"description": "one entry per crash group; every report belongs to exactly one",
+								"items": {
+									"type": "object",
+									"properties": {
+										"fingerprint": {
+											"type": "string",
+											"description": "the group's fingerprint, from crash_list"
+										},
+										"reports": {
+											"type": "array",
+											"description": "the IDs of every report in the group",
+											"items": {
+												"type": "string"
+											}
+										},
+										"category": {
+											"type": "string",
+											"enum": [
+												"nil_value",
+												"out_of_range",
+												"concurrency",
+												"bad_input",
+												"other"
+											]
+										},
+										"root_cause": {
+											"type": "object",
+											"description": "where the code is wrong, which may not be where it crashed",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "string",
+											"description": "why this is the cause: what you read and ran"
+										},
+										"reproducer": {
+											"type": "object",
+											"description": "the test you wrote that fails before the fix; leave out for already_fixed and duplicate",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"fix": {
+											"type": "string",
+											"description": "what you changed, for status fixed"
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"fixed",
+												"already_fixed",
+												"duplicate",
+												"not_a_bug",
+												"needs_human"
+											]
+										},
+										"issue": {
+											"type": "integer",
+											"description": "the issue you filed, for status fixed or needs_human"
+										},
+										"duplicate": {
+											"type": "integer",
+											"description": "for status duplicate: the open issue it duplicates"
+										}
+									},
+									"required": [
+										"fingerprint",
+										"reports",
+										"category",
+										"root_cause",
+										"evidence",
+										"status"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"groups"
+						],
+						"additionalProperties": false
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792110320-3SGRbzxwOJRlt9Lf0AOR",
+		"object": "chat.completion",
+		"created": 1792110320,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "**Considering data logs**\n\nI need to figure out if I need to look at the logs to identify the data. It could help me understand what's going on better! I'm curious about how to approach this task efficiently. Do I have all the necessary information? Should I explore the logs step by step or look for specific entries first? I want to make sure I'm on the right track and not missing anything important. Let's see!",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_Wx2rf4vJmUSZ45DVsH9H3ul4",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_b73dbe\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "call_4cyHlJQNq5IuRHBCWcX3njAI",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_6265c5\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 2,
+							"id": "call_klDXbooFOnneeCULkavsk1YH",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_76768c\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 3,
+							"id": "call_NbVls7paPSNfFrVSXHiRxEAs",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_ed4938\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 4,
+							"id": "call_EHLgIYrXPZelhchZTWc4qX5b",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_d80efa\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 5,
+							"id": "call_o1dJuLZxSu4zuk5kIEqabmN3",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_03654d\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 6,
+							"id": "call_VjuUWHPX23E2UTNRqdZ5Aczq",
+							"function": {
+								"name": "code_list",
+								"arguments": "{\"dir\":\"\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 7,
+							"id": "call_TuDVUF5xFdjaQ8lNUQxE418B",
+							"function": {
+								"name": "issue_search",
+								"arguments": "{\"query\":\"\",\"fingerprint\":\"fp_34f681\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 8,
+							"id": "call_a8JWicsvPlURmwNLxAja5IXR",
+							"function": {
+								"name": "issue_search",
+								"arguments": "{\"query\":\"\",\"fingerprint\":\"fp_4828a6\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 9,
+							"id": "call_9eEEIVXt1FQAnM4k7DYu8Ej6",
+							"function": {
+								"name": "issue_search",
+								"arguments": "{\"query\":\"\",\"fingerprint\":\"fp_6a569c\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 10,
+							"id": "call_JuyUxFjgSZ708dyBUA68WTLg",
+							"function": {
+								"name": "issue_search",
+								"arguments": "{\"query\":\"\",\"fingerprint\":\"fp_86f99d\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 11,
+							"id": "call_HNVyWgLapo9rVhJN1SKIVI2n",
+							"function": {
+								"name": "issue_search",
+								"arguments": "{\"query\":\"\",\"fingerprint\":\"fp_9e9c4e\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Considering data logs**\n\nI need to figure out if I need to look at the logs to identify the data. It could help me understand what's going on better! I'm curious about how to approach this task efficiently. Do I have all the necessary information? Should I explore the logs step by step or look for specific entries first? I want to make sure I'm on the right track and not missing anything important. Let's see!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0W7yPAf__RBrYcmDJSYzjVS_tXXPMQWp5EHQxKkefvw2XoeyXvVScpM7j6GYgvcErRt1diRE7UJbhW0Sxgr3bz_NyO_CzJ4U42nZL8wvavdIq0JvycbtL8hB_uGA5IUc66C2D1l225uV5EPVh7EtBhw35_XRGmSgjmbOUb2-g0-ciqYOE9Il5Wdoc7z3FqXXJK3J921UXnsHWpRWT1SkTbOh4pzu1JxNhGYUKL1xBJ9ZQH7cpmZB_4a55zuZjqhQL37coz3wKun8TloRkKznXgmsoj9WwXok12KBFYRRgAPbrQoRC3uu3gQ1W6n3flpSwXmNJJZtByu6TRRHCFVzqw6tBNGA70bQEAJJ8qzyE3pX1iQ9YT2uIMbP0DEEUzwBIUiMaH0KCf6prcoo2AbXCRMYTiFamfhgB_OhHS4c3Q_YcjYSAqJPVZ59DWwTrPShvNS7-Mplzv0AkhAnBj-tvS-zTLBRHVQBDn_DQ8wSIJV4S9vE94h-nVQju--S6wfgql29YAAB226-Fycq93_jwANhD-T5PwhCKifMzc1H4z02BIKyE54M9KbSY9MHOBfXgsF1_htr6uggbjT9DXL_EwoBeURqYn5zVOz1UovabZcUX_1iCskYkYAbFPw1GDU31glju4GyaQYX6dPO4bi8orodJT9RlHL_--w3OOgG7w6NhDr4LMqdh6TT_8_V8fRr971gH9g9BsKBYmufDhwEbsJfLkn6NfeA6KYDgT4_GKJKxcGih5_lHE2SNMg422m-p3eeR4ij0ax_hZG5HWToLtczgr7vKXT_ATl7FrwIaUa8YzbsAH6tKADZs6DB5EcpFmuoRynRKCfd1_UaBpJZp7-I_Gs_8Rv3fAaknu4cpN9OHV27zCEvZkAk06VClJvhsn9s48ctNrNJAVbx9IuML4kMGcdsgbBCl29zSeRSycg6Jd01tbqvgmlR40hBa8UCb5wQP03b5aovDJxOnzpha2p6gPZvymjDiR-aMnHlUsVy8RwNT3rd51SyJ0BmMzBo98ShFvvTHriFp5KIwM9MgWf9WEylBlwoSLgfkEzc1H1CM4UaMO4nVefXh8xzCAz7l99FD1dYeg1NHzWITvKU6uQagUH-FmVAVfqC4QCBrUqpAUAzZmi4nHryvckkB_BDtaWFA0zmaNvCBfVic93NwpD6V9G_gabKV_xSm4esdILZvQxbbiwhBEz9GR0Rnqxg6jW22meEjsVLtpsU5ess1RYVa2iNQHt9NBvZTF0Pt4sxXfBVKFjZVnBlJ2-68s8EtVrs2JCoMDNf_BtI5Q8yNu2FI4ouZvzMWCHvymqsMpop0TJ68ZDoy5Y_aON6dWEmRW4H511EwqGI5xaTd3P3sE9NEMtfkIq2brfiGssQC_3fYQ6Y-W8dmF3MDuIGpA_p4mtgf3Tq1pEgoBTrK-knDQdpiZ_U5LM7psx9UmxAgHOgwoJzQ12e5IM-ucwL8sQ8WlOtUnSfO9EwIVIOyApP7hpgGPtfmsLhmM-I6x9B6VMTD-pvRkBB3Cofw2zrzUIpeVHbd9hKRq78mzZiFtBZE9xsDG6lY-ERhlGkXZMoCgpZYVx1GS6LF5odd46PWMVRGabmMo7poNOIASapyMxVmXAgj0_MFYCs2t6KN9ow6YdG9jNi9cXYaOJXC_KLVV8IOvOLbUDQWlsnt22303NUgCp4ZzXilMWTPV6jC0J6I5CnnPE=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0b96102eeaacbce1016ad16ef12d9c87d1b11e6765560bf014",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 3680,
+			"completion_tokens": 270,
+			"total_tokens": 3950,
+			"cost": 0.00079282,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 1961,
+				"cache_write_tokens": 1716,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00079282,
+				"upstream_inference_prompt_cost": 0.00046882,
+				"upstream_inference_completions_cost": 0.000324
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 10,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

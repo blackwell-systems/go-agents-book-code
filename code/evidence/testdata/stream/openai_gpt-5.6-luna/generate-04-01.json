@@ -1,0 +1,73 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092342-s5PNNbdnO3JqumXO4RMy",
+		"object": "chat.completion",
+		"created": 1792092342,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, `context.Context` carries request-scoped information across API boundaries and goroutines. Its primary purpose is to coordinate cancellation, deadlines, and timeouts. For example, an HTTP handler can create a context with a timeout and pass it to database or network calls. If the request is canceled or the deadline expires, those operations can stop early, freeing resources and preventing wasted work.\n\nContexts also support passing small, immutable, request-scoped values, such as a trace ID or authentication metadata. They form a tree: derived contexts inherit cancellation and deadlines from their parents, so canceling a parent affects its children.\n\nFunctions that perform potentially long-running work should generally accept a `context.Context` as their first parameter and honor `ctx.Done()` or return `ctx.Err()`. Use `context.Background()` or `context.TODO()` only as roots. Do not use contexts for optional configuration, global state, or arbitrary function parameters, and never pass a `nil` context.",
+					"refusal": null,
+					"reasoning": "**Formulating clear answers**\n\nI need to create an answer that's around 150 words and includes specific explanations. I’ll have to count my words carefully, aiming for about 145 while covering key elements like cancellation deadlines and value requests. It’s crucial to avoid storing arbitrary information and keeping things clear, not nil or convoluted. I might want to use a context interface for clarity. Let's aim for a precise formulation at about 147 words.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Formulating clear answers**\n\nI need to create an answer that's around 150 words and includes specific explanations. I’ll have to count my words carefully, aiming for about 145 while covering key elements like cancellation deadlines and value requests. It’s crucial to avoid storing arbitrary information and keeping things clear, not nil or convoluted. I might want to use a context interface for clarity. Let's aim for a precise formulation at about 147 words.",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0Si53TkU_6IAKy5aZ6DrROvdQlPPD6fqwF3Pp1f9eEOQt87b0S-0vgOPXhlIRIx_uYRyF8J_EF7p7u541uOzK9MgzgY0fQ-sxHeU0SQjVuKpxNvdqgXSyO4AbpTOPWYb3zxZWIjV9kmdkfaoLiBR4PCqJ5sSbMjxExSayflEf9muIols_M5izVXuZ3t7s1LvGQlzbowr5aeM4BmUHIRKL2ZJovdEXMRZgRgcsgvzTBMZiUe9azpJknYkMJpxMYRPMjj8UQra5DatOj4Bs6B7gcOEZy6AKJveHetfwYmBIYCypQRONv6HG9bxm4eAE1KiJlN6oBAj7Q3pJ7ilcWChfP8xZaS6bXA27D_VjzBosB1203DrxS7mrl10nmgV_RaeQfsjcXllcyYvzmcNkn43u5lLYz1Djody5nD9pOSUOS9BnGv_z4Tx7aOi6es5gCq97y9W_X5LpvITzc8W3aGbcqIXHJRZe2mRcgB0204FB-uZKftiBd_tyJSg3GNpEsGJoUcHvbFQQ2dFU5x-7gAviJsmiKr4aM6cZcEyYCEHDxPNHZbbn0sBzYtY0lR_0aaMVPXY2MfVrjDlPs1WLhJodWP6ZitMWoNNANmKLOP_rGYj3aDeZWoF4JzQhHXlB1E3zdcj9OG3W24gxnw_zY8nN2WwvhGJETqigL7PDJrdWxoMk-ArfNs4yXTHsvXUI9JYyelHPAmiU2V3vHp_uaWAIfN-JpWXpQGEEDMCepSevlNg_Ac11zMb-pYSWHxpD7c3hIe-zYqUwWy5KP0ZRCZzGiNfF4fHMZHc1FMu-ONdRym5MA7guGfbPJgQUkBJhfvvQOpZW4XNtcBM3So9vSJuLOIcOAESeE-kJ_0iQSnasfFP4IW6E2FckCBa68iXmQ0-7OwhQXOSlsaQzEPWYQQN1L25ncMFGo10lNZ8YM59pYTQjNMPuiMx4TvgwSXFxm2UUaTtI_zgOs9nvlb-AwnHqh3IItITXUH7KyecHQSLcTgKKpMGhQZdJsnfL-ztbJ1ARr52nAUZ79A37Ro9taujRsxk-meK3SDHS7nluzwhctEGrl62mL6J77QMJQAE4ZMmfFiSfyvvocgcF838ZSiZJieMtCZjInWWsA5gh5IYAWwH8JlkgMPxAgKlXS6KvmVGyy8NDau4Lu6bwrOK965nsqLMT5KyYSMl6BQySvlocx_8wW2Y7_dNKGJlVguh3EYa38jt7reycghFETfkbf5hb2DdxJ2rO2Qn2US2Am1ThBYrnWGmdTVV1-MNAtARx8C9WWVvLC18I8tD3NsPGcb_K747OFlZmP3c3QJaqha97RqpdIfnWWbamzp1fDxTDBJQzcaLLHwsM4w-Q0c8vQNuCd34mRSJiQeAuHigAL0qy6mgsrCqqUCzXpD5CDgygcrDe7OipNch5JZX23-0iBFUPSJkgk5zar6mcpDfngYFz23J3chOvXPdhXXAFe63E2RsndrgKr729dxjUxVfi4raF_qF95q_phNkqM-wT9d24D2tfgHq8qeYMcHCsFAwKP88JM1lpQZqN_056wpbCZ-MPEM2IVSgb4Yir8Rd8cVsl3a4nE4_D-JKQLLOFjQ2BEMH3cZmw2f-zmZ_b_unssjtft4CfGiLc-p5kG-v0lSV5CDEG1G9YsWewad0gtX8KpMlbQtWSmplOjQ24Ik7uUdF0ojPISRiN35SLSXbnSqb09xxLLzDbZ7-bv2se_29Pah-Gj9hod9uQNdyDJC2280ivhBg_tWGuXkjYGxTlTQH0QoCE-p3FffdZ1DTWBqu1WNUeyxbD9Z0KiWKkTOby6JNpy4sz0LHoOSo1oaA5BlCkD6LeiB7GVEqsQ-9JOgUoaOaF7lMjDiRb-1U7-izxjd0zOJBFkkzqzhDUahQIx9itl1OY616iKjdTwNM531f8PAqcAkM6GSyQ0ihO68UbkrdMgWISW9S2jfliGfB_lqHW5wJAWXOfP784TIWk0HQ17u4BbGJ6zSrMd_IbiMKFJFxzI1o_0NAm5IqNdtZ86IiWNSWUaSG5PMOQRsyM7nRc4uV80LP_ThHeTIyWo6OYMKQIVTL5NwIxyf3By_v7Rs1LBm8MoL3r5iZpHuBI00yf-RcQ21EahkvfCwow_X07-e-GUKXRjkbn9_SySNRPqSW5q6MmL6Szoy0-PwDlBsWnAA6KWaeLi-FSk7W0tcB_O2Q-40MWDegnizEBaJqUjXuoCumwpClh1U_pzJXv4WcLbFYU_wrEnS96uA7VAey4URqV7R-C9vx2Xugufh1ihVne7jlCKGS5DSfg0kPJnLJmYC28ldItgRRDtPQjGJN_VeAHwTFHw==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_05c4bd3c97e7283b016ad128b767c487d18edf5ba6ccac8737",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 21,
+			"completion_tokens": 260,
+			"total_tokens": 281,
+			"cost": 0.0003162,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0003162,
+				"upstream_inference_prompt_cost": 0.0000042,
+				"upstream_inference_completions_cost": 0.000312
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 58,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

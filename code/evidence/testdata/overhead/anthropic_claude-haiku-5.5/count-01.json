@@ -1,0 +1,67 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"max_tokens": 400
+	},
+	"response": {
+		"id": "gen-1792092713-ORvpJc1svbTMXIVMGO9d",
+		"object": "chat.completion",
+		"created": 1792092713,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "max_tokens",
+				"message": {
+					"role": "assistant",
+					"content": "I can't see your project, so I don't know why the tests fail yet. Please share:\n\n1. **The test output**: the full error messages and stack traces from the failing run.\n2. **The failing test files** and the **code they exercise**.\n3. **How you run the tests** (for example `npm test`, `pytest`, `mvn test`) and the language/framework.\n4. **Any recent changes**, if you know what might have broken them.\n\nIf you can paste the output and the relevant files, or point me to the directory if I have access to it, I can diagnose the failures and propose fixes.\n\nIn the meantime, you can narrow it down yourself:\n\n- **Run one failing test in isolation** to see whether it fails alone or only in combination with others (which suggests shared state or test-order dependence).\n- **Check whether the failure is in the test or the code.** If the test's expected value looks wrong, the test may be outdated. If the actual value looks wrong, the code has a bug.\n- **Check the environment.** Missing dependencies, a different runtime version, or unset environment variables often cause",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQStAYKEAgSGAI4AUIIdGhpbmtpbmcSDAT7mrfG9Jfg5vzPLBoM90o7Z1Lol79AV3BeIjCwu8NyPBNwKbDMoCLRJKaHmM/oact+V4nr2B5K/e/QijLqXOfs8YkJdBRQk/oNsJgq0QWO1kP0SznX5Th7XBnKfBFWpNPrlAzhLEn4kGJgfdTjQBOdiDHmoD6Bvi36Fq37sAkNTB7WaH/FDwl/rGxsLgvPhD5ZM4qncHCidf8+yThDty2f7pyBEns0ffZAtqN6JmjVwUzoczwZSEVaDbpYG+qXOXVa9OmK+0WnZxY2GRWuKrPUM7mJ/YRISRzVevaU7RRToyrsGVH/8lTYkfDLvjQo6sa9LWu2VDUTLE1uELZpe5FjE4aQ0V14fs5wQdMzzbuyUnaTDtlxBQOSVO+V0joJic12VM+lfQup0LukpESFWBYenE5j4mem8TKy2akaEDWffe8vpaf3Vupz4C5tvzcrtE01okeT5K0JadTqOcSWdN4C9hptA6HjU5I2Smt5MpXcFV68BpnVIWnC/v1on6dZVcKpAgB6Yuc7SOovzE+Yz9W8IGMpqmYnA+TpD07S3ospb+TNcd9ewMuWiWUHLO46EI+5DL7GIwtIVx1wkuVTIRG/CyhJP3GUADCQG3IBTzVxehhj0jrHyDYea8wrlW/6Mzd+ZNc3qo6GGt4VYEj5KNf1McXYC7W869xkDr0mG5SXJCQ4snUZx/u0acPkinf7vep0zoJf3llfOI/IScgxklP8jf/4Mz3Vi+Xz9fMnXu8DIdm5tJxV+z2/z5Tmdj2snoXeEy844yGgyp//lUFDRb4pX+WxuVeZO1MrKY/2yevBJq+XX9371ldyHqTQDZaSw2h/PjF9GiQPEQAnO9cVfmkPFS30gBtHzPkasnLUjS/KWWkkauWaUkMHuL5OqfT2kHeymQikCHUeQ6gGoniTlhHfP9CdLODKLanUArrXXXEIwE50Bse+dUbWghfjVHhw56rCfNxN5NCkWitFq1SxzsZ83U1A2/QpZ2XLpWUQLMusfIi1KGKAzp5aTn2E+OyU2hisJaQZUu22578GhPCStgqJ9WaozrrwsdBxDfx8CaWDGAE=.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 26,
+			"completion_tokens": 400,
+			"total_tokens": 426,
+			"cost": 0.0002026,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002026,
+				"upstream_inference_prompt_cost": 0.0000026,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 66,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

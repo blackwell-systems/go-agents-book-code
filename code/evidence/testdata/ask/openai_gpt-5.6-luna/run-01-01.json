@@ -1,0 +1,73 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091610-W1tCDjhq40BBewDh826Z",
+		"object": "chat.completion",
+		"created": 1792091610,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "A **nil slice** has no underlying array and equals `nil`:\n\n```go\nvar s []int // nil\n```\n\nAn **empty slice** is non-nil but contains zero elements:\n\n```go\ns := []int{}       // empty\ns := make([]int, 0) // empty\n```\n\nBoth have `len(s) == 0`, can be ranged over, and support `append`. The key difference is:\n\n```go\ns == nil // true for nil slices, false for empty slices\n```\n\nWhen JSON-encoded, nil slices typically become `null`, while empty slices become `[]`.",
+					"refusal": null,
+					"reasoning": "**Clarifying nil slices in JSON**\n\nI'm looking to craft something concise regarding nil slices in programming. Understanding that a nil slice has a length and capacity of 0 is essential. When comparing, `nil` is true for a nil slice but false for an empty non-nil slice created with a literal or `make`. Also, when it comes to JSON, I need to be clear on the differences—like `nil` converting to `null` and empty slices represented as `[]`. Let's keep it simple and direct!",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Clarifying nil slices in JSON**\n\nI'm looking to craft something concise regarding nil slices in programming. Understanding that a nil slice has a length and capacity of 0 is essential. When comparing, `nil` is true for a nil slice but false for an empty non-nil slice created with a literal or `make`. Also, when it comes to JSON, I need to be clear on the differences—like `nil` converting to `null` and empty slices represented as `[]`. Let's keep it simple and direct!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SXdnjbFxPciYhhNOBGvcOJOO4SifeWHWesKOJKAUN2i5wpbCbrETHGMkrhwZSHVEv_iCOFpfo7W_l_G4WBAnQs5QQ3A7geh0QNSo_OIaXv823ChduHiMEIOeR4onWzGnfThRyLBW0ufaGva7aAZRo5n3v_42TVM-PdQIZU_GnM7YdyczlXKzpit_fi7Pom2guZKE68yqL3Z5j6tJ64BANzmFIfxvIjD7Kg_6kU0YEiFhu34Gn2Hmo2Z7SB1Lm4TbpiMiWeVwXeBe4TlZ2-ZZZSiZ-DpJldHtzJFpoAFpEJMS8uxcPoMPUY2qBkrgVbV2EZiJD0yMgwnd3hcniy8nes2alQa-MpteCCI3C20dgJTXYExmRi2lrxFRyz1iQ67ZqiOXpDtajlDvmRoKWPDVWWeAR9hw-j4cvMsKZyFJkleU1FEEXvjYpeTFTHP5fLts5h5g5RZetYSmGlKvB-MeHP4HfAhhJjoFKXyc9DwpZ3BJLR_CoNTmcEEBiAVtlIxNzV1-ThSN1PRjOIgdZQdlXQm9Mnbj5bzBAThvx3HdSI8ZRBI58jkAUgqloGsdLHWyEL0pUfl2uRWIynrgDpwftVe4oEMfQgTdMvwCD0ZMM6IQFgSsiXtL-AH_Nq_EzqjVZ6I2b6RFDILJJSK31_8TzovM3C17ad09QHW0J65gje1VHn74w-9C95wPiAEK9QRjKkLDV_-vsJf_fja1rULSvS0S2zAsr8-kVb7SbEuUtWDnBgLm5s86Eql-KwjaAevh43zUjyLa3YutxDCu-8cLup-NQvcHPDlakd-voQiiJmGSXGDqPM7IptEiqK7gDCs-5cRxSyQtn0tK4gZ-6mP8jghhVNKuoSgco8bV7pQE0KZCofsZstkWwMqx5kh39BF9r5OnyOraGL2ROVDXPmnzwGs7uufNivViMQXJwIcykAh9ODHgVovcwtNSrE_Wk47jm3DYtbsawxkjRfMje5HvV3xm7q73F24sqIvW5NVWdbuCDI9JYhgT5Hm_cdeRmp0CTHB2yt5Htqoze5sZo4hMXFJTRKxs-D1PGy8r1yLovqeAzqhEW-FTrDPH7DsX3LCYgLJbNP3FzXQmq3E40HGyw_PG9K_oycyuzC-b9gL5Qv46QqyFDX2fTz4U0qYFLPA-tCtj8YxxBLgZupTYJLoZG-IKOlqeLpgIcLbGLJ2t29RNSEW9AIslk1Y9j1OaSafQImvhbkwQLf2rRwopCTsJdPs9S5hs3ySesePhjDsHR-i7vn2BZ0WAPSNZLRJMAMqW5cvojPvlcr_XXOzwn1Ew5sfwlIlFvpU61lQAMSnvNlj7AGkAEwRGL6-W28pcV4PC53mGlmHg21qxDbsc7Ick9kuJrXjEs_F893kIOh3Zbe_lj3PmFBD6VRYS7O68zIZcwLPOiQZvxp4Q3Fbx-xb0VMZXbGnhDCWgjMimOhIL8zivHMhwDjZhxC-7am-968CzOyMn0EUifmHw0pzJs7RCWWTQKWkwEvz9VAAZuqE2YysJWKvpTFiKZWkLcCMZxVSJ-LDK2cI71sweLTu4-qipoD3r-SzGgoHhOub32FeL8GtZqrQw4QpBHXQrIOUTBrphqKtnciHxnrfep5XwSWjUJMmDpumZdMX6mUYO4-z1LyY-3Os78znIompAlT2aV4VUQRsWpCxnMJYVgB-bghfPK_fKXLC4xDF1Iu-Lpqi30n4EwJO47u_fcFT0DO6WSrOvA-d6aaUMNyAQV-CIuCY_BE-BzO3QaIi5NcAxmkHM-uM8Ak13YOZlRhXRqQPmxMC5MyUDz9RWZqC-rZr9XFJYn98mhRlxc61YhUvYYdg_rj2yXFnxyUFyac7Hyav9_1weEovs28IgILTsgsDsUhMEcqjyE-61IhGkZn4rx_uGRQ7GGujOV0nO0JyS7F_ivOlvezq3nYmweqHvEJrBZ9nGLXBl2PH3l94uHtHFK1ncjmMrWeHPob9tHb-k7mSDkc7IL36NPMG-XSNqs2A3u1yI0HureG4D0UvhZP3Nr3j_PNcfaLKc74s83tpgib2UIvZ5AiWXe0IRd8-Uj2B25iXu9S9rW9_peWimPckoozyHm-SOg_9nqpE8MxaGlsPAaHhEQkMzZ2khoNfjZdC32g7NdCQwDhup7QGy3tHk_sa4Yibdm5fA8eTx_4GJDea1QGF3bGfxz1_DAhQfFourWlwbHmP9l_AWeB0OJJvAXukgw88aFQd4JldWQxKNHClNzEJwJ8t.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_08bd7f14b4449990016ad125dc13fc87d1bc3f89eff92e9001",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 29,
+			"completion_tokens": 193,
+			"total_tokens": 222,
+			"cost": 0.0002374,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002374,
+				"upstream_inference_prompt_cost": 0.0000058,
+				"upstream_inference_completions_cost": 0.0002316
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 57,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

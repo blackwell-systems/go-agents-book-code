@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091636-laXrWP7hqjoNccf0Gf7C",
+		"object": "chat.completion",
+		"created": 1792091636,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "A **nil slice** (`var s []int`) has no underlying array—its pointer, length, and capacity are all zero, and `s == nil` is true. An **empty slice** (`s := []int{}`) is non-nil; it has length 0 but references a valid (zero-length) backing array, so `s == nil` is false.\n\nFunctionally they're nearly identical: `len`, `cap`, `range`, and `append` work the same on both. Differences appear in edge cases:\n\n- `json.Marshal`: nil → `null`, empty → `[]`\n- `reflect.DeepEqual` and `==` comparisons\n- Explicit nil checks (`s == nil`)\n\nUse nil slices as the default zero value; use empty slices when you need a distinct \"initialized but empty\" state.",
+					"refusal": null,
+					"reasoning": "The user wants a concise answer about the difference between nil slices and empty slices in Go, under 100 words.\n\nKey points:\n- nil slice: `var s []int` or `s := []int(nil)` — it's nil, len 0, cap 0, `s == nil` is true, no underlying array allocated\n- empty slice: `s := []int{}` — non-nil, len 0, cap 0 (or could have capacity), `s == nil` is false, points to a zero-length underlying array (though it may point to zerobase)\n- Functionally similar for most operations: len, cap, range, append all work the same\n- Differences: nil checks, JSON marshaling (nil → null, empty → []), reflect.DeepEqual, comparisons\n\nKeep under 100 words. Use markdown lightly — maybe a short format with bullet points for clarity since it's a technical comparison.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user wants a concise answer about the difference between nil slices and empty slices in Go, under 100 words.\n\nKey points:\n- nil slice: `var s []int` or `s := []int(nil)` — it's nil, len 0, cap 0, `s == nil` is true, no underlying array allocated\n- empty slice: `s := []int{}` — non-nil, len 0, cap 0 (or could have capacity), `s == nil` is false, points to a zero-length underlying array (though it may point to zerobase)\n- Functionally similar for most operations: len, cap, range, append all work the same\n- Differences: nil checks, JSON marshaling (nil → null, empty → []), reflect.DeepEqual, comparisons\n\nKeep under 100 words. Use markdown lightly — maybe a short format with bullet points for clarity since it's a technical comparison.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 35,
+			"completion_tokens": 364,
+			"total_tokens": 399,
+			"cost": 0.00018725,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00018725,
+				"upstream_inference_prompt_cost": 0.00000525,
+				"upstream_inference_completions_cost": 0.000182
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 193,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

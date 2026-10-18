@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092473-vQW1bAn005ZpVhauschm",
+		"object": "chat.completion",
+		"created": 1792092473,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "`context.Context` is a standard library type used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\nA Context is typically created at the top of a request (for example, in an HTTP handler) via `context.Background()`, then derived with functions like `context.WithTimeout`, `context.WithDeadline`, or `context.WithCancel`. Derived contexts propagate cancellation: when the parent is cancelled or a deadline passes, the `Done()` channel of the context and all its children closes, so every goroutine watching it can stop work and release resources promptly. This prevents goroutine leaks and wasted computation when a caller is no longer interested in a result—for instance, when a client disconnects mid-request.\n\nContexts also carry key-value data through `Value()`, meant for request-scoped metadata such as trace IDs, though using it as a general parameter mechanism is discouraged.\n\nBy convention, a Context is the first parameter of a function, and functions must pass it down rather than store it.",
+					"refusal": null,
+					"reasoning": "The user wants a ~150 word explanation of context.Context in Go. Let me think about what to cover:\n\n1. What context.Context is - an interface/type in Go standard library\n2. Its purpose: carrying deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines\n3. Key pieces: Done() channel, Err(), Deadline(), Value()\n4. Common functions: context.Background(), context.WithCancel, context.WithTimeout, context.WithDeadline, context.WithCancelCause\n5. Convention: first parameter of functions, passed down call chains\n6. Why it matters: cleanup of goroutines, preventing leaks, propagating cancellation through call trees (e.g., HTTP request cancelled by client should cancel downstream work)\n\nTarget ~150 words. Should be accurate and well-organized. Let me draft.\n\nDraft:\n\n`context.Context` is a standard library type used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\nA Context is typically created at the top of a request (e.g., in an HTTP handler) using `context.Background()`, then derived with functions like `context.WithTimeout`, `context.WithDeadline`, or `context.WithCancel`. These derived contexts share cancellation: calling `cancel` or hitting a deadline closes the `Done()` channel in the context and all its children, so every goroutine watching the context can stop its work and clean up promptly. This prevents goroutine leaks and wasted work when a caller is no longer interested in a result—say, a client disconnects mid-request.\n\nContexts also carry key-value data via `Value()`, intended for request-scoped metadata like trace IDs, though overusing this is discouraged.\n\nBy convention, a Context is the first parameter of a function, and functions must pass it along rather than store it.\n\nWord count check: roughly 150. Let me count approximately. First para ~30, second ~85, third ~25, fourth ~25. That's ~165. Close enough to \"about 150\". Could trim slightly.\n\nFormat: prose paragraphs are fine for a ~150 word explanation. Maybe short paragraphs, no headers needed. Could use inline code formatting for API names. Keep it tight.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user wants a ~150 word explanation of context.Context in Go. Let me think about what to cover:\n\n1. What context.Context is - an interface/type in Go standard library\n2. Its purpose: carrying deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines\n3. Key pieces: Done() channel, Err(), Deadline(), Value()\n4. Common functions: context.Background(), context.WithCancel, context.WithTimeout, context.WithDeadline, context.WithCancelCause\n5. Convention: first parameter of functions, passed down call chains\n6. Why it matters: cleanup of goroutines, preventing leaks, propagating cancellation through call trees (e.g., HTTP request cancelled by client should cancel downstream work)\n\nTarget ~150 words. Should be accurate and well-organized. Let me draft.\n\nDraft:\n\n`context.Context` is a standard library type used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\nA Context is typically created at the top of a request (e.g., in an HTTP handler) using `context.Background()`, then derived with functions like `context.WithTimeout`, `context.WithDeadline`, or `context.WithCancel`. These derived contexts share cancellation: calling `cancel` or hitting a deadline closes the `Done()` channel in the context and all its children, so every goroutine watching the context can stop its work and clean up promptly. This prevents goroutine leaks and wasted work when a caller is no longer interested in a result—say, a client disconnects mid-request.\n\nContexts also carry key-value data via `Value()`, intended for request-scoped metadata like trace IDs, though overusing this is discouraged.\n\nBy convention, a Context is the first parameter of a function, and functions must pass it along rather than store it.\n\nWord count check: roughly 150. Let me count approximately. First para ~30, second ~85, third ~25, fourth ~25. That's ~165. Close enough to \"about 150\". Could trim slightly.\n\nFormat: prose paragraphs are fine for a ~150 word explanation. Maybe short paragraphs, no headers needed. Could use inline code formatting for API names. Keep it tight.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 27,
+			"completion_tokens": 659,
+			"total_tokens": 686,
+			"cost": 0.00033058,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00033058,
+				"upstream_inference_prompt_cost": 0.00000108,
+				"upstream_inference_completions_cost": 0.0003295
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 546,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

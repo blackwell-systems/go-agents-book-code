@@ -1,0 +1,58 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091627-f9eNw2cDZXr4xC5xjxKT",
+		"object": "chat.completion",
+		"created": 1792091627,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, a **nil slice** has no underlying array and is declared without initialization (e.g., `var s []int`). An **empty slice** has an underlying array but zero length (e.g., `s := []int{}` or `make([]int, 0)`).\n\nBoth have length and capacity of 0, and both work with `append`, `len`, and `range`. However, `s == nil` is true only for the nil slice. Both marshal differently in JSON: a nil slice encodes as `null`, while an empty slice encodes as `[]`.",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 40,
+			"completion_tokens": 169,
+			"total_tokens": 209,
+			"cost": 0.0000885,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0000885,
+				"upstream_inference_prompt_cost": 0.000004,
+				"upstream_inference_completions_cost": 0.0000845
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

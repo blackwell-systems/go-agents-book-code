@@ -1,0 +1,113 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version (MVP):\n\n- Add a book: title, author, and status (`to-read`, `reading`, `finished`)\n- List all books\n- Update a book’s status\n- Remove a book\n- Save data locally in a simple JSON file\n- Provide basic command-line help and clear error messages"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file in the user’s config/data directory:\n\n- Linux: `~/.local/share/booklist/books.json`\n- macOS: `~/Library/Application Support/booklist/books.json`\n- Windows: `%AppData%\\booklist\\books.json`\n\nExample:\n\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"reading\"\n  }\n]\n```\n\nIn Go, use `encoding/json`. Load the file at startup and rewrite it after changes. Write to a temporary file first, then rename it over the original so interrupted writes don’t corrupt the list."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Book struct {\n\tID     int    `json:\"id\"`\n\tTitle  string `json:\"title\"`\n\tAuthor string `json:\"author\"`\n\tStatus string `json:\"status\"` // to-read, reading, finished\n}\n```"
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a subcommand with flags:\n\n```bash\nbooklist add --title \"The Hobbit\" --author \"J.R.R. Tolkien\" --status to-read\n```\n\nExample Go handler:\n\n```go\nfunc addBook(args []string, books *[]Book) error {\n\tfs := flag.NewFlagSet(\"add\", flag.ExitOnError)\n\n\ttitle := fs.String(\"title\", \"\", \"Book title\")\n\tauthor := fs.String(\"author\", \"\", \"Book author\")\n\tstatus := fs.String(\"status\", \"to-read\", \"to-read, reading, or finished\")\n\n\tfs.Parse(args)\n\n\tif *title == \"\" || *author == \"\" {\n\t\treturn errors.New(\"title and author are required\")\n\t}\n\n\tif *status != \"to-read\" && *status != \"reading\" && *status != \"finished\" {\n\t\treturn errors.New(\"invalid status\")\n\t}\n\n\t*books = append(*books, Book{\n\t\tID:     nextID(*books),\n\t\tTitle:  *title,\n\t\tAuthor: *author,\n\t\tStatus: *status,\n\t})\n\n\treturn nil\n}\n```\n\nThen save the updated slice to your JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How should the program handle two books with the same title?"
+			},
+			{
+				"role": "assistant",
+				"content": "Allow them. Different books can share a title, and the same book may have different editions or authors.\n\n- Give every entry a unique ID.\n- Use the ID for update and delete commands.\n- Optionally warn when the title and author match an existing book, but don’t block it.\n\nExample:\n\n```bash\nbooklist add --title \"Dune\" --author \"Frank Herbert\"\nbooklist delete --id 3\n```"
+			},
+			{
+				"role": "user",
+				"content": "Write the function that loads the list from the file."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091666-6oCqQR209q2rBbi7oWcH",
+		"object": "chat.completion",
+		"created": 1792091666,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "```go\nfunc LoadBooks(path string) ([]Book, error) {\n\tdata, err := os.ReadFile(path)\n\tif err != nil {\n\t\tif errors.Is(err, os.ErrNotExist) {\n\t\t\treturn []Book{}, nil // Start with an empty list.\n\t\t}\n\t\treturn nil, err\n\t}\n\n\tvar books []Book\n\tif err := json.Unmarshal(data, &books); err != nil {\n\t\treturn nil, fmt.Errorf(\"decode books file: %w\", err)\n\t}\n\n\treturn books, nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n\t\"os\"\n)\n```\n\nA missing file is treated as an empty list; other file or JSON errors are returned.",
+					"refusal": null,
+					"reasoning": "**Creating the Go function**\n\nI’m thinking about how to create a Go function for loading books. I should set a path and handle cases where a missing file returns empty. Using `os.ReadFile` seems like the simplest way to go. I’ll need to manage empty returns and check if the file doesn’t exist with `os.IsNotExist`. My function will be `LoadBooks(path string) ([]Book, error)` and use `json.Unmarshal`. I might want to include the necessary imports and note any invalid JSON errors.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Creating the Go function**\n\nI’m thinking about how to create a Go function for loading books. I should set a path and handle cases where a missing file returns empty. Using `os.ReadFile` seems like the simplest way to go. I’ll need to manage empty returns and check if the file doesn’t exist with `os.IsNotExist`. My function will be `LoadBooks(path string) ([]Book, error)` and use `json.Unmarshal`. I might want to include the necessary imports and note any invalid JSON errors.",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SYUxNVbUHhpBGTKksoCUMD9-Hz5pl5o3f1O4XvXdVUIGOTvwKcfQTO5m4zLdMvXjxs5V1g42fxOJItN8Grl9mGcu4BEV0Spdeqlk9Ma-Ve5Cs80ahlcXAN1zT0EP3Frzk0OunYm57Ht-SBUno_GSb9ydnyfTby2nFoDTefI2OLZ3WqAxlEjcvBOLitMiOehxy00uTAZn32AIckK3T2S3fldFRLmvW99bgrJ7nzlzf9oOChtTZ68eh1mGDyHHHis9wvnl-IXwkNAcijmrE9-6PFMk_sCGOkj3YwUC2Bh6LLdnZUzVLE__v704H13MTNVaQLMKP-MWWO3BKsuWPI6S8COIrd9jx32ux8RJW4i1SqY7iy53IzwD5kWGdHwVX_RhhRZIK04E-li2aNIJQDjZrPpUPOvXe2RWl6Bef72-T970x_eeu9XNXBDdYjh-0PHtH2l9UgPq48vdey_XraBaJVH9kdNdD5ha85KJUGr_QdaHFg2B7RrwWM13lf4scNFgUoav2OzTeaNARKXiewz97GdCdWOQVMdd020KpqUByEnWlINUjCATf-UNqKCrpzozXG_F7JtP5xjgZOJ35dgIlMBX1S9xr1_JOl8VaS7N5pNy_YxyOspQmrDybBKZ6v7QRQl1x_vx1fg-jUCMV58uyI3pgFyjjeeKFrl9c6m3UuCxHuTNm_BIfodYYz7efGgh5kFc-NiBfByCG_uRNicg6eXqnQT5zq7ztGJJvdmE9QX2G3U8h5zKCE3OYnN_bIoX1NOP0i68SWbHaz_WPnovd0GT3XRiN5NlpHSnVoKeHE6xE7ftp_Ico-3baMnGsdo_4k-nHtVbuv1bASJ6NDGL736c9VMe8EfHD1bs3A5bETHWTXwQ_spIXHsF_LM8EpUR_qoziJ2xW6lcG7je7BrxVHy8Rd8FNynw24mbl9OnVXebkCk_KKRZuYcJp2MesGJNSDOub3S2XvWcxjBwAPGUmY1XeKIKTvT5dr5ZGoEvnwb5pR9vOL3GWKedcoN46cYeug5TsjyKriG2-Am8fsOhXpllGwVfLAMsC2E-Prq7uVXOi_MW4tFefqTBlV3rcRv7zXlsBznZy9c033ouIEnFPAmdAschmaByuitXnqLNGLfNaR2d9vxV2N6iejjUiEj4kPBm69qJf1t2JivWe_OrKxARH6j00DHZysPWg0_ItZszyCigQ7gsUeACDNGiMTRiILMeKNwQaNwyyL00TtE3vpFTYbedFsABm604gymtGSykVGhENd8LXGMgY4UecDWQeHH5kJV_n0COmrKRjbLi2imDyZr1lJjF9gPi1itfBrSpa-RRlAlEDVvaNqu7TATDxD0hoFBiYrmsnOctYaRQHjx2P0Dy1v7jFLcsiV4KIFvikWefqDEIH5vXKfBIektJOYwjmg66GUZAgXCRuXgp_y9oxys8WWD0Cg05niJ7cRcwbALvWw4TdNtZtZytHEIa0X-FSLRCGj1AYrn9AKG22yNKFFPQfn9a_sOC8FiNnJvL1ndvP79BY511jJvohvkstw9MPIEDKaapkO-ExlcSiWOXaZ1mMtfNU7vgkyxg2xbqv1od0jyBu89SiM0eOCj0LOoaXCNx6v1v_aAwvEcHseQ3B6-yGKOtaFklXYTYMVKyu_lK2MfqP-LThvKCI7wrwUXXQ795rXUbskZo4dmxsfB9LCyVdJLVQh8qiFQSlZjRDsKnHYdSa-HbRozMJPNnPuu8sOO_17iT7kXQC3e0rG_9w5Onj_PmQ3G-HXSGsKP5HFXtJ-q1sVp2c7wa9iH4jYIrVadjGkDcTU80hX_fhuZggDkijGCgb2HXLFRiGT6PJcFt-bmSFyFFN1DuLPdxlHht3gNO6LkpYEW2_g_eRrYou7S1S0xcMMI0I29MipavBtiEKTqzyhPa6NXORzjZsTBV4fpv35yeNoRhLYLe6kJ5h2WUzRob46jFd01PyYZMTLl8a1qD4Dq1fjyVqBv5MMcagX7IPW9vduwq6ufaJNvOUDmCeL_slpiJjjcZnHlKwvRcbzuRwj3uxza5zn8gSSsMIO3sNgVTeY0WUhV0eDKcL5vPoG-MO00Iblarion0GPUB4vE97PMRBY_D0nl7CfUcOKHw-nlW3Ka6brTAxkC6MGJyLG4gwaO58y8qBZKquM5_2R-Juq_HhWV94LjxBZowA-lmWcsU7fAF1F4zUW8KyTg3bpX7nM8pnOzp7e4MUBXe_epLiLrZDBqeSlrT_q8UJc2D29q0VqLlOkVA8u9NN72sh2UjfNwdi21ORoAAAFcphzZjPlhlYQN3Ogyrnoo9QvnAJczqprjUcYHEZ28agFKcDTajGDGwFdl1NM4NgjXTwLv1QPuOkuSDNh1mmQOz3DkGU9-EVa5E7zXqSqTpLd9O4h659w1B5iU6Z28GeqmlNazoxRFKhAa1Usm8HhgtXuwHXFFiEF9R3TA1hFKY4pJwEcHGMbmEA9Xk2LD1Dp0oG-8tdmwuNaYwYC8qH4c.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0abf9601e235a0af016ad12612d48887d191cf92e94eecc8df",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 713,
+			"completion_tokens": 229,
+			"total_tokens": 942,
+			"cost": 0.0004174,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0004174,
+				"upstream_inference_prompt_cost": 0.0001426,
+				"upstream_inference_completions_cost": 0.0002748
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 72,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

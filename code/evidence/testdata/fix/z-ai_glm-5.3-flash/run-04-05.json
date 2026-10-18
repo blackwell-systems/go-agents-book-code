@@ -1,0 +1,258 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"content": "I'll start by exploring the project structure and running the tests to see what's failing.",
+				"tool_calls": [
+					{
+						"id": "839fcef5-9ace-4f7a-a3c9-79bac9f6947c",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "c78c4dc6-3c26-44f7-8af6-10b06828aff8",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me start by exploring the project structure and running the tests to see what's failing.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "839fcef5-9ace-4f7a-a3c9-79bac9f6947c"
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "c78c4dc6-3c26-44f7-8af6-10b06828aff8"
+			},
+			{
+				"role": "assistant",
+				"content": "A Go project with a duration parser. Let me look at both files.",
+				"tool_calls": [
+					{
+						"id": "be0a8f34-8773-4cd9-a43c-71669444b96a",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration.go\"}"
+						}
+					},
+					{
+						"id": "819434b6-1576-422e-ae82-44f0527f972d",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration_test.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "There's a Go project with `duration.go` and `duration_test.go`. The tests fail on parsing \"45m\" and \"1h30m\". Let me read both files.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "be0a8f34-8773-4cd9-a43c-71669444b96a"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "819434b6-1576-422e-ae82-44f0527f972d"
+			},
+			{
+				"role": "assistant",
+				"content": "Found it. In `duration.go`, the units map maps `'m'` (minutes) to `time.Second` instead of `time.Minute`:\n\n```go\n'm': time.Second,\n```\n\nThat explains both failures exactly:\n- `Parse(\"45m\")` returns `45s` (45 × second) instead of `45m0s`\n- `Parse(\"1h30m\")` returns `1h0m30s` (1h + 30 × second) instead of `1h30m0s`\n\nEverything else (`s`, `h`, `d`) is correct. Let me fix the mapping:",
+				"tool_calls": [
+					{
+						"id": "f641303d-37f9-4378-970c-2b8091a9601d",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"old\":\"\\t'm': time.Second,\",\"new\":\"\\t'm': time.Minute,\",\"path\":\"duration.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Found the bug. In `duration.go`:\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,  // BUG: should be time.Minute\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\nThe `'m'` unit is mapped to `time.Second` instead of `time.Minute`. That's why:\n- `Parse(\"45m\")` = 45s (should be 45m = 45 * 60s)\n- `Parse(\"1h30m\")` = 1h + 30s = 1h0m30s (should be 1h30m)\n\nThe fix: change `'m': time.Second` to `'m': time.Minute`.\n\nLet me apply the fix and run the tests.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited duration.go",
+				"tool_call_id": "f641303d-37f9-4378-970c-2b8091a9601d"
+			},
+			{
+				"role": "assistant",
+				"content": "Now let me run the tests to confirm the fix:",
+				"tool_calls": [
+					{
+						"id": "f0acb2fa-c1d1-49af-98dd-eb07ed55dfaa",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "PASS\nok  \tproject",
+				"tool_call_id": "f0acb2fa-c1d1-49af-98dd-eb07ed55dfaa"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091660-xx1bZscjFjURKMufZ7FT",
+		"object": "chat.completion",
+		"created": 1792091660,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "All tests pass now. \n\n**The bug:** In `duration.go`, the `units` map incorrectly mapped the minute unit to seconds:\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,   // ❌ minutes were treated as seconds\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\n**The fix:** Changed `'m': time.Second` to `'m': time.Minute`.\n\nThis is why `Parse(\"45m\")` returned `45s` and `Parse(\"1h30m\")` returned `1h0m30s` — every minute component was only worth one second. The other tests (`90s`, `2d`, and the error cases) passed because their units were mapped correctly.",
+					"refusal": null,
+					"reasoning": "All tests pass now. Let me summarize.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "All tests pass now. Let me summarize.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1474,
+			"completion_tokens": 178,
+			"total_tokens": 1652,
+			"cost": 0.0001437,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 1280,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001437,
+				"upstream_inference_prompt_cost": 0.0000547,
+				"upstream_inference_completions_cost": 0.000089
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 10,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

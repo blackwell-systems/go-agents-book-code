@@ -1,0 +1,930 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You triage crash reports for remind, a Go web service. Its source is in your workspace; paths are relative to its module root, such as store/store.go.\n\nFor each problem:\n1. Group the crash reports that share a cause.\n2. Find the root cause: the function whose code is wrong.\n3. Write a test that reproduces the crash: a new _test.go file whose test fails on the current code.\n4. Fix the code, then check that your test and the whole test suite pass.\n5. File one issue for the cause.\n\nHow to work: start with crash_list, then read reports with crash_read, crash_logs, and crash_goroutines. Investigate with code_search, code_list, and code_read. Change code and create test files with code_patch, and check your work with run_tests. Search the issue tracker with issue_search before filing with issue_file. Don't change or delete existing tests.\n\nWhen you are done, call submit_diagnosis once, with one entry for every group. If you can't find a cause, file an issue with what you found and give the group the status needs_human.\n"
+			},
+			{
+				"role": "user",
+				"content": "Triage the crash reports: group them by cause, then investigate, fix, and file each cause that isn't filed yet."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01T4VtJ53buq6WzzuSZxY9UJ",
+						"type": "function",
+						"function": {
+							"name": "crash_list",
+							"arguments": "{}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "6 reports:\ncr_b73dbe fp_34f681 x2 panic v1.4.0 duration.Parse: runtime error: index out of range [-1]\ncr_6265c5 fp_4828a6 x1 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_76768c fp_6a569c x1 panic v1.4.0 store.(*Store).List: runtime error: slice bounds out of range [20:2]\ncr_ed4938 fp_6a569c x1 panic v1.4.0 store.(*Store).List: runtime error: slice bounds out of range [20:1]\ncr_d80efa fp_86f99d x1 panic v1.4.0 api.(*API).export: runtime error: invalid memory address or nil pointer dereference\ncr_03654d fp_9e9c4e x1 panic v1.4.0 api.(*API).stats: runtime error: invalid memory address or nil pointer dereference\n",
+				"tool_call_id": "toolu_01T4VtJ53buq6WzzuSZxY9UJ"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01KsP21xPF42HbaL1cG7J5DA",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_b73dbe\"}"
+						}
+					},
+					{
+						"id": "toolu_01Q1MA3NtPGji9NweSSK3Y1a",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_6265c5\"}"
+						}
+					},
+					{
+						"id": "toolu_017723idy5fwrstygcnphUnA",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_76768c\"}"
+						}
+					},
+					{
+						"id": "toolu_01Jg4yTFsjobvC5QeThj926Y",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_ed4938\"}"
+						}
+					},
+					{
+						"id": "toolu_01GCRUTJBTasyCXXwhVhkoqe",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_d80efa\"}"
+						}
+					},
+					{
+						"id": "toolu_01DdEiEF7eDaUsXdVZuP3Jau",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_03654d\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSjAYKEAgSGAI4AUIIdGhpbmtpbmcSDIMEnOxd5qn474whShoMHD18wwVC7InKCwGPIjBuedGe0ydK2SE/7c9B4mwtOXmuAKQHr3Iw7k0ueKr7D6wi523ZaNohQUyN/zItzVsqqQXptPrqR2wYlDtgic7FZd+dv73RjPEbl+0dgYhznlH5j9IQJWp5Ih9kXpnPhjr7QSios1v9nfAQpHK9FvtDK2/KJHLgVvZf+6s46FIor+D/eudTlZLZMwG6T8A+5McABfDP5aHVlLUPX3HMtkLisldVw5mj41NaUVjNZTCKFSARZsU1TFbsX1eOdm8H74hN7F1o7/2/5q8x2bk1YIGYPFS4CsGd+6+pDFrmSwfKD1aXjuPIT+POstIMWvFaL4OmnkAEHeR1aO9DzDRwJcah9g3ItTO140sb7LTWXsMDqxzfxBiZtlplb4Url5ZOXtlUOFNNPLcwn4zXJQfMWa2RdZBdaEd0hS0/8b1NtivnmrIWsxvwo5j3gNtJxdod156MH4H6ocRT2+ZiKAIfxMfu2XHpvsb487lg44lI1/jt4osU1uzKH52iN8FR9y6fyVWbju01eQ7FKkNWCQ8Dnyk0vkKaoKH1iWVy4LoaOyTfQvlYEnDWAlx0ebqiyuxfeUjVlm9LvPZvZ40FxpBBokEDakmtYQUb4ykhgsXqoap676YTmfss9f1Vd7J+WHW50njuAYVHuOwJk6C9kTwmLIiSYV9keys0jmxtdvxAyFBOXIoAfp6vPji5gbqx80ZVqKM4r2SiWChC3+AlfjJYrYEvOax9B26aljAJOIK1GJNiRL0a/Dm5iM+tU2XDehPB1hfI3kEDGZ3wLUYIQjMfQdxKE+cvzilgeW7HCZof7uL8APxGiAzMC25YLbaCHMQrQe2qDkQ1VicVgicO4CON5XGGQJSkMsWUTBv1Gb/WD/m1ci34xtrsQ+ReoAw2ELKKn1L/ymEoY3xt+6z8xUb8zuG9QJ0X7JlJroCuDnPWhFL7uqDZPMRI2y1n2eRMWKCXgpS5eb3+79L827UDKP4YAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "cr_b73dbe: panic in v1.4.0 (commit 9c41e7a), 2 times, 2026-10-05 14:09 to 2026-10-05 14:18\nfingerprint: fp_34f681\npanic: runtime error: index out of range [-1]\nrequest: POST /v1/reminders/rem_0001/snooze\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 10\n  Content-Type: application/json\n  User-Agent: remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\n  X-Request-Id: 6ac3ae14-0008\n  body: {\"for\":\"\"}\nstack, remind's frames, innermost first:\n  duration.Parse  duration/duration.go:29\n  api.(*API).snooze  api/reminders.go:197\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "toolu_01KsP21xPF42HbaL1cG7J5DA"
+			},
+			{
+				"role": "tool",
+				"content": "cr_6265c5: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:15 to 2026-10-05 14:15\nfingerprint: fp_4828a6\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: POST /v1/reminders/rem_0003/done\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 0\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0006\nstack, remind's frames, innermost first:\n  api.(*API).owned  api/reminders.go:144\n  api.(*API).markDone  api/reminders.go:171\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "toolu_01Q1MA3NtPGji9NweSSK3Y1a"
+			},
+			{
+				"role": "tool",
+				"content": "cr_76768c: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:10 to 2026-10-05 14:10\nfingerprint: fp_6a569c\npanic: runtime error: slice bounds out of range [20:2]\nrequest: GET /v1/reminders?offset=20\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0004\nstack, remind's frames, innermost first:\n  store.(*Store).List  store/store.go:136\n  api.(*API).listReminders  api/reminders.go:127\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 6; read them with crash_logs\n",
+				"tool_call_id": "toolu_017723idy5fwrstygcnphUnA"
+			},
+			{
+				"role": "tool",
+				"content": "cr_ed4938: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:21 to 2026-10-05 14:21\nfingerprint: fp_6a569c\npanic: runtime error: slice bounds out of range [20:1]\nrequest: GET /v1/reminders?offset=20\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-000a\nstack, remind's frames, innermost first:\n  store.(*Store).List  store/store.go:136\n  api.(*API).listReminders  api/reminders.go:127\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "toolu_01Jg4yTFsjobvC5QeThj926Y"
+			},
+			{
+				"role": "tool",
+				"content": "cr_d80efa: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:20 to 2026-10-05 14:20\nfingerprint: fp_86f99d\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: GET /v1/me/export\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0009\nstack, remind's frames, innermost first:\n  api.(*API).export  api/users.go:104\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "toolu_01GCRUTJBTasyCXXwhVhkoqe"
+			},
+			{
+				"role": "tool",
+				"content": "cr_03654d: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:16 to 2026-10-05 14:16\nfingerprint: fp_9e9c4e\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: GET /v1/me/stats\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\n  X-Request-Id: 6ac3ae14-0007\nstack, remind's frames, innermost first:\n  api.(*API).stats  api/users.go:117\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "toolu_01DdEiEF7eDaUsXdVZuP3Jau"
+			},
+			{
+				"role": "assistant",
+				"content": "Five distinct crash sites so far. Let me start with the duration parser and the store's List.",
+				"tool_calls": [
+					{
+						"id": "toolu_01MpKbNYafQ4mo1JrRo3NXte",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"duration/duration.go\"}"
+						}
+					},
+					{
+						"id": "toolu_01LshK1jH3ADdkzJASRecmTz",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"store/store.go\", \"start\": 100, \"end\": 160}"
+						}
+					},
+					{
+						"id": "toolu_01JwipTk8kWMNCB5idCDUuqw",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/reminders.go\", \"start\": 110, \"end\": 210}"
+						}
+					},
+					{
+						"id": "toolu_01YWb2xqvwGkeVuQPJtiHFEj",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/users.go\", \"start\": 80, \"end\": 130}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration/duration.go, lines 1-73 of 73:\n    1\t// Package duration parses the human-friendly durations remind accepts,\n    2\t// such as \"90s\", \"1h30m\", \"2d\", and \"1w2d\".\n    3\tpackage duration\n    4\t\n    5\timport (\n    6\t\t\"fmt\"\n    7\t\t\"strconv\"\n    8\t\t\"strings\"\n    9\t\t\"time\"\n   10\t)\n   11\t\n   12\t// Day and Week are the units Parse adds to the standard library's.\n   13\tconst (\n   14\t\tDay  = 24 * time.Hour\n   15\t\tWeek = 7 * Day\n   16\t)\n   17\t\n   18\tvar units = map[byte]time.Duration{\n   19\t\t's': time.Second,\n   20\t\t'm': time.Minute,\n   21\t\t'h': time.Hour,\n   22\t\t'd': Day,\n   23\t\t'w': Week,\n   24\t}\n   25\t\n   26\t// Parse parses a sequence of whole numbers, each followed by a unit:\n   27\t// s, m, h, d (24 hours), or w (7 days). \"1h30m\" is ninety minutes.\n   28\tfunc Parse(s string) (time.Duration, error) {\n   29\t\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\n   30\t\t\treturn 0, fmt.Errorf(\"duration %q: missing unit\", s)\n   31\t\t}\n   32\t\tvar total time.Duration\n   33\t\tfor rest := s; rest != \"\"; {\n   34\t\t\ti := 0\n   35\t\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n   36\t\t\t\ti++\n   37\t\t\t}\n   38\t\t\tif i == 0 {\n   39\t\t\t\treturn 0, fmt.Errorf(\"duration %q: expected a number at %q\", s, rest)\n   40\t\t\t}\n   41\t\t\tn, err := strconv.Atoi(rest[:i])\n   42\t\t\tif err != nil {\n   43\t\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n   44\t\t\t}\n   45\t\t\tunit, ok := units[rest[i]]\n   46\t\t\tif !ok {\n   47\t\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n   48\t\t\t}\n   49\t\t\ttotal += time.Duration(n) * unit\n   50\t\t\trest = rest[i+1:]\n   51\t\t}\n   52\t\treturn total, nil\n   53\t}\n   54\t\n   55\t// Format formats d the way Parse reads it, largest units first.\n   56\t// Parts smaller than a second are dropped.\n   57\tfunc Format(d time.Duration) string {\n   58\t\tif d < time.Second {\n   59\t\t\treturn \"0s\"\n   60\t\t}\n   61\t\tvar b strings.Builder\n   62\t\tfor _, u := range []struct {\n   63\t\t\tsize time.Duration\n   64\t\t\tname byte\n   65\t\t}{{Week, 'w'}, {Day, 'd'}, {time.Hour, 'h'}, {time.Minute, 'm'}, {time.Second, 's'}} {\n   66\t\t\tif n := d / u.size; n > 0 {\n   67\t\t\t\tb.WriteString(strconv.FormatInt(int64(n), 10))\n   68\t\t\t\tb.WriteByte(u.name)\n   69\t\t\t\td -= n * u.size\n   70\t\t\t}\n   71\t\t}\n   72\t\treturn b.String()\n   73\t}\n",
+				"tool_call_id": "toolu_01MpKbNYafQ4mo1JrRo3NXte"
+			},
+			{
+				"role": "tool",
+				"content": "store/store.go, lines 100-160 of 264:\n  100\t\t\tRule:    rule,\n  101\t\t\tDue:     due,\n  102\t\t\tCreated: now,\n  103\t\t}\n  104\t\ts.reminders[r.ID] = r\n  105\t\ts.byUser[userID] = append(s.byUser[userID], r)\n  106\t\ts.changed(r)\n  107\t\treturn r\n  108\t}\n  109\t\n  110\t// Get returns a reminder by ID. Deleted reminders are not returned.\n  111\tfunc (s *Store) Get(id string) (*Reminder, error) {\n  112\t\ts.mu.RLock()\n  113\t\tdefer s.mu.RUnlock()\n  114\t\tr, ok := s.reminders[id]\n  115\t\tvar err error\n  116\t\tswitch {\n  117\t\tcase !ok:\n  118\t\t\terr = ErrNotFound\n  119\t\tcase r.Deleted:\n  120\t\t\tr = nil\n  121\t\t}\n  122\t\treturn r, err\n  123\t}\n  124\t\n  125\t// List returns a page of a user's reminders, oldest first.\n  126\tfunc (s *Store) List(userID string, offset, limit int) []*Reminder {\n  127\t\ts.mu.RLock()\n  128\t\tdefer s.mu.RUnlock()\n  129\t\tvar out []*Reminder\n  130\t\tfor _, r := range s.byUser[userID] {\n  131\t\t\tif !r.Deleted {\n  132\t\t\t\tout = append(out, r)\n  133\t\t\t}\n  134\t\t}\n  135\t\tend := min(offset+limit, len(out))\n  136\t\treturn out[offset:end]\n  137\t}\n  138\t\n  139\t// Count returns how many reminders a user has, not counting deleted ones.\n  140\tfunc (s *Store) Count(userID string) int {\n  141\t\ts.mu.RLock()\n  142\t\tdefer s.mu.RUnlock()\n  143\t\tn := 0\n  144\t\tfor _, r := range s.byUser[userID] {\n  145\t\t\tif !r.Deleted {\n  146\t\t\t\tn++\n  147\t\t\t}\n  148\t\t}\n  149\t\treturn n\n  150\t}\n  151\t\n  152\t// Update calls f with the reminder locked, then records the change.\n  153\tfunc (s *Store) Update(id string, f func(*Reminder) error) error {\n  154\t\ts.mu.Lock()\n  155\t\tdefer s.mu.Unlock()\n  156\t\tr, ok := s.reminders[id]\n  157\t\tif !ok || r.Deleted {\n  158\t\t\treturn ErrNotFound\n  159\t\t}\n  160\t\tif err := f(r); err != nil {\n... 104 more lines; read on with start=161\n",
+				"tool_call_id": "toolu_01LshK1jH3ADdkzJASRecmTz"
+			},
+			{
+				"role": "tool",
+				"content": "api/reminders.go, lines 110-210 of 223:\n  110\t\treturn reminderView{\n  111\t\t\tID:       r.ID,\n  112\t\t\tText:     r.Text,\n  113\t\t\tPreview:  notify.Preview(r.Text),\n  114\t\t\tDue:      r.Due,\n  115\t\t\tSchedule: r.Rule,\n  116\t\t\tPriority: priorityName(r.Priority),\n  117\t\t\tDone:     r.Done,\n  118\t\t}\n  119\t}\n  120\t\n  121\tfunc (a *API) listReminders(w http.ResponseWriter, r *http.Request) {\n  122\t\tu := auth.UserFrom(r.Context())\n  123\t\toffset, limit, ok := a.page(w, r)\n  124\t\tif !ok {\n  125\t\t\treturn\n  126\t\t}\n  127\t\trems := a.Store.List(u.ID, offset, limit)\n  128\t\tviews := make([]reminderView, len(rems))\n  129\t\tfor i, rem := range rems {\n  130\t\t\tviews[i] = viewOf(rem)\n  131\t\t}\n  132\t\ta.writeJSON(w, http.StatusOK, map[string]any{\"reminders\": views})\n  133\t}\n  134\t\n  135\t// owned returns the caller's reminder with the request's ID, or answers\n  136\t// 404 and returns nil.\n  137\tfunc (a *API) owned(w http.ResponseWriter, r *http.Request) *store.Reminder {\n  138\t\tu := auth.UserFrom(r.Context())\n  139\t\trem, err := a.Store.Get(r.PathValue(\"id\"))\n  140\t\tif err != nil {\n  141\t\t\ta.writeError(w, err)\n  142\t\t\treturn nil\n  143\t\t}\n  144\t\tif rem.UserID != u.ID {\n  145\t\t\ta.fail(w, http.StatusNotFound, \"not found\")\n  146\t\t\treturn nil\n  147\t\t}\n  148\t\treturn rem\n  149\t}\n  150\t\n  151\tfunc (a *API) getReminder(w http.ResponseWriter, r *http.Request) {\n  152\t\tif rem := a.owned(w, r); rem != nil {\n  153\t\t\ta.writeJSON(w, http.StatusOK, viewOf(rem))\n  154\t\t}\n  155\t}\n  156\t\n  157\tfunc (a *API) deleteReminder(w http.ResponseWriter, r *http.Request) {\n  158\t\trem := a.owned(w, r)\n  159\t\tif rem == nil {\n  160\t\t\treturn\n  161\t\t}\n  162\t\tif err := a.Store.Delete(rem.ID); err != nil {\n  163\t\t\ta.writeError(w, err)\n  164\t\t\treturn\n  165\t\t}\n  166\t\ta.Search.Remove(rem.ID)\n  167\t\tw.WriteHeader(http.StatusNoContent)\n  168\t}\n  169\t\n  170\tfunc (a *API) markDone(w http.ResponseWriter, r *http.Request) {\n  171\t\trem := a.owned(w, r)\n  172\t\tif rem == nil {\n  173\t\t\treturn\n  174\t\t}\n  175\t\terr := a.Store.Update(rem.ID, func(r *store.Reminder) error {\n  176\t\t\tr.Done = true\n  177\t\t\treturn nil\n  178\t\t})\n  179\t\tif err != nil {\n  180\t\t\ta.writeError(w, err)\n  181\t\t\treturn\n  182\t\t}\n  183\t\tw.WriteHeader(http.StatusNoContent)\n  184\t}\n  185\t\n  186\tfunc (a *API) snooze(w http.ResponseWriter, r *http.Request) {\n  187\t\trem := a.owned(w, r)\n  188\t\tif rem == nil {\n  189\t\t\treturn\n  190\t\t}\n  191\t\tvar req struct {\n  192\t\t\tFor string `json:\"for\"` // such as \"10m\"\n  193\t\t}\n  194\t\tif !a.decode(w, r, &req) {\n  195\t\t\treturn\n  196\t\t}\n  197\t\td, err := duration.Parse(req.For)\n  198\t\tif err != nil {\n  199\t\t\ta.fail(w, http.StatusBadRequest, err.Error())\n  200\t\t\treturn\n  201\t\t}\n  202\t\terr = a.Store.Update(rem.ID, func(r *store.Reminder) error {\n  203\t\t\tr.Due = a.Now().Add(d)\n  204\t\t\treturn nil\n  205\t\t})\n  206\t\tif err != nil {\n  207\t\t\ta.writeError(w, err)\n  208\t\t\treturn\n  209\t\t}\n  210\t\tw.WriteHeader(http.StatusNoContent)\n... 13 more lines; read on with start=211\n",
+				"tool_call_id": "toolu_01JwipTk8kWMNCB5idCDUuqw"
+			},
+			{
+				"role": "tool",
+				"content": "api/users.go, lines 80-128 of 128:\n   80\t\t}\n   81\t\tloc := must.Get(time.LoadLocation(u.Prefs.TZ))\n   82\t\tfrom := a.Now()\n   83\t\tocc := a.Store.Upcoming(u.ID, from, from.AddDate(0, 0, days))\n   84\t\td := notify.BuildDigest(from, days, loc, occ)\n   85\t\tif u.Prefs.QuietFrom != \"\" && u.Prefs.QuietTo != \"\" {\n   86\t\t\td.QuietHours = notify.QuietHours(u.Prefs.QuietFrom, u.Prefs.QuietTo)\n   87\t\t}\n   88\t\ta.writeJSON(w, http.StatusOK, d)\n   89\t}\n   90\t\n   91\t// closeAccount deletes the caller's account and reminders.\n   92\tfunc (a *API) closeAccount(w http.ResponseWriter, r *http.Request) {\n   93\t\tu := auth.UserFrom(r.Context())\n   94\t\tif err := a.Store.DeleteUser(u.ID); err != nil {\n   95\t\t\ta.writeError(w, err)\n   96\t\t\treturn\n   97\t\t}\n   98\t\ta.Log.Info(\"account closed\", \"user\", u.ID)\n   99\t\tw.WriteHeader(http.StatusNoContent)\n  100\t}\n  101\t\n  102\tfunc (a *API) export(w http.ResponseWriter, r *http.Request) {\n  103\t\tu := auth.UserFrom(r.Context())\n  104\t\trems := a.Store.List(u.ID, 0, 1000)\n  105\t\tviews := make([]reminderView, len(rems))\n  106\t\tfor i, rem := range rems {\n  107\t\t\tviews[i] = viewOf(rem)\n  108\t\t}\n  109\t\tw.Header().Set(\"Content-Disposition\", `attachment; filename=\"reminders.json\"`)\n  110\t\ta.writeJSON(w, http.StatusOK, views)\n  111\t}\n  112\t\n  113\tfunc (a *API) stats(w http.ResponseWriter, r *http.Request) {\n  114\t\tu := auth.UserFrom(r.Context())\n  115\t\tnow := a.Now()\n  116\t\tvar open, done, overdue int\n  117\t\tfor _, rem := range a.Store.List(u.ID, 0, 1000) {\n  118\t\t\tswitch {\n  119\t\t\tcase rem.Done:\n  120\t\t\t\tdone++\n  121\t\t\tcase rem.Due.Before(now):\n  122\t\t\t\toverdue++\n  123\t\t\tdefault:\n  124\t\t\t\topen++\n  125\t\t\t}\n  126\t\t}\n  127\t\ta.writeJSON(w, http.StatusOK, map[string]int{\"open\": open, \"done\": done, \"overdue\": overdue})\n  128\t}\n",
+				"tool_call_id": "toolu_01YWb2xqvwGkeVuQPJtiHFEj"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01CH6eF2YxByAKFxyZ1qPmTb",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\": \"cr_d80efa\"}"
+						}
+					},
+					{
+						"id": "toolu_01NBaauaefjrhgJkKTumg4yW",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\": \"cr_03654d\"}"
+						}
+					},
+					{
+						"id": "toolu_019fJmcMA2wdEEn7Anzw5FbZ",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\": \"cr_6265c5\"}"
+						}
+					},
+					{
+						"id": "toolu_01HZHjrx3MzNwFBYNeJPF5wt",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_d80efa\", \"full\": true}"
+						}
+					},
+					{
+						"id": "toolu_01YavP7w924PpqsuNgjfBCoe",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"store/store.go\", \"start\": 1, \"end\": 100}"
+						}
+					},
+					{
+						"id": "toolu_016j9Vk9ZRB4Z1N776pCdnXK",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"store/store.go\", \"start\": 160, \"end\": 264}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQS8woKEAgSGAI4AUIIdGhpbmtpbmcSDDz0DyD9FaFCSTYHGRoMjc+l8dUZTfSgW4ZnIjDDyN/INxfe79tsNQ0jiBYVBlhqHApggyVASUEgBTc8++eVQPzKy8TI6VfGVgrTqY0qkApYUrWiUdPSpi0xvTTp96OOvuKr/Jr/ZKjfARD2NEJZClcZgbn+B9RlJcC6WcpYhboK2o+uKPKH1YXOWZqLtaOiOOBijzMvQR1wv2EQeSeX9foTTfFA2J6ZZvN91dPH+BASLx0YJW9QR83bZmgjs7Hm569IC1h/PtzwtoJIgcwg3/YUvTXy786hU9p8/qoaSkoWoPG6nlw2Cbhu24XMyx+ghN3A6E42WQy4dmWbja6TwT4kIK4ggXTTOE6iACEHNCntOfeMrv12C8c4zCrzJwBtALo6c8fmRII4QEnJM3DM8L/30UbqYBqoL+Ag/iNvA1TjKCURqbsEGpIw1kWYzMVLaAXh9RMCzeA8Eh6oUXZSLW3ZqPzoqVKVpSL5DLS/i3TsYYafvVzdC8eRowy8RVLAC0lqCAkA0c4aJP1MgiGJMmM80yG2QmgGgVKyeJBvDP5LsKylLKV2qusp3QsqkNOS2e2aUx8gLbkKT/uMP9S10o7PeGVjArzgZznDMwrvbxowXpFF57GhPOJlKw0Fckl4sGs5kjGCGvviFXIgiX2Ut/YJOaRfwUFYHl3rb3oh2f36fp9wbRa0jFUpipwNMVxLYTEFPJtCTbuXxclpHJ6hKMWdS2tkM3htdffz3UASLfP6/q2LjYJWXTv7e9dLHwgKlZWxu1aA3zK1UboibpajzXTtIkpPF6ekxpKdOPRxfHp3jv2cV0+aNqojeFweJZelb1I6BWdcBk3WyeO/GTwP50Kmno9DNo0PTj1ByxDykuhkEgY2WMRIZjD+z4o1qU1GceY3G5gKeW3KZZfcREbM46sMThV3SXu5HYKixfTWwSE9IYqKhBaEeRL2v4bFFHmPVVcIaJgyw+ZbxYM79GzIsCHhALG5DOCHzT8I09HfTGRLrMdPPracheLwNgAwCD+HlOCNqEqmfXcHlGvEF+j08vV8oy/+rmNthM+pjs748pClTjCR2HsRqO3Wek/87T7NQS7xSsiO7I+pg9JObumRrytfi/ZgFfav2EtJw1rjAGDXFTSO4Toku1LHNy/8nc2qeRNXAWHwWZbVQ6x5OgxuCfuM+G0W6aeA/fBmtPe7MBC27e4uwjo9UD/zQDirNJ0O6gfN14RwSsU63w6AgGXo733IRRmtcZeEbNqwditRhu9YAzsx4lSoKmPH0/8QAu5Rw+RfWsUfDmfDrsPysz+ohHV436M5NgVAMwl2Z/gTp3uKly4NF80Le+MMMIex1bhhtV3XS9RaI2T5aRXnoPXecjWuqGK8YqzXgteQATgH7lJovcXuOoFsZqE91JlVbVh8MVmMSXWjPk71XndEjokB+W8rZ/GyTJVc5EiZ+aW0r4Ep+swRcB7T5CpUXx4vMNzmOktfQDCfk2oCYIQBnm3U14+XsFfjgA4bhKBcbycZfQG4dHTMA1o3lZL2fCCRpn+oPWoC3csW6ku9vJiho8cXV/0rQcM24zmPRtew1erZZio74TgpPIMs8HUaTdJInSXegxxVBN+XqGkGZlftAUMKr5Kh3GQpdsXdX0OzKL2vAjHmazy2Uz2JdVDr/2VGf/CcBbJ9lpxKpk9msLd1yB+TbjT9EeONjBLmVU/mljq25N3uZ4t/BW8/ImcZMRnEdn1lUJbodh84HRxd/xtTpQes9I6a9abtvuHj3ftbMRkoZJwbKSQDGBQdoM8qijQEhBE22/mUVYU0DfDXD3GMXdmF5A0Q8t58FlqtcITHQpLwBygYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\n2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\"\n2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\n2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\n2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"",
+				"tool_call_id": "toolu_01CH6eF2YxByAKFxyZ1qPmTb"
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\n2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\"\n2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\n2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\n2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"",
+				"tool_call_id": "toolu_01NBaauaefjrhgJkKTumg4yW"
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\n2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\"\n2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\n2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\n2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"",
+				"tool_call_id": "toolu_019fJmcMA2wdEEn7Anzw5FbZ"
+			},
+			{
+				"role": "tool",
+				"content": "cr_d80efa: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:20 to 2026-10-05 14:20\nfingerprint: fp_86f99d\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: GET /v1/me/export\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0009\nstack:\ngoroutine 29 [running]:\nruntime/debug.Stack()\n\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\n\t/app/remind/crash/crash.go:102 +0x168\npanic({0xc000010000?, 0xc0000101a8?})\n\t/usr/local/go/src/runtime/panic.go:859 +0x120\nexample.com/remind/api.(*API).export(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848?)\n\t/app/remind/api/users.go:104 +0x84\nnet/http.HandlerFunc.ServeHTTP(0xc0000109f0?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010b98?)\n\t/usr/local/go/src/net/http/server.go:2338 +0x38\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000104f8, 0xc0000106a0}, 0xc000010d40)\n\t/usr/local/go/src/net/http/server.go:2903 +0x194\nexample.com/remind/server.accessLog.func1({0xc000010ee8, 0xc000011090}, 0xc000010d40)\n\t/app/remind/server/server.go:130 +0xc4\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000010ee8?, 0xc000011090?}, 0xc000011238?)\n\t/usr/local/go/src/net/http/server.go:2338 +0x38\nexample.com/remind/metrics.Instrument.func1({0xc0000113e0, 0xc000011588}, 0xc000010d40)\n\t/app/remind/metrics/instrument.go:24 +0xc4\nnet/http.HandlerFunc.ServeHTTP(0xc000011730?, {0xc0000113e0?, 0xc000011588?}, 0xc0000118d8?)\n\t/usr/local/go/src/net/http/server.go:2338 +0x38\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc0000113e0, 0xc000011588}, 0xc000010d40)\n\t/app/remind/crash/crash.go:106 +0x240\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc0000113e0?, 0xc000011588?}, 0xc000011a80?)\n\t/usr/local/go/src/net/http/server.go:2338 +0x38\nnet/http.serverHandler.ServeHTTP({0xc000011c28?}, {0xc0000113e0?, 0xc000011588?}, 0x1?)\n\t/usr/local/go/src/net/http/server.go:3413 +0xb0\nnet/http.(*conn).serve(0xc000011dd0, {0xc000011f78, 0xc000012120})\n\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\ncreated by net/http.(*Server).Serve in goroutine 28\n\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\n\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "toolu_01HZHjrx3MzNwFBYNeJPF5wt"
+			},
+			{
+				"role": "tool",
+				"content": "store/store.go, lines 1-100 of 264:\n    1\t// Package store keeps users and reminders in memory and writes snapshots\n    2\t// of them to disk.\n    3\tpackage store\n    4\t\n    5\timport (\n    6\t\t\"cmp\"\n    7\t\t\"encoding/json\"\n    8\t\t\"errors\"\n    9\t\t\"fmt\"\n   10\t\t\"io\"\n   11\t\t\"slices\"\n   12\t\t\"sync\"\n   13\t\t\"time\"\n   14\t\n   15\t\t\"example.com/remind/schedule\"\n   16\t)\n   17\t\n   18\t// Errors callers check for.\n   19\tvar (\n   20\t\tErrNotFound = errors.New(\"store: not found\")\n   21\t\tErrConflict = errors.New(\"store: conflict\")\n   22\t)\n   23\t\n   24\t// maxOccurrences caps how many times Upcoming expands one recurring\n   25\t// reminder, so a rule like \"every 1m\" can't produce millions of entries.\n   26\tconst maxOccurrences = 50\n   27\t\n   28\t// A Reminder is one reminder. Recurring reminders have a Rule; one-off\n   29\t// reminders have only Due.\n   30\ttype Reminder struct {\n   31\t\tID       string\n   32\t\tUserID   string\n   33\t\tText     string\n   34\t\tRule     schedule.Rule\n   35\t\tDue      time.Time // the next time it fires\n   36\t\tDone     bool\n   37\t\tPriority int  // 1 (high) to 3 (low); 0 means normal\n   38\t\tDeleted  bool // kept as a tombstone so sync clients see the delete\n   39\t\tCreated  time.Time\n   40\t}\n   41\t\n   42\t// An Occurrence is one future firing of a reminder.\n   43\ttype Occurrence struct {\n   44\t\tReminderID string\n   45\t\tText       string\n   46\t\tAt         time.Time\n   47\t}\n   48\t\n   49\t// Store holds all users and reminders.\n   50\ttype Store struct {\n   51\t\tnow func() time.Time\n   52\t\n   53\t\tmu        sync.RWMutex\n   54\t\tusers     map[string]*User // by ID\n   55\t\ttokens    map[string]*User // by API token\n   56\t\treminders map[string]*Reminder\n   57\t\tbyUser    map[string][]*Reminder\n   58\t\tseq       int\n   59\t\tonChange  func(*Reminder)\n   60\t}\n   61\t\n   62\t// New returns an empty store. now is its clock.\n   63\tfunc New(now func() time.Time) *Store {\n   64\t\treturn &Store{\n   65\t\t\tnow:       now,\n   66\t\t\tusers:     make(map[string]*User),\n   67\t\t\ttokens:    make(map[string]*User),\n   68\t\t\treminders: make(map[string]*Reminder),\n   69\t\t\tbyUser:    make(map[string][]*Reminder),\n   70\t\t}\n   71\t}\n   72\t\n   73\t// OnChange registers a function called whenever a reminder changes.\n   74\tfunc (s *Store) OnChange(f func(*Reminder)) {\n   75\t\ts.mu.Lock()\n   76\t\tdefer s.mu.Unlock()\n   77\t\ts.onChange = f\n   78\t}\n   79\t\n   80\tfunc (s *Store) changed(r *Reminder) {\n   81\t\tif s.onChange != nil {\n   82\t\t\ts.onChange(r)\n   83\t\t}\n   84\t}\n   85\t\n   86\t// Create adds a reminder for a user. For a recurring reminder, Due is\n   87\t// computed from its rule.\n   88\tfunc (s *Store) Create(userID, text string, due time.Time, rule schedule.Rule) *Reminder {\n   89\t\ts.mu.Lock()\n   90\t\tdefer s.mu.Unlock()\n   91\t\tnow := s.now()\n   92\t\tif rule != nil {\n   93\t\t\tdue = rule.Next(now)\n   94\t\t}\n   95\t\ts.seq++\n   96\t\tr := &Reminder{\n   97\t\t\tID:      fmt.Sprintf(\"rem_%04d\", s.seq),\n   98\t\t\tUserID:  userID,\n   99\t\t\tText:    text,\n  100\t\t\tRule:    rule,\n... 164 more lines; read on with start=101\n",
+				"tool_call_id": "toolu_01YavP7w924PpqsuNgjfBCoe"
+			},
+			{
+				"role": "tool",
+				"content": "store/store.go, lines 160-264 of 264:\n  160\t\tif err := f(r); err != nil {\n  161\t\t\treturn err\n  162\t\t}\n  163\t\ts.changed(r)\n  164\t\treturn nil\n  165\t}\n  166\t\n  167\t// Delete marks a reminder deleted, keeping a tombstone.\n  168\tfunc (s *Store) Delete(id string) error {\n  169\t\ts.mu.Lock()\n  170\t\tdefer s.mu.Unlock()\n  171\t\tr, ok := s.reminders[id]\n  172\t\tif !ok || r.Deleted {\n  173\t\t\treturn ErrNotFound\n  174\t\t}\n  175\t\tr.Deleted = true\n  176\t\ts.changed(r)\n  177\t\treturn nil\n  178\t}\n  179\t\n  180\t// Due returns reminders that are due at or before now and not done.\n  181\tfunc (s *Store) Due(now time.Time) []*Reminder {\n  182\t\ts.mu.RLock()\n  183\t\tdefer s.mu.RUnlock()\n  184\t\tvar out []*Reminder\n  185\t\tfor _, r := range s.reminders {\n  186\t\t\tif !r.Done && !r.Deleted && !r.Due.After(now) {\n  187\t\t\t\tout = append(out, r)\n  188\t\t\t}\n  189\t\t}\n  190\t\tslices.SortFunc(out, func(a, b *Reminder) int { return a.Due.Compare(b.Due) })\n  191\t\treturn out\n  192\t}\n  193\t\n  194\t// MarkSent records that a reminder fired: a recurring reminder moves to\n  195\t// its next time, and a one-off reminder is done.\n  196\tfunc (s *Store) MarkSent(id string) {\n  197\t\ts.mu.Lock()\n  198\t\tdefer s.mu.Unlock()\n  199\t\tr, ok := s.reminders[id]\n  200\t\tif !ok {\n  201\t\t\treturn\n  202\t\t}\n  203\t\tif r.Rule != nil {\n  204\t\t\tr.Due = r.Rule.Next(r.Due)\n  205\t\t} else {\n  206\t\t\tr.Done = true\n  207\t\t}\n  208\t}\n  209\t\n  210\t// Upcoming returns the times a user's reminders fire in [from, to),\n  211\t// sorted by time. Recurring reminders appear once per occurrence.\n  212\tfunc (s *Store) Upcoming(userID string, from, to time.Time) []Occurrence {\n  213\t\ts.mu.RLock()\n  214\t\tdefer s.mu.RUnlock()\n  215\t\tvar out []Occurrence\n  216\t\tfor _, r := range s.byUser[userID] {\n  217\t\t\tif r.Done || r.Deleted {\n  218\t\t\t\tcontinue\n  219\t\t\t}\n  220\t\t\tif r.Rule == nil {\n  221\t\t\t\tif !r.Due.Before(from) && r.Due.Before(to) {\n  222\t\t\t\t\tout = append(out, Occurrence{ReminderID: r.ID, Text: r.Text, At: r.Due})\n  223\t\t\t\t}\n  224\t\t\t\tcontinue\n  225\t\t\t}\n  226\t\t\tt := r.Rule.Next(from)\n  227\t\t\tfor n := 0; !t.IsZero() && t.Before(to) && n < maxOccurrences; n++ {\n  228\t\t\t\tout = append(out, Occurrence{ReminderID: r.ID, Text: r.Text, At: t})\n  229\t\t\t\tt = r.Rule.Next(t)\n  230\t\t\t}\n  231\t\t}\n  232\t\tslices.SortStableFunc(out, func(a, b Occurrence) int { return cmp.Compare(a.At.UnixNano(), b.At.UnixNano()) })\n  233\t\treturn out\n  234\t}\n  235\t\n  236\t// Snapshot writes every user and reminder to w as JSON.\n  237\tfunc (s *Store) Snapshot(w io.Writer) error {\n  238\t\ts.mu.RLock()\n  239\t\tdefer s.mu.RUnlock()\n  240\t\ttype reminder struct {\n  241\t\t\t*Reminder\n  242\t\t\tRule string `json:\",omitempty\"`\n  243\t\t}\n  244\t\tsnap := struct {\n  245\t\t\tUsers     []*User\n  246\t\t\tReminders []reminder\n  247\t\t}{}\n  248\t\tfor _, u := range s.users {\n  249\t\t\tsnap.Users = append(snap.Users, u)\n  250\t\t}\n  251\t\tslices.SortFunc(snap.Users, func(a, b *User) int { return cmp.Compare(a.ID, b.ID) })\n  252\t\tfor _, r := range s.reminders {\n  253\t\t\trr := reminder{Reminder: r}\n  254\t\t\tif r.Rule != nil {\n  255\t\t\t\trr.Rule = r.Rule.String()\n  256\t\t\t}\n  257\t\t\tsnap.Reminders = append(snap.Reminders, rr)\n  258\t\t}\n  259\t\tslices.SortFunc(snap.Reminders, func(a, b reminder) int { return cmp.Compare(a.ID, b.ID) })\n  260\t\tif err := json.NewEncoder(w).Encode(snap); err != nil {\n  261\t\t\treturn fmt.Errorf(\"store: snapshot: %w\", err)\n  262\t\t}\n  263\t\treturn nil\n  264\t}\n",
+				"tool_call_id": "toolu_016j9Vk9ZRB4Z1N776pCdnXK"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01RYd2os5XKCooy5jbyJx2Dw",
+						"type": "function",
+						"function": {
+							"name": "code_search",
+							"arguments": "{\"pattern\": \"func UserFrom|func Require|WithValue|/me/export|/me/stats|users/me|Handle\"}"
+						}
+					},
+					{
+						"id": "toolu_01LSskBaNnpFVUD4a1UfC4hw",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"auth/auth.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "api/api.go:30: Metrics  http.Handler   // served at /metrics if not nil\napi/api.go:46: func (a *API) limit(h http.Handler) http.Handler {\napi/api.go:57: func (a *API) Routes() http.Handler {\napi/api.go:59: user := func(h http.HandlerFunc) http.Handler { return auth.Require(a.Store, a.limit(h)) }\napi/api.go:60: admin := func(h http.HandlerFunc) http.Handler { return auth.RequireAdmin(a.Store, h) }\napi/api.go:62: mux.Handle(\"POST /v1/reminders\", user(a.createReminder))\napi/api.go:63: mux.Handle(\"GET /v1/reminders\", user(a.listReminders))\napi/api.go:64: mux.Handle(\"GET /v1/reminders/{id}\", user(a.getReminder))\napi/api.go:65: mux.Handle(\"DELETE /v1/reminders/{id}\", user(a.deleteReminder))\napi/api.go:66: mux.Handle(\"POST /v1/reminders/{id}/done\", user(a.markDone))\napi/api.go:67: mux.Handle(\"POST /v1/reminders/{id}/snooze\", user(a.snooze))\napi/api.go:68: mux.Handle(\"POST /v1/reminders/{id}/test\", user(a.testNotify))\napi/api.go:70: mux.Handle(\"GET /v1/me\", user(a.me))\napi/api.go:71: mux.Handle(\"DELETE /v1/me\", user(a.closeAccount))\napi/api.go:72: mux.Handle(\"PUT /v1/me/prefs\", user(a.updatePrefs))\napi/api.go:73: mux.Handle(\"GET /v1/me/digest\", user(a.digest))\napi/api.go:74: mux.Handle(\"GET /v1/me/calendar.ics\", user(a.calendarFeed))\napi/api.go:75: mux.Handle(\"GET /v1/search\", user(a.search))\napi/api.go:77: mux.Handle(\"POST /v1/lists\", user(a.createList))\napi/api.go:78: mux.Handle(\"GET /v1/lists\", user(a.listLists))\napi/api.go:79: mux.Handle(\"GET /v1/lists/{id}\", user(a.getList))\napi/api.go:80: mux.Handle(\"DELETE /v1/lists/{id}\", user(a.deleteList))\napi/api.go:81: mux.Handle(\"POST /v1/lists/{id}/members\", user(a.addMember))\napi/api.go:82: mux.Handle(\"DELETE /v1/lists/{id}/members/{user}\", user(a.removeMember))\napi/api.go:83: mux.Handle(\"POST /v1/lists/{id}/reminders\", user(a.addListReminder))\napi/api.go:84: mux.Handle(\"DELETE /v1/lists/{id}/reminders/{reminder}\", user(a.removeListReminder))\napi/api.go:87: mux.HandleFunc(\"GET /v1/me/export\", a.export)\napi/api.go:88: mux.HandleFunc(\"GET /v1/me/stats\", a.stats)\napi/api.go:90: mux.Handle(\"POST /v1/admin/users/import\", admin(a.importUsers))\napi/api.go:91: mux.Handle(\"DELETE /v1/admin/users/{id}\", admin(a.deleteUser))\napi/api.go:92: mux.Handle(\"POST /v1/admin/dispatcher/stop\", admin(a.stopDispatcher))\napi/api.go:93: mux.Handle(\"POST /v1/admin/snapshot\", admin(a.snapshot))\napi/api.go:94: mux.Handle(\"GET /v1/admin/dispatcher/status\", admin(a.dispatcherStatus))\napi/api.go:95: mux.Handle(\"GET /v1/admin/audit\", admin(a.auditLog))\napi/api.go:98: mux.Handle(\"GET /metrics\", a.Metrics)\napi/api.go:101: mux.HandleFunc(\"GET /healthz\", func(w http.ResponseWriter, _ *http.Request) {\napi/api_test.go:52: c.srv.Handler.ServeHTTP(rec, req)\nauth/auth.go:16: func Require(s *store.Store, next http.Handler) http.Handler {\nauth/auth.go:17: return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\nauth/auth.go:23: next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, u)))\n... 44 more matches; narrow the pattern or give a dir",
+				"tool_call_id": "toolu_01RYd2os5XKCooy5jbyJx2Dw"
+			},
+			{
+				"role": "tool",
+				"content": "auth/auth.go, lines 1-67 of 67:\n    1\t// Package auth authenticates API requests by bearer token.\n    2\tpackage auth\n    3\t\n    4\timport (\n    5\t\t\"context\"\n    6\t\t\"net/http\"\n    7\t\t\"strings\"\n    8\t\n    9\t\t\"example.com/remind/store\"\n   10\t)\n   11\t\n   12\ttype userKey struct{}\n   13\t\n   14\t// Require lets a request through only if it carries a valid API token,\n   15\t// and makes the token's user available through UserFrom.\n   16\tfunc Require(s *store.Store, next http.Handler) http.Handler {\n   17\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n   18\t\t\tu, ok := authenticate(s, r)\n   19\t\t\tif !ok {\n   20\t\t\t\thttp.Error(w, \"unauthorized\", http.StatusUnauthorized)\n   21\t\t\t\treturn\n   22\t\t\t}\n   23\t\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, u)))\n   24\t\t})\n   25\t}\n   26\t\n   27\t// RequireAdmin is Require for administrators only.\n   28\tfunc RequireAdmin(s *store.Store, next http.Handler) http.Handler {\n   29\t\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n   30\t\t\tu, ok := authenticate(s, r)\n   31\t\t\tif !ok {\n   32\t\t\t\thttp.Error(w, \"unauthorized\", http.StatusUnauthorized)\n   33\t\t\t\treturn\n   34\t\t\t}\n   35\t\t\tif !u.Admin {\n   36\t\t\t\thttp.Error(w, \"forbidden\", http.StatusForbidden)\n   37\t\t\t\treturn\n   38\t\t\t}\n   39\t\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, *u)))\n   40\t\t})\n   41\t}\n   42\t\n   43\t// UserFrom returns the authenticated user, or nil if there is none.\n   44\tfunc UserFrom(ctx context.Context) *store.User {\n   45\t\tu, _ := ctx.Value(userKey{}).(*store.User)\n   46\t\treturn u\n   47\t}\n   48\t\n   49\tfunc authenticate(s *store.Store, r *http.Request) (*store.User, bool) {\n   50\t\ttoken, ok := parseBearer(r.Header.Get(\"Authorization\"))\n   51\t\tif !ok {\n   52\t\t\treturn nil, false\n   53\t\t}\n   54\t\tu, err := s.UserByToken(token)\n   55\t\tif err != nil {\n   56\t\t\treturn nil, false\n   57\t\t}\n   58\t\treturn u, true\n   59\t}\n   60\t\n   61\t// parseBearer extracts the token from \"Bearer <token>\".\n   62\tfunc parseBearer(h string) (string, bool) {\n   63\t\tif !strings.HasPrefix(h, \"Bearer\") {\n   64\t\t\treturn \"\", false\n   65\t\t}\n   66\t\treturn strings.SplitN(h, \" \", 2)[1], true\n   67\t}\n",
+				"tool_call_id": "toolu_01LSskBaNnpFVUD4a1UfC4hw"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01NCEEWvsmTWq6xyUJ6sBcbm",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/api.go\", \"start\": 40, \"end\": 100}"
+						}
+					},
+					{
+						"id": "toolu_01CcMcaUKakpdsborHmYowEt",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/reminders.go\", \"start\": 1, \"end\": 60}"
+						}
+					},
+					{
+						"id": "toolu_01DB4PxGKYeCoYR5YLNx2nEA",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"duration/duration_test.go\"}"
+						}
+					},
+					{
+						"id": "toolu_01LyPtG2iBbwDKxDGPyrJdh6",
+						"type": "function",
+						"function": {
+							"name": "code_search",
+							"arguments": "{\"pattern\": \"func \\\\(a \\\\*API\\\\) page\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "api/api.go, lines 40-100 of 165:\n   40\t\t\treturn quota.Free\n   41\t\t}\n   42\t\treturn p\n   43\t}\n   44\t\n   45\t// limit applies the per-user rate limit, if there is one.\n   46\tfunc (a *API) limit(h http.Handler) http.Handler {\n   47\t\tif a.Limiter == nil {\n   48\t\t\treturn h\n   49\t\t}\n   50\t\treturn quota.Middleware(a.Limiter, func(r *http.Request) (string, quota.Plan) {\n   51\t\t\tu := auth.UserFrom(r.Context())\n   52\t\t\treturn u.ID, planOf(u)\n   53\t\t}, h)\n   54\t}\n   55\t\n   56\t// Routes returns the API's handler.\n   57\tfunc (a *API) Routes() http.Handler {\n   58\t\tmux := http.NewServeMux()\n   59\t\tuser := func(h http.HandlerFunc) http.Handler { return auth.Require(a.Store, a.limit(h)) }\n   60\t\tadmin := func(h http.HandlerFunc) http.Handler { return auth.RequireAdmin(a.Store, h) }\n   61\t\n   62\t\tmux.Handle(\"POST /v1/reminders\", user(a.createReminder))\n   63\t\tmux.Handle(\"GET /v1/reminders\", user(a.listReminders))\n   64\t\tmux.Handle(\"GET /v1/reminders/{id}\", user(a.getReminder))\n   65\t\tmux.Handle(\"DELETE /v1/reminders/{id}\", user(a.deleteReminder))\n   66\t\tmux.Handle(\"POST /v1/reminders/{id}/done\", user(a.markDone))\n   67\t\tmux.Handle(\"POST /v1/reminders/{id}/snooze\", user(a.snooze))\n   68\t\tmux.Handle(\"POST /v1/reminders/{id}/test\", user(a.testNotify))\n   69\t\n   70\t\tmux.Handle(\"GET /v1/me\", user(a.me))\n   71\t\tmux.Handle(\"DELETE /v1/me\", user(a.closeAccount))\n   72\t\tmux.Handle(\"PUT /v1/me/prefs\", user(a.updatePrefs))\n   73\t\tmux.Handle(\"GET /v1/me/digest\", user(a.digest))\n   74\t\tmux.Handle(\"GET /v1/me/calendar.ics\", user(a.calendarFeed))\n   75\t\tmux.Handle(\"GET /v1/search\", user(a.search))\n   76\t\n   77\t\tmux.Handle(\"POST /v1/lists\", user(a.createList))\n   78\t\tmux.Handle(\"GET /v1/lists\", user(a.listLists))\n   79\t\tmux.Handle(\"GET /v1/lists/{id}\", user(a.getList))\n   80\t\tmux.Handle(\"DELETE /v1/lists/{id}\", user(a.deleteList))\n   81\t\tmux.Handle(\"POST /v1/lists/{id}/members\", user(a.addMember))\n   82\t\tmux.Handle(\"DELETE /v1/lists/{id}/members/{user}\", user(a.removeMember))\n   83\t\tmux.Handle(\"POST /v1/lists/{id}/reminders\", user(a.addListReminder))\n   84\t\tmux.Handle(\"DELETE /v1/lists/{id}/reminders/{reminder}\", user(a.removeListReminder))\n   85\t\n   86\t\t// Read-only views of the caller's own data.\n   87\t\tmux.HandleFunc(\"GET /v1/me/export\", a.export)\n   88\t\tmux.HandleFunc(\"GET /v1/me/stats\", a.stats)\n   89\t\n   90\t\tmux.Handle(\"POST /v1/admin/users/import\", admin(a.importUsers))\n   91\t\tmux.Handle(\"DELETE /v1/admin/users/{id}\", admin(a.deleteUser))\n   92\t\tmux.Handle(\"POST /v1/admin/dispatcher/stop\", admin(a.stopDispatcher))\n   93\t\tmux.Handle(\"POST /v1/admin/snapshot\", admin(a.snapshot))\n   94\t\tmux.Handle(\"GET /v1/admin/dispatcher/status\", admin(a.dispatcherStatus))\n   95\t\tmux.Handle(\"GET /v1/admin/audit\", admin(a.auditLog))\n   96\t\n   97\t\tif a.Metrics != nil {\n   98\t\t\tmux.Handle(\"GET /metrics\", a.Metrics)\n   99\t\t}\n  100\t\n... 65 more lines; read on with start=101\n",
+				"tool_call_id": "toolu_01NCEEWvsmTWq6xyUJ6sBcbm"
+			},
+			{
+				"role": "tool",
+				"content": "api/reminders.go, lines 1-60 of 223:\n    1\tpackage api\n    2\t\n    3\timport (\n    4\t\t\"cmp\"\n    5\t\t\"net/http\"\n    6\t\t\"strings\"\n    7\t\t\"time\"\n    8\t\n    9\t\t\"example.com/remind/auth\"\n   10\t\t\"example.com/remind/duration\"\n   11\t\t\"example.com/remind/notify\"\n   12\t\t\"example.com/remind/quota\"\n   13\t\t\"example.com/remind/schedule\"\n   14\t\t\"example.com/remind/store\"\n   15\t)\n   16\t\n   17\ttype createRequest struct {\n   18\t\tText  string `json:\"text\"`\n   19\t\tIn    string `json:\"in\"`    // from now, such as \"1h30m\"\n   20\t\tAt    string `json:\"at\"`    // an RFC 3339 time\n   21\t\tEvery string `json:\"every\"` // a schedule spec, such as \"on mon at 09:00\"\n   22\t\tTZ    string `json:\"tz\"`    // for weekly schedules; defaults to the user's\n   23\t\t// Priority is 1 (high), 2 (normal), or 3 (low); omitted means normal.\n   24\t\tPriority *int `json:\"priority\"`\n   25\t}\n   26\t\n   27\tfunc (a *API) createReminder(w http.ResponseWriter, r *http.Request) {\n   28\t\tu := auth.UserFrom(r.Context())\n   29\t\tvar req createRequest\n   30\t\tif !a.decode(w, r, &req) {\n   31\t\t\treturn\n   32\t\t}\n   33\t\tif strings.TrimSpace(req.Text) == \"\" {\n   34\t\t\ta.fail(w, http.StatusBadRequest, \"text is required\")\n   35\t\t\treturn\n   36\t\t}\n   37\t\tpriority := 2\n   38\t\tif req.Priority != nil {\n   39\t\t\tif *req.Priority > 3 {\n   40\t\t\t\ta.fail(w, http.StatusBadRequest, \"priority must be 1, 2, or 3\")\n   41\t\t\t\treturn\n   42\t\t\t}\n   43\t\t\tpriority = *req.Priority\n   44\t\t}\n   45\t\tvar (\n   46\t\t\tdue  time.Time\n   47\t\t\trule schedule.Rule\n   48\t\t\terr  error\n   49\t\t)\n   50\t\tswitch {\n   51\t\tcase req.Every != \"\":\n   52\t\t\tzone := schedule.LookupZone(cmp.Or(req.TZ, u.Prefs.TZ))\n   53\t\t\trule, err = schedule.Parse(req.Every, zone, a.Now())\n   54\t\tcase req.In != \"\":\n   55\t\t\tvar d time.Duration\n   56\t\t\td, err = duration.Parse(req.In)\n   57\t\t\tdue = a.Now().Add(d)\n   58\t\tcase req.At != \"\":\n   59\t\t\tdue, err = time.Parse(time.RFC3339, req.At)\n   60\t\tdefault:\n... 163 more lines; read on with start=61\n",
+				"tool_call_id": "toolu_01CcMcaUKakpdsborHmYowEt"
+			},
+			{
+				"role": "tool",
+				"content": "duration/duration_test.go, lines 1-53 of 53:\n    1\tpackage duration\n    2\t\n    3\timport (\n    4\t\t\"testing\"\n    5\t\t\"time\"\n    6\t)\n    7\t\n    8\tfunc TestParse(t *testing.T) {\n    9\t\ttests := []struct {\n   10\t\t\tin   string\n   11\t\t\twant time.Duration\n   12\t\t}{\n   13\t\t\t{\"90s\", 90 * time.Second},\n   14\t\t\t{\"1h30m\", 90 * time.Minute},\n   15\t\t\t{\"2d\", 48 * time.Hour},\n   16\t\t\t{\"1w2d\", 9 * Day},\n   17\t\t\t{\"0m\", 0},\n   18\t\t}\n   19\t\tfor _, tt := range tests {\n   20\t\t\tgot, err := Parse(tt.in)\n   21\t\t\tif err != nil {\n   22\t\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n   23\t\t\t\tcontinue\n   24\t\t\t}\n   25\t\t\tif got != tt.want {\n   26\t\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n   27\t\t\t}\n   28\t\t}\n   29\t}\n   30\t\n   31\tfunc TestParseErrors(t *testing.T) {\n   32\t\tfor _, in := range []string{\"1h30\", \"h\", \"10y\", \"1h-30m\", \"1.5h\"} {\n   33\t\t\tif _, err := Parse(in); err == nil {\n   34\t\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n   35\t\t\t}\n   36\t\t}\n   37\t}\n   38\t\n   39\tfunc TestFormat(t *testing.T) {\n   40\t\ttests := []struct {\n   41\t\t\tin   time.Duration\n   42\t\t\twant string\n   43\t\t}{\n   44\t\t\t{90 * time.Minute, \"1h30m\"},\n   45\t\t\t{9 * Day, \"1w2d\"},\n   46\t\t\t{500 * time.Millisecond, \"0s\"},\n   47\t\t}\n   48\t\tfor _, tt := range tests {\n   49\t\t\tif got := Format(tt.in); got != tt.want {\n   50\t\t\t\tt.Errorf(\"Format(%v) = %q, want %q\", tt.in, got, tt.want)\n   51\t\t\t}\n   52\t\t}\n   53\t}\n",
+				"tool_call_id": "toolu_01DB4PxGKYeCoYR5YLNx2nEA"
+			},
+			{
+				"role": "tool",
+				"content": "api/api.go:148: func (a *API) page(w http.ResponseWriter, r *http.Request) (offset, limit int, ok bool) {",
+				"tool_call_id": "toolu_01LyPtG2iBbwDKxDGPyrJdh6"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01Nqg4vf6hMPvbVxkHvLMMbm",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/api.go\", \"start\": 140, \"end\": 165}"
+						}
+					},
+					{
+						"id": "toolu_0128c18s5gd6EQkeAfmsZMLv",
+						"type": "function",
+						"function": {
+							"name": "code_search",
+							"arguments": "{\"pattern\": \"\\\\.List\\\\(\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQStgcKEAgSGAI4AUIIdGhpbmtpbmcSDODRVVDKYE0aj5MTGBoMONLQQPCuxFS3tyjmIjAN7d8O4PnVPi5Yd4OATDYp96lMhnc5fgqzXAvViXKFqU+8GPeIJSh3nITHrCFPjtMq0wbsvvPGXEYum17kUkhDWk3tDsVqb8ZhP/gbUJFc42E8xy5fH9Mk79ENluGieJN4q1IwaW/TDKkRsXD73PBJjRxtKM/DBrUnWiZ1bfQrQSDYdeaos1ePFSyx5qlUQeuz8Pgn2qvEiDQztGbxbsUA2+EDkpET5PfvWsJzJejVScadqnb2qUJCXBGSqsj10CcsTxmZNnfAeI9X92DNMAv7UDPCDwjxRe0VG0hVmclrVe5+ABpiaKNOw0bY8fKN5qxmOZtypvdliNpErvReiYzC2jCa3TgivZd6+OAhiIvx+Zm4TcycWFykLUYf8Bo/g9kJLlf0/Mlyp+VWPPi+oDlbn/FPjJWIcHd//MJmNOAgQCyZYLYdg9MBFPCfpQ02cc/Ltw96Gbmo1oXo6I6KS2evMReTuJsuCzkbZuJarYCRWZQUKeXqY/37zjPd6exbP6Z7XCLUCmebwM4QMODQrt+4wCFfvkC3ysW458QG5rU2REUBCN6DlRpP026yrBodo87HXJwwTRdZid9OfvcjnPgljIg7ZNRu7wI3vwLNrR6taZnbT6dIGzIvOSM58VJdXMJerC7QmV9Gd/XdkOyxRy+LogMmpMi1weHoJQAYZXTAsB/AAt7kM7kVpr35wFN0wRWP0yp5RYvxDKCDyGuZ6qRgkjvMFWkvqO8p/G6zTNVHZzNvUzCmCgyG/YPpYd7gRhEcYSD6pqPI1CQ6sWA4zwsh9OnZlx4WJcCYc6Ou/9AYjZsz8j+LyIchgSPehCSKRvFhgkuVv0kZJYh5IAWhjh56jVzPfEJ80RUUQn1z+7oLE5rXIMHiLfaOx0d2EHlxIcYdxKU3+1Em7EreLc5WTggG+atk/jC6BqcMKJ85ed1/xqF+n1nkk+ojKQvo0RN2MO8YavcGrLYCziHt48LjDkhaiIXaq/QBqfBaECbxzNVf+gVjcG4zUzc0q42GXHJS/bWL33Jz9ZztmnqT40TurhRk+RVES/ux5RpiFtGyVviWRCPUs7azDFxQ4XJalMS7XiCT9aDOqPXOAslG7F1eb73eRTm9ceFgkYGiclxI26clRs7Ii5s+i6VgcN+QYU49+ZvP0IJdffM3ZOw/D4SqMq+D1bUp/Oa1b7SvnBSjCpyl28vWgIHQ/RgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "api/api.go, lines 140-165 of 165:\n  140\t\t\ta.fail(w, http.StatusConflict, \"conflict\")\n  141\t\tdefault:\n  142\t\t\ta.Log.Error(\"request failed\", \"err\", err)\n  143\t\t\ta.fail(w, http.StatusInternalServerError, \"internal error\")\n  144\t\t}\n  145\t}\n  146\t\n  147\t// page reads offset and limit from the query.\n  148\tfunc (a *API) page(w http.ResponseWriter, r *http.Request) (offset, limit int, ok bool) {\n  149\t\toffset, limit = 0, 50\n  150\t\tq := r.URL.Query()\n  151\t\tvar err error\n  152\t\tif s := q.Get(\"offset\"); s != \"\" {\n  153\t\t\tif offset, err = strconv.Atoi(s); err != nil || offset < 0 {\n  154\t\t\t\ta.fail(w, http.StatusBadRequest, \"offset must be a whole number\")\n  155\t\t\t\treturn 0, 0, false\n  156\t\t\t}\n  157\t\t}\n  158\t\tif s := q.Get(\"limit\"); s != \"\" {\n  159\t\t\tif limit, err = strconv.Atoi(s); err != nil || limit < 1 || limit > 100 {\n  160\t\t\t\ta.fail(w, http.StatusBadRequest, \"limit must be between 1 and 100\")\n  161\t\t\t\treturn 0, 0, false\n  162\t\t\t}\n  163\t\t}\n  164\t\treturn offset, limit, true\n  165\t}\n",
+				"tool_call_id": "toolu_01Nqg4vf6hMPvbVxkHvLMMbm"
+			},
+			{
+				"role": "tool",
+				"content": "api/reminders.go:127: rems := a.Store.List(u.ID, offset, limit)\napi/search.go:45: for _, rem := range a.Store.List(u.ID, 0, 1000) {\napi/users.go:104: rems := a.Store.List(u.ID, 0, 1000)\napi/users.go:117: for _, rem := range a.Store.List(u.ID, 0, 1000) {\nstore/store_test.go:55: if got := s.List(\"u1\", 0, 2); len(got) != 2 || got[0].Text != \"a\" {\nstore/store_test.go:58: if got := s.List(\"u1\", 2, 50); len(got) != 1 || got[0].Text != \"c\" {\nstore/store_test.go:69: if got := s.List(\"u1\", 0, 50); len(got) != 0 {",
+				"tool_call_id": "toolu_0128c18s5gd6EQkeAfmsZMLv"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_list",
+					"description": "List every crash report, one line each: its ID, fingerprint, how many times it happened, the version that crashed, the function inside remind where it happened, and the panic message, cut short. Reports with the same fingerprint usually share a cause, but check. Start here.",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": [],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_read",
+					"description": "Read one crash report: when and how often it happened, the panic, the request being served, and the stack. By default the stack shows only remind's own frames, with file and line; set full for every frame. Log lines are in crash_logs.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							},
+							"full": {
+								"type": "boolean",
+								"description": "show every stack frame, not just remind's"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_search",
+					"description": "Search every crash report for text, ignoring case: panic messages, request paths and bodies, stacks, and log lines. Lists each match with the report's ID and where it was found.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "text to look for, such as a function name, a path, or words from a panic"
+							}
+						},
+						"required": [
+							"query"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_logs",
+					"description": "Read the log lines remind wrote just before a crash.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_goroutines",
+					"description": "Summarize the goroutine dump of a stuck request: goroutines with identical stacks are grouped and counted, so a dump of thousands reads as a few groups. Use it for reports of kind stuck.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_list",
+					"description": "List the files under a directory of remind's source, with how many lines each has. Use it to find your way around; use code_search to find where something is defined.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"dir": {
+								"type": "string",
+								"description": "a directory such as \"store\"; empty lists everything"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_read",
+					"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "a file path, such as store/store.go"
+							},
+							"start": {
+								"type": "integer",
+								"description": "the first line to show; default 1"
+							},
+							"end": {
+								"type": "integer",
+								"description": "the last line to show; default 200 lines after start"
+							}
+						},
+						"required": [
+							"path"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_search",
+					"description": "Search remind's Go files for a regular expression and list the matching lines with file and line number. Use it to find where a function is defined or called.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"pattern": {
+								"type": "string",
+								"description": "a Go regular expression, such as func \\(s \\*Store\\) Get"
+							},
+							"dir": {
+								"type": "string",
+								"description": "limit the search to this directory"
+							}
+						},
+						"required": [
+							"pattern"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run go test on remind's code, as it is now, and report failed tests, build errors, and each package's result. Run one package while you work; run ./... before you finish.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"package": {
+								"type": "string",
+								"description": "a package pattern, such as ./store or ./..."
+							},
+							"run": {
+								"type": "string",
+								"description": "run only tests matching this regular expression, such as ^TestGetDeleted$"
+							},
+							"race": {
+								"type": "boolean",
+								"description": "run with the race detector"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_patch",
+					"description": "Change a file by replacing one piece of text, or create a new file, such as a test, by leaving old empty. Read a file with code_read before changing it, and copy old exactly from what you read. After a change, the package and its tests are compiled, and you see the result.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "the file to change, such as store/store.go"
+							},
+							"old": {
+								"type": "string",
+								"description": "text copied exactly from the file, appearing in it once; empty to create a new file"
+							},
+							"new": {
+								"type": "string",
+								"description": "the text to put in its place, or the new file's contents"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_search",
+					"description": "Search the open issues in the issue tracker, by words or by fingerprint; with neither, list them all. Issues that contain more of the words come first. Check here before filing, since a crash may already be filed, perhaps by a person, with no fingerprint and in other words.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "words to look for in titles and bodies, such as parseBearer index out of range"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "a fingerprint from crash_list"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_file",
+					"description": "File a new issue for a crash group, once you know its cause. Search the open issues first; don't file a problem that is already filed. File one issue per cause.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"title": {
+								"type": "string",
+								"description": "one line naming the problem, such as \"store.Get returns a deleted reminder\""
+							},
+							"body": {
+								"type": "string",
+								"description": "the cause, the evidence, the fix, and the reports it covers"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "the crash group's fingerprint, from crash_list"
+							}
+						},
+						"required": [
+							"title",
+							"body",
+							"fingerprint"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_comment",
+					"description": "Add a comment to an issue, such as new crash reports that match one already filed.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "integer",
+								"description": "the issue number, such as 101"
+							},
+							"body": {
+								"type": "string",
+								"description": "the comment, such as new reports of the same crash"
+							}
+						},
+						"required": [
+							"id",
+							"body"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "submit_diagnosis",
+					"description": "Finish the job: submit one diagnosis per crash group. Call it once, at the end, after filing an issue for each new cause. For status fixed, the reproducer test must fail on the original code and pass on yours; this is checked.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"groups": {
+								"type": "array",
+								"description": "one entry per crash group; every report belongs to exactly one",
+								"items": {
+									"type": "object",
+									"properties": {
+										"fingerprint": {
+											"type": "string",
+											"description": "the group's fingerprint, from crash_list"
+										},
+										"reports": {
+											"type": "array",
+											"description": "the IDs of every report in the group",
+											"items": {
+												"type": "string"
+											}
+										},
+										"category": {
+											"type": "string",
+											"enum": [
+												"nil_value",
+												"out_of_range",
+												"concurrency",
+												"bad_input",
+												"other"
+											]
+										},
+										"root_cause": {
+											"type": "object",
+											"description": "where the code is wrong, which may not be where it crashed",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "string",
+											"description": "why this is the cause: what you read and ran"
+										},
+										"reproducer": {
+											"type": "object",
+											"description": "the test you wrote that fails before the fix; leave out for already_fixed and duplicate",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"fix": {
+											"type": "string",
+											"description": "what you changed, for status fixed"
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"fixed",
+												"already_fixed",
+												"duplicate",
+												"not_a_bug",
+												"needs_human"
+											]
+										},
+										"issue": {
+											"type": "integer",
+											"description": "the issue you filed, for status fixed or needs_human"
+										},
+										"duplicate": {
+											"type": "integer",
+											"description": "for status duplicate: the open issue it duplicates"
+										}
+									},
+									"required": [
+										"fingerprint",
+										"reports",
+										"category",
+										"root_cause",
+										"evidence",
+										"status"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"groups"
+						],
+						"additionalProperties": false
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792110227-K1cS0BgKYP82To7k5zjI",
+		"object": "chat.completion",
+		"created": 1792110227,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01QY3dK6F5Aeb83L8JRrPqbK",
+							"function": {
+								"name": "code_read",
+								"arguments": "{\"path\": \"store/store_test.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01J47E7UQD9nkuxooXx1yBsp",
+							"function": {
+								"name": "code_read",
+								"arguments": "{\"path\": \"api/api_test.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 2,
+							"id": "toolu_01W1qh7bYSfZAzE9bv2WADaW",
+							"function": {
+								"name": "code_search",
+								"arguments": "{\"pattern\": \"Get\\\\(\", \"dir\": \"store\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 26092,
+			"completion_tokens": 686,
+			"total_tokens": 26778,
+			"cost": 0.0029522,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0029522,
+				"upstream_inference_prompt_cost": 0.0026092,
+				"upstream_inference_completions_cost": 0.000343
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 511,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

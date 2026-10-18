@@ -1,0 +1,221 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_LyYrPyYACks9PzGEwHGSd9ZD",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0TByTyAkK6PzwKMVFPGpa4iGRsURjbh0U57TGPQh21mZrq05w0lY7l8-QqW5xL4ZoMd2TF1Dz55fBqFTBJQQbCDwdPdRpFPioPLQlOTPSRgaFUf9lxPNPYLRl0B70TNCgmsVX5q_8kN4B7jdgmSzreD_pNMiSmCuXUpA-Mb_cunw-57nzVgEi-MSxJAIeNie5p3Z2ryvErmhIIHZ1vFUw2M657Z8FqHWGy8dPuZTZKlHSG5VUkv866-2YwNrPKtIM6SEbXcVarGq3lcilr5rTwIhVIinDVzQhKeRsLTJnppJQYVIQ7EVNq7-HgNYUIVLAxGwJcV8oUfeqfsuciQPRJ3tEFQbtWQnpyTUYxkCpA0IRUWzE9PUSnX96PkxoXTbv8PvvDWK_Q_ET5dIfnJIxpCUTvm9V9WA5vtyUpmE4zEAHs7wRhg2RHE5pwcYWcr890wyyW4PCribmJ0w_3__fapweU41zLq58f_Sn9iRytUcFLsB6kSZnZUDRPYgnCf-Hfdwlaeu2RrNkmNwyMpAZvufmgT6d4UKyC4D9BoAgc1wU72ySZDQJB1H1AvOZN2WrZTPvSrau7zGZ_wGFuMuwvM9kajvx8OzvyX4DUoEbMDadCvgF-bvvuIkig3XuRngptu5VPcCo5epPv1Mxw4zHleZDm3wneF4PGRAPJmCXPUCqvbwV3A4_Jc_PT4e1k2OxiZuNBL8Q9fTRduAzkti22iwDUAS4ymt4VfQ6C-g7mYG7qXJqDk58PasPGM8MY9fWzroEn9PrklaIKs5KMrBzRjvrLjGKFkpgtVF9FM426bKv6OqSBGHyDIisdHtDGT4HP-XTAvqbLpc1KcUmD0lWy6hejO2S8DHNc_P1bRGmeuT3c5-mIrUi5EzCYHdhSF4GQbLS6EIz5Z0DSKmvOZW91Rq5wZPhodpnGn2fWlw5OS-G0KGKIxjgK3kCf0vsOyyZQRwYe9XWF4-F0xRhb1gvvpc0-XXy3_F4DqF4q_M0Wamx5GMwnA1kSR6AHRNsZ9HXBnZC0RAcpG_lJvvL5c-TAYERiL0NG_KuAmkgpSbGeSmv8XokvwVT3-zVXt8lHNuNeGZCmipippzvpwRRPzDZukGOiuqu9ogZ9Ol2OIu6i73SHrakCk2PGei6FvUkZkkMRxHq84Ir0vDjNaKZyOsJf2lskjdtQV-WbIsXKXpEJqYM29GJsJH3KLx0NwRidzUlTRbnWpLnrZoaEn1O95mvj7wmS7eK-ob_U1k48Zzr8Ms1wWzCRpvig7fM-be6Ueqbvq4glbA8FNrvZIhYB6FDr2PddQhTSLQSNfn0abxlQPT3DnGNFX6LCrthY7bsr0LdpCO713RCpdgQpT9yvZ3EZJUtbgVHuoWeblMDcLLrnz06QBAv1Y9gf4tSpc4oGN9VqDN-0oxflmhfJeZ_XIU4CwcktuApFZqScWSSB0aikZZD6tmogXLQw6aJgwi8J5CiNVylaFu7Q1zWgdNpfUWh08KUxTXLOjpo6yBlcPNFkpYUcVCXyjMxagnFgLAhd3gH6LtM6UqSoGMIiaspksaaXzjpbXnV0BCIctaVCVJWnI3h-UD3w-7HHathMNL4inVqcJXuvqfHKW1d8By8vwvYVXlFo2xahqnRcDGf2ew2QIhPWUHDPQ_1_uHGPoyFYgRz81g8ZRY6N9PnGxtTHEtp7clNg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_093bda5aa58aa410016ad130727e9c87d185b3844e35726ca9",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_LyYrPyYACks9PzGEwHGSd9ZD"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_S4pU5NlsOaqSQXgdxw8eBE2h",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration.go\"}"
+						}
+					},
+					{
+						"id": "call_4LJukJcEj6DDcskAwvyvesYw",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration_test.go\"}"
+						}
+					},
+					{
+						"id": "call_S0JWd4gOdGVeMa7dTvRH7mIw",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "call_S4pU5NlsOaqSQXgdxw8eBE2h"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "call_4LJukJcEj6DDcskAwvyvesYw"
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "call_S0JWd4gOdGVeMa7dTvRH7mIw"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792094325-oq3GDhoW7DhLO2qrLbhF",
+		"object": "chat.completion",
+		"created": 1792094325,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "**Fixing test errors**\n\nI’ve noticed there’s a typo related to time.Second that I need to fix. There could also be hidden tests causing an overflow. The user is asking for a fix for failing tests, which seems to point to possibly needing to edit just one line. It sounds like I should go ahead, make that edit, and run the tests again to see if that resolves the issue!",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_FccJy4Astp435aiGNLG53QuK",
+							"function": {
+								"name": "edit_file",
+								"arguments": "{\"path\":\"duration.go\",\"old\":\"\\t'm': time.Second,\",\"new\":\"\\t'm': time.Minute,\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Fixing test errors**\n\nI’ve noticed there’s a typo related to time.Second that I need to fix. There could also be hidden tests causing an overflow. The user is asking for a fix for failing tests, which seems to point to possibly needing to edit just one line. It sounds like I should go ahead, make that edit, and run the tests again to see if that resolves the issue!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0TB3coGl1uyNPTSKgPtf_N5KisrYSOLYQeB9Xw-XZ8_-vZEnV7_U3qxeGD5DCA9yAV-06ANhYEg7jaLgicBgvB4PB02cX-TjHbHa3LvMTleU8SSqzTW25YhkLn1SBNZ2lm0idLZt2DUyVK8iZDomwMo1X2AFXewDbNsZJShj7PH3xmVlz8UCo4GoNCX-UksrArytUv6A6P-fxewRz1kz9_CjQ2p0YWjIct1iMvJkLTNiHcuQ-9_vHPufwfNz8bOZr_Q8-XGgn3v5bwa0my5vaaU2oO2lWQ7MLyWd8MLNzNTILpcAzKHGd_B0eHpRoIScBHi1lvH3K-eD4ZrpzkOnH2kv4Sob8jjqZoh1i0QFYDvUte5TLmlriPtixI0xcz3Jc1Oo_D1mnQP5BQit561VHaihY3rGohXMOZ_M4fP7G6nu-MTRNIxue9_GVgWFjgJH-6kxPXJf_OoX5SKtKKtZYyIVjP7lN6n74bvyUCG7fIZh46X94ojQNP24uIPiSIZUupQRegccTxU--xsb3MLhvXtg33wa6sfj4mVRl8hKZhLiGjd-gxt3R85kRqvgt8CtxzZ3ScUUMRgy5UPHiGBeXrZBWJkwq8fM3WpCeXfmuzg1oI3Iz5hWC5D-vX86te6tKeLB88hAdNjiHYGG6VuUtCaB0N4TVr15pPzwg5S6CKz9curCgsdiHGOTChdkUjFi3hcDpM5Tcub1tf1pvEUy7mHV-q-YmdGnBMXk8xhK0T_f1z_5QxTiee_cnPE5ARv_Os0BcW-5LNgNX9q5Tns_txBSgMlRQuyZ9KXapoRPr95XoIOgx72PE-W5okzDg-7tps9JOYuVZyHc4fFwY9Jw4bvXsGcHNNp94k6UcwOh2YtJUqFLRd3M-2lVt7J_IR6CDOwgGkLQq_LIOHCA9BbxKBD-aiQ5JB6jAhmHqUvdStqzzGAZcFcvcXqZP7dHFb-dB_9acwQ4nb0kw3iDpwm7EEtrM3gBzJkHHnUOREhyLPQqZC7lmIJpRJaVWCvw4z2vpqbBhxOST-WZ9KWOn5PGT9fK0rtoWDaUvdE7g1PXg63RI1ePNTDel_w6HhmG8x18rBQbuB5dFktCQd0DXLlrjqYYMOUV-T5hKamHzyi4dKcODC5N52Aj2iDOc-03X78KG3USJXTGxemyhafAM3GhYv7-5pYl8IaGfTaKAqdPUFYfipLKGnQITwg0Hq7AlbNNaRdVF3l9qHDNPK7s6SmEFxq6J3mkCXhNB2RZV_8NWfKQ46BKBxdqtICezimuPd3xJMwel-gig5_hOM9ziyZcxGLKr-zkKnFKcAbXh886OArWQK11c_GyumeYv4FGWBIQJ6mcsUqSRCnjarr4TE6dQtYRUjDDgQNrDo3LSIpjjWOxXjVUUzHbh4h9toDkRZtcxIwHbeL6x0xTR0ix7UX4MwD_9fUD36jvs1z_MoefG8bwAfNEGzLwWBL0SpnNYiN5oG0mQA5IRUfXprEVftyFxI_HAJsV6NrYixmOPl27xagESTwo4v1wHjKf1WhVBlQnY8KHp2wbT6-wjrRo-b1WlB9lNTQ2BPBu1cIdWlyK_GqTQmwbhQP4Bh1hbgfCKwE4bEL3VMThUVsSCnHxxoHcijkqzLqSIGWApsCKhziFdn6CJlBeqcOKd4rPFevuHLQ_mfsJW43T6Op6cSPcekp_L0SewhoXo3TTaUVvtzpjubO7n6UivhxWm20Nn1D8ixO8uGawifv3q4kHvt-g_8DzgYkJJ5S3o-7eEJANMSlp3xcz2bxp_n3_C5Gs5jmD0PeMKJQjer8zCEBK5CvzNbjPWemAdRgkaOUOQK1D5veNDE_7ZGIhbTtZCvk9QwcDAkDz-IsPi8j_fHV529GAf3iTYj0fW9ngFT99OnxDgoQjxKe5j4sR4TfyWAuNa37XqRg9CMXmgZhS5QuoN1Wg8cOsDKTou-yVIaMw4YRO6u6kYFgYwJTSpKFy_2C7pKBsEuyMbQkt.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_093bda5aa58aa410016ad130760ba887d1978de8a08655ec6b",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 899,
+			"completion_tokens": 73,
+			"total_tokens": 972,
+			"cost": 0.0002674,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002674,
+				"upstream_inference_prompt_cost": 0.0001798,
+				"upstream_inference_completions_cost": 0.0000876
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 32,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

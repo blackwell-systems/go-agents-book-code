@@ -1,0 +1,235 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"content": "I'll run the tests and list the project files first.",
+				"tool_calls": [
+					{
+						"id": "toolu_01M4V2biT6X7wnZVysqbDhYw",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "toolu_014b9vJSgcS6e1SY7LhWVyKR",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSsgUKEAgSGAI4AUIIdGhpbmtpbmcSDDNzaeV/EUPFa+sl/hoMwL5e0Wd6cezE1bwIIjCNABoboq/RXpewfZQH/X61q51uUWX5ktAccj39/VEYnLvP2oarWf2Y2SdassEfyz4qzwTINcuT6enaSOlJ8OH2xPAuuHXA/31CUTbg/aRBWsvnvrS6ou4yBez3Apcor5Z+KUU1+Gys/MbynFBoYa5WWINkiAehU65QAVoLYLArgQykv8ob6v8HrNFnUn2LveQlIMrlvtccFVupPAzxzh2x/fVLfQwwlAFq+Q6HORScM/8RHuLV1Cl+wRDApZIXfjctt9Ux4nv0ku4OIOC2HNOGDK9t3a/XuQ7z6vnDEe1iu5Mcnz1KB6gQxvWuAiZn+pMC2w8IPZ0/6hzRQFSIDLKsT5L41PhTgCsWnRdNcnUG8Axg8T0TZFXd10MXuPy4Lx7E7ab/0NCNEiNYCOFkJB9lf5gr0HkVgacTOfmLu7JWqKEA3cSXMs0flXalELjGjFiiOfJvQ+cw5o5dYs+jnErMKsqck9JyB3m/yMRpZsCSMYdKLemcFOjK1RLhqOZSo60HFHVyTEwvsRQzitcVtlZeHGb9S/S6/3BAxNjDZA/pXK7jDdf92pl4iJ+e2S73ncOZP3Nz8uWzDCrVB02iZUqZFJGIJBD+izQzgwNAYlvTP22hQ/BnF/VsP956VcAjLy0JUku7IO8jFlC3zPCTkQwP/f1sKUgOb1Ltogjo4gKsBnRFQyLF8wEh5CEkU278/m1KQFpvdGpsFNX2/fw2zr+ERfGfF2NuVUoqlf2+GmEl+DOTfOJpK4Cy7+7NbmA61uDCPyKgBGNThs2qMpsOdjh/ctkF2a6MkgAK4ftP2NG6Rrsw1w9s6hqegdATKngQRoSXHW6K9OsRufjwnn6/7p1vWSAYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "toolu_01M4V2biT6X7wnZVysqbDhYw"
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "toolu_014b9vJSgcS6e1SY7LhWVyKR"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01EBBRCCxkMBxjUKbAYtDGwY",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\": \"duration.go\"}"
+						}
+					},
+					{
+						"id": "toolu_015FUz1k4w3srcNuqeXksFvh",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\": \"duration_test.go\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "toolu_01EBBRCCxkMBxjUKbAYtDGwY"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "toolu_015FUz1k4w3srcNuqeXksFvh"
+			},
+			{
+				"role": "assistant",
+				"content": "The bug is in the unit table: `'m'` is mapped to `time.Second` when it should be `time.Minute`. That explains both failures (`45m` parsed as 45s, and `1h30m` as 1h0m30s). I'll fix it.",
+				"tool_calls": [
+					{
+						"id": "toolu_01RMoX44pFS2bi66x15EbZNF",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\": \"duration.go\", \"old\": \"\\t'm': time.Second,\", \"new\": \"\\t'm': time.Minute,\"}"
+						}
+					},
+					{
+						"id": "toolu_01Xd4k5aL7L98veEpLg7maj7",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "Error: the project is read-only: edits are not possible in this session, so don't retry; report the fix instead",
+				"tool_call_id": "toolu_01RMoX44pFS2bi66x15EbZNF"
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "toolu_01Xd4k5aL7L98veEpLg7maj7"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792094308-bOKXWXYMbPTno05iNtPh",
+		"object": "chat.completion",
+		"created": 1792094308,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "I couldn't apply the fix. The project is read-only in this session, so the edit was rejected and I didn't retry it.\n\n**Cause:** In `duration.go`, the unit table maps `'m'` to the wrong duration:\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,   // bug: should be time.Minute\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\nBecause `m` means one second, `45m` parses as 45 seconds, and `1h30m` parses as 1h0m30s. That is why `TestParse` fails. `TestParseErrors` passes, and the bug doesn't affect it.\n\n**Fix:** Change line 2 of the table so `'m'` maps to `time.Minute`:\n\n```go\n\t'm': time.Minute,\n```\n\nOnce that edit is applied, `TestParse` should pass. Someone with write access needs to make this one-line change, or you can lift the read-only restriction and I'll apply it and rerun the tests.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSiwgKEAgSGAI4AUIIdGhpbmtpbmcSDJUqCnAbPAwnOKDXIhoMFmD+oHpGPQu3LapLIjDFjrHsJFR6YY/m1CGcKViKi33FySPlhmfD1WBjK3O4S/UHDBJ3sWHmTCwcIp6gRpAqqAcHQv9+uVqTjrxxwV1mmk8DFTMB+wI4sZwp0F2K1b872B9eAwwiXC2EX77zZaC1yODRtiJCvKeAh0HJPT2E9aVTcRzLMfbTCG0JuWGLUHvH7s6R/Hqd9cbJoDEDudJ4pKegHIl7RNsvTDOwZLMAtew7b+y8UoAPu54Er2NwbC5XNK8wWlLCJIPrEv1BKrfCz5yLQGSC3l+ZZB8UBuocQpcRPBCaQhjN6ZvMgHmOFTUtf7LVSrQr66CNngttsbvy0oVmpBWefz/cuJBYMVaXSyJHAoF4ReKUfRjOskla0htLI5skH0EPwVLsS81XQg6RyIb3dlnx8tTsRAoqLAosLnJtl1foa6KUuXPnxUDb0oWe++ddJJeqyRn5gD2mCrEUX0m8TGj2FJ7dZENhQ0IN/kV2MZEAUc63G49eVuzE3HKvXrknfZa804gO41kh2u5Lv4vynqu0pBKS9C4wknQzS0dKAqSGo1eMxo0ubTvLEn62pMgsly+suqa6IlW7FKSCQ+TNWOk8Kj39n3PSIhpmJtwmt7016KlZCZ3ySkgAEhaQ51udQInIm672FwB/1+KHGsfZl3uTDuW5HNBLfXXAyezn/ieP/W7hlQ2w1Nz+re4Ec2E/9KC/n0Jgff8zewZt49mAeHjEWE4OjxyUBf3Mu4jPvBo7wnW/Vz6jaec/VBQ1ccEmKnDn7LyTFdMxmRwBnk82cdUQYVa3J+BklzOMFCfbcD74RIvbtUxwca3F6vrMSZPMbbhtfzsJC70yNqQWgti7W3mLEYdbdqlFt/soMlYqkQT5EZDVY4eJht6tOmR34oQQUf1sHLhtFGnl0Pc53QvVe1hOO+u8R113nAvAAhCC9mALjFwFv7qEudBMzU24wEBet6NFzcKjb3BUwMGMo5pxrbsmPWS8aiBJiMk3zejPpf9uhSjE7nkakkhfXferYwl+IjV7EVUOheR+7WM/FpzXJbCxhgzjHdzcJqgWRAPyxcLeg3BSTruWk8mHsTj+C1xzqoPm39381PMifxSdZxiVfi8C7GnziBjD7+eb8nUQOvBbc+Iy62W3ueS7BiTvQS8IXDLMUNm9mCzq63UUf6F6gA9xIx26gsF77gEUf8MLtMdaNlgJqbXju05cTBQII4M5A0bclSb9nAEDwdg+mnJPPdx8MO3ZR9Xl09/RFnpQVKGPT1/7Pm6ayJqgSoFBgfmwC+3TtssGz46mCHsIMgzfPlqTt0Nxrg1OxLkIoEpzBTKPunR/xqkYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 2235,
+			"completion_tokens": 446,
+			"total_tokens": 2681,
+			"cost": 0.0004465,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0004465,
+				"upstream_inference_prompt_cost": 0.0002235,
+				"upstream_inference_completions_cost": 0.000223
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 103,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

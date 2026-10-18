@@ -1,0 +1,193 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version (MVP):\n\n- Add a book: title, author, and status (`to-read`, `reading`, `finished`)\n- List all books\n- Update a book’s status\n- Remove a book\n- Save data locally in a simple JSON file\n- Provide basic command-line help and clear error messages"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file in the user’s config/data directory:\n\n- Linux: `~/.local/share/booklist/books.json`\n- macOS: `~/Library/Application Support/booklist/books.json`\n- Windows: `%AppData%\\booklist\\books.json`\n\nExample:\n\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"reading\"\n  }\n]\n```\n\nIn Go, use `encoding/json`. Load the file at startup and rewrite it after changes. Write to a temporary file first, then rename it over the original so interrupted writes don’t corrupt the list."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Book struct {\n\tID     int    `json:\"id\"`\n\tTitle  string `json:\"title\"`\n\tAuthor string `json:\"author\"`\n\tStatus string `json:\"status\"` // to-read, reading, finished\n}\n```"
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a subcommand with flags:\n\n```bash\nbooklist add --title \"The Hobbit\" --author \"J.R.R. Tolkien\" --status to-read\n```\n\nExample Go handler:\n\n```go\nfunc addBook(args []string, books *[]Book) error {\n\tfs := flag.NewFlagSet(\"add\", flag.ExitOnError)\n\n\ttitle := fs.String(\"title\", \"\", \"Book title\")\n\tauthor := fs.String(\"author\", \"\", \"Book author\")\n\tstatus := fs.String(\"status\", \"to-read\", \"to-read, reading, or finished\")\n\n\tfs.Parse(args)\n\n\tif *title == \"\" || *author == \"\" {\n\t\treturn errors.New(\"title and author are required\")\n\t}\n\n\tif *status != \"to-read\" && *status != \"reading\" && *status != \"finished\" {\n\t\treturn errors.New(\"invalid status\")\n\t}\n\n\t*books = append(*books, Book{\n\t\tID:     nextID(*books),\n\t\tTitle:  *title,\n\t\tAuthor: *author,\n\t\tStatus: *status,\n\t})\n\n\treturn nil\n}\n```\n\nThen save the updated slice to your JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How should the program handle two books with the same title?"
+			},
+			{
+				"role": "assistant",
+				"content": "Allow them. Different books can share a title, and the same book may have different editions or authors.\n\n- Give every entry a unique ID.\n- Use the ID for update and delete commands.\n- Optionally warn when the title and author match an existing book, but don’t block it.\n\nExample:\n\n```bash\nbooklist add --title \"Dune\" --author \"Frank Herbert\"\nbooklist delete --id 3\n```"
+			},
+			{
+				"role": "user",
+				"content": "Write the function that loads the list from the file."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc LoadBooks(path string) ([]Book, error) {\n\tdata, err := os.ReadFile(path)\n\tif err != nil {\n\t\tif errors.Is(err, os.ErrNotExist) {\n\t\t\treturn []Book{}, nil // Start with an empty list.\n\t\t}\n\t\treturn nil, err\n\t}\n\n\tvar books []Book\n\tif err := json.Unmarshal(data, &books); err != nil {\n\t\treturn nil, fmt.Errorf(\"decode books file: %w\", err)\n\t}\n\n\treturn books, nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n\t\"os\"\n)\n```\n\nA missing file is treated as an empty list; other file or JSON errors are returned."
+			},
+			{
+				"role": "user",
+				"content": "What happens if the file doesn't exist yet?"
+			},
+			{
+				"role": "assistant",
+				"content": "`LoadBooks` treats a missing file as an empty list:\n\n```go\nreturn []Book{}, nil\n```\n\nThe program can then add books normally. When it first saves the list, it should create the parent directory and JSON file."
+			},
+			{
+				"role": "user",
+				"content": "Now write the function that saves the list."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc SaveBooks(path string, books []Book) error {\n\tdata, err := json.MarshalIndent(books, \"\", \"  \")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"encode books: %w\", err)\n\t}\n\n\tif err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {\n\t\treturn fmt.Errorf(\"create data directory: %w\", err)\n\t}\n\n\ttmp, err := os.CreateTemp(filepath.Dir(path), \"books-*.tmp\")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"create temporary file: %w\", err)\n\t}\n\ttmpName := tmp.Name()\n\tdefer os.Remove(tmpName)\n\n\tif _, err := tmp.Write(data); err != nil {\n\t\ttmp.Close()\n\t\treturn fmt.Errorf(\"write books: %w\", err)\n\t}\n\n\tif err := tmp.Close(); err != nil {\n\t\treturn fmt.Errorf(\"close temporary file: %w\", err)\n\t}\n\n\tif err := os.Rename(tmpName, path); err != nil {\n\t\treturn fmt.Errorf(\"replace books file: %w\", err)\n\t}\n\n\treturn nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"os\"\n\t\"path/filepath\"\n)\n```\n\nIt creates the parent directory if needed and uses a temporary file to avoid leaving a partially written JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How do I make sure a crash halfway through saving doesn't lose the list?"
+			},
+			{
+				"role": "assistant",
+				"content": "Write to a temporary file in the **same directory**, flush it to disk, then atomically rename it over the original:\n\n```go\nfunc SaveBooks(path string, books []Book) error {\n\tdata, err := json.MarshalIndent(books, \"\", \"  \")\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tdir := filepath.Dir(path)\n\tif err := os.MkdirAll(dir, 0o755); err != nil {\n\t\treturn err\n\t}\n\n\ttmp, err := os.CreateTemp(dir, \".books-*.tmp\")\n\tif err != nil {\n\t\treturn err\n\t}\n\ttmpName := tmp.Name()\n\tdefer os.Remove(tmpName)\n\n\tif _, err := tmp.Write(data); err != nil {\n\t\ttmp.Close()\n\t\treturn err\n\t}\n\tif err := tmp.Sync(); err != nil { // Flush file contents to disk.\n\t\ttmp.Close()\n\t\treturn err\n\t}\n\tif err := tmp.Close(); err != nil {\n\t\treturn err\n\t}\n\n\t// Because the temp file is in the same directory, this replacement is atomic.\n\treturn os.Rename(tmpName, path)\n}\n```\n\nIf the program crashes before `Rename`, the original file remains unchanged. If it crashes after the rename, the complete new file is available. The temporary file must be in the same directory for this guarantee."
+			},
+			{
+				"role": "user",
+				"content": "How do I mark a book as finished?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use an update command with the book’s ID:\n\n```bash\nbooklist update --id 3 --status finished\n```\n\nThe handler should:\n\n1. Find the book with ID `3`.\n2. Set its status to `finished`.\n3. Save the updated list.\n4. Report an error if the ID doesn’t exist.\n\n```go\nfunc MarkFinished(books []Book, id int) error {\n\tfor i := range books {\n\t\tif books[i].ID == id {\n\t\t\tbooks[i].Status = \"finished\"\n\t\t\treturn nil\n\t\t}\n\t}\n\n\treturn fmt.Errorf(\"book with ID %d not found\", id)\n}\n```\n\nThen call `SaveBooks` after it succeeds."
+			},
+			{
+				"role": "user",
+				"content": "Add a command that lists only the books I haven't finished."
+			},
+			{
+				"role": "assistant",
+				"content": "Add a `list` command with an optional `--unfinished` flag:\n\n```bash\nbooklist list --unfinished\n```\n\n```go\nfunc ListUnfinished(books []Book) {\n\tfor _, book := range books {\n\t\tif book.Status == \"finished\" {\n\t\t\tcontinue\n\t\t}\n\n\t\tfmt.Printf(\"[%d] %s by %s (%s)\\n\",\n\t\t\tbook.ID, book.Title, book.Author, book.Status)\n\t}\n}\n```\n\nIn your command handling:\n\n```go\nif *unfinished {\n\tListUnfinished(books)\n} else {\n\tListBooks(books)\n}\n```\n\nThe command includes `to-read` and `reading` books, while excluding `finished`."
+			},
+			{
+				"role": "user",
+				"content": "How should I test the load and save functions?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use `t.TempDir()` so tests never touch real user data. Test round-tripping, missing files, and invalid JSON:\n\n```go\nfunc TestSaveAndLoadBooks(t *testing.T) {\n\tdir := t.TempDir()\n\tpath := filepath.Join(dir, \"nested\", \"books.json\")\n\n\twant := []Book{\n\t\t{ID: 1, Title: \"Dune\", Author: \"Frank Herbert\", Status: \"reading\"},\n\t\t{ID: 2, Title: \"The Hobbit\", Author: \"J.R.R. Tolkien\", Status: \"finished\"},\n\t}\n\n\tif err := SaveBooks(path, want); err != nil {\n\t\tt.Fatalf(\"SaveBooks() error = %v\", err)\n\t}\n\n\tgot, err := LoadBooks(path)\n\tif err != nil {\n\t\tt.Fatalf(\"LoadBooks() error = %v\", err)\n\t}\n\n\tif !reflect.DeepEqual(got, want) {\n\t\tt.Errorf(\"loaded books = %#v, want %#v\", got, want)\n\t}\n}\n\nfunc TestLoadBooksMissingFile(t *testing.T) {\n\tpath := filepath.Join(t.TempDir(), \"books.json\")\n\n\tgot, err := LoadBooks(path)\n\tif err != nil {\n\t\tt.Fatalf(\"LoadBooks() error = %v\", err)\n\t}\n\n\tif len(got) != 0 {\n\t\tt.Errorf(\"loaded %v books, want an empty list\", len(got))\n\t}\n}\n\nfunc TestLoadBooksInvalidJSON(t *testing.T) {\n\tpath := filepath.Join(t.TempDir(), \"books.json\")\n\n\tif err := os.WriteFile(path, []byte(\"{invalid\"), 0o600); err != nil {\n\t\tt.Fatal(err)\n\t}\n\n\tif _, err := LoadBooks(path); err == nil {\n\t\tt.Fatal(\"LoadBooks() expected an error for invalid JSON\")\n\t}\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"os\"\n\t\"path/filepath\"\n\t\"reflect\"\n\t\"testing\"\n)\n```\n\nRun them with:\n\n```bash\ngo test ./...\n```"
+			},
+			{
+				"role": "user",
+				"content": "Write one of those tests."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc TestSaveAndLoadBooks(t *testing.T) {\n\tdir := t.TempDir()\n\tpath := filepath.Join(dir, \"books.json\")\n\n\twant := []Book{\n\t\t{\n\t\t\tID:     1,\n\t\t\tTitle:  \"Dune\",\n\t\t\tAuthor: \"Frank Herbert\",\n\t\t\tStatus: \"reading\",\n\t\t},\n\t}\n\n\tif err := SaveBooks(path, want); err != nil {\n\t\tt.Fatalf(\"SaveBooks() failed: %v\", err)\n\t}\n\n\tgot, err := LoadBooks(path)\n\tif err != nil {\n\t\tt.Fatalf(\"LoadBooks() failed: %v\", err)\n\t}\n\n\tif !reflect.DeepEqual(got, want) {\n\t\tt.Errorf(\"LoadBooks() = %#v, want %#v\", got, want)\n\t}\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"path/filepath\"\n\t\"reflect\"\n\t\"testing\"\n)\n```\n\nSave it as `books_test.go`, then run:\n\n```bash\ngo test\n```"
+			},
+			{
+				"role": "user",
+				"content": "How do I sort the list by the date I started each book?"
+			},
+			{
+				"role": "assistant",
+				"content": "Add a `StartedAt` field and sort with `sort.Slice`:\n\n```go\ntype Book struct {\n\tID        int       `json:\"id\"`\n\tTitle     string    `json:\"title\"`\n\tAuthor    string    `json:\"author\"`\n\tStatus    string    `json:\"status\"`\n\tStartedAt time.Time `json:\"started_at\"`\n}\n```\n\nSort oldest first:\n\n```go\nsort.Slice(books, func(i, j int) bool {\n\treturn books[i].StartedAt.Before(books[j].StartedAt)\n})\n```\n\nSort newest first:\n\n```go\nsort.Slice(books, func(i, j int) bool {\n\treturn books[i].StartedAt.After(books[j].StartedAt)\n})\n```\n\nSet the date when adding a book:\n\n```go\nStartedAt: time.Now(),\n```\n\nImports:\n\n```go\nimport (\n\t\"sort\"\n\t\"time\"\n)\n```\n\n`time.Time` is automatically stored in JSON using an RFC3339-compatible format."
+			},
+			{
+				"role": "user",
+				"content": "Should the dates be stored as strings or as time.Time?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use `time.Time` in Go:\n\n```go\nStartedAt time.Time `json:\"started_at\"`\n```\n\nIt gives you reliable comparisons and sorting. Go’s JSON package stores it in a standard RFC3339 format, so you don’t need to manually parse strings.\n\nUse strings only if you need a custom display format, such as `\"2025-03-08\"`."
+			},
+			{
+				"role": "user",
+				"content": "Add a command that prints how many books I finished this year."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091699-z6ffn1ctafu3DnhojMnF",
+		"object": "chat.completion",
+		"created": 1792091699,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "Add a `FinishedAt` field and set it when marking a book finished:\n\n```go\ntype Book struct {\n\tID         int       `json:\"id\"`\n\tTitle      string    `json:\"title\"`\n\tAuthor     string    `json:\"author\"`\n\tStatus     string    `json:\"status\"`\n\tStartedAt  time.Time `json:\"started_at\"`\n\tFinishedAt time.Time `json:\"finished_at,omitempty\"`\n}\n```\n\nCount finished books for the current year:\n\n```go\nfunc CountFinishedThisYear(books []Book, now time.Time) int {\n\tcount := 0\n\n\tfor _, book := range books {\n\t\tif book.Status == \"finished\" &&\n\t\t\t!book.FinishedAt.IsZero() &&\n\t\t\tbook.FinishedAt.Year() == now.Year() {\n\t\t\tcount++\n\t\t}\n\t}\n\n\treturn count\n}\n```\n\nCommand handler:\n\n```go\nfunc PrintFinishedThisYear(books []Book) {\n\tcount := CountFinishedThisYear(books, time.Now())\n\tfmt.Printf(\"Finished this year: %d\\n\", count)\n}\n```\n\nExample command:\n\n```bash\nbooklist stats finished-this-year\n```\n\nWhen finishing a book:\n\n```go\nbooks[i].Status = \"finished\"\nbooks[i].FinishedAt = time.Now()\n```",
+					"refusal": null,
+					"reasoning": "**Creating concise code**\n\nI need to provide a concise code solution. I should consider the FinishedAt field and ensure my earlier structure is updated to include it. \n\nIt makes sense to set the FinishedAt time to the current time when marking something as finished. I should probably count the year based on local time using time.Now().Year, while ensuring UTC consistency. I'll also need to include a function and the command invocation. It’s best to keep the code short since the user likely prefers brevity.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Creating concise code**\n\nI need to provide a concise code solution. I should consider the FinishedAt field and ensure my earlier structure is updated to include it. \n\nIt makes sense to set the FinishedAt time to the current time when marking something as finished. I should probably count the year based on local time using time.Now().Year, while ensuring UTC consistency. I'll also need to include a function and the command invocation. It’s best to keep the code short since the user likely prefers brevity.",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SY2H2hqjD73goUYn1YDWgBmoNfo0HktlTyMTHTRC6xp7K1ctG3QwqHDqBmt2C7pMyH3uYITp2TmJE-M-DK2QEeP_8Lf29P5GAISDuD6MmoJla94V8ffNFgW8TX-Ucl258nP8kp0eaDkSh5K-kKYb86uPMpbmkr3zfxK2YZ1XxYl-emai4uJTKxExEVK7bZ9AAtRaELsP_-dX1MrF-1K22kmUETcWW9hdYlszyMBdAVkZO7aRE06Ryjq5EoEL2ThKNR8SY5jDuWw7T440JsdePd9G_cQvkAWQTjSIzP-4lKpUwoBR90Tjrw90pkqeGPRi3akGk8q1GDDQAvO3sg-zn6kt4NOQYkG6pXhV5IEakSlKPl_A0Eya_kkcPR9F0k6aSSzh5GG_uf_ciaULGNr5kRyGlJ8680pmr0slExykOSCFUIpfyvjwrva-NMiFcPLBVTegFbMoJfnpAJoC6kYXxxFkKOeaanaisqF1_owH4nadJ0HEeUJVhXORH-oYzJplzFY0jyJKOSWYs5otlrocM7tqTgEsn9YjApMyUBJjilWENFx8SdYzE8NRGumb_R6Xmqf4DMj_VkSApS28N2ly-YBJFAChtcmPN52V-ZiS2n92e8oZkvLdOaBxm6OsL47sgkGkhsPnWwaDeDP0T29psoWCg-bcl9CzpXpC5TBkwpjk4SF4LCLj9HjVr75rCp_ydv7zeaUREHoZGkUb43Dn73rNm_lwVyv5jd36S7yLDe2aDZ9PxpoLeWSgyQpC0XP92qc3ldMyBw-sRkN92KljHdpYRhLMamkYrFXU2Q53WzjXzqIGN0pcbupdR_6BUeO6TeJqAuMXsTwTT_VSieFajvfxNM0lxhLmCo723D6UG2zPBx6nLkdoUYGEdijSP2oNT5RouAy3CEUO7xPi-EBH-8y3HwDSGjckz-PrGLNGe7MJRxrw0FHKOElrnCAKxueE-9hTq_TMtbMERKN7iOYz3f6ZlHAlpdN4QRMR5PoOwP74weNW6qL8RcpcSvopPC2-flKcPszd89r_YZKTHqhFxtUQCmaQce3JHdqhQquatyVbriBBmv2dXojlyIFELYvM3Kl1dsjxMQWweru-0yCrFdjn2puHCFdEM5ef8LwC0DkpMm0hFfydsXgolzbsuntOh382PP5KRwuA0GCJ3SK2sayQUuUALQdr27whsapSOKN94s2CvFtdVrtXEMu069m7caQIc88BBIx01Yvh2CP9llu7x9US2Fgv8ROSy8rotTHdoH_O-l2Hz82GXtET0mfD1v9LKntglk6szccWSHvQeCI9RmhAv3CIJOvm0hB7qo3STeCuUE0WkXZO9Ytb-69Hik_z_x4hOGASCnSm8GWfUMj_5WtdK1dty4MeJl2RXOPXC69pai5Rg6fLGiRmxn_RAjgPHw3XEpFZJHETAiZnK-tpp8l9JNvIvT3rf-2DCGlKknNcGOcTA3Azox9mnFgWMSw2wYIYl8T2Z-2zzJCgmN8jnseDIa4H2psXeBf7fmpkhPa9SwePW2l7xT8J1ep-ZIu033fNVVxcXFb0itP77PDN_lSn4kHCWXUOVH2caDaqom6F2N8UkPi9A1BE7JvhwOqg8ZiCbrEc-qO_OvBUwuGalyx_dhW5WzfvjKCNAVz7uoeeLHbyNywb1JqpaG2n2xjaH9a9cEM7bTD4ebdvPPsXAUrAOY8nE9HQdZDBP2oUdS6BCVxtkN6qepqlz28IQMCz2rQx4dwSGX1hdRXdIOMItZAHfY68sgVYrijwAhgAh8qThB4DxUaSTBNPmWuiG4efSTFZe670EkS4R2aNpgPnHyKg92UthqbS3tveTpK_EzU8DlPtY2liQSbHkSg5FguAeQq3tZSPNvk7jVts8rCp72CKW4E8J32lWLPxJOnz6WRs-SVLJucFKq_HX978ttPhCYuU649opj6C-iCAXbzcxmL0eI5eOzr8psh814I5CmMz3Rg1Pn8uEBTjty7OUcuP57IXrbSa5XLQm2CQKAxNl6BCVI7UpWAJsrcInQLvpMOp-mcarqHNoKpMkbYUdZPV0aBTcn2_uPClRSLRAH9lRobZoXv8KgBXECc4YNSs0nqcAiePgl5mjRcKCS2ve3z_WDjXxcxEBuU4b0iI_k4_u2k4ikhu8IQUK_slJMMAm0AkU7ITtHvH6UyYFU-wcwodfN2x0WOnINY_OvR3mIa9q6p84I4-R6wTXpXp_EVi2MdD6eHKASKeegO5fW3E5qXXyceqc3LElg3643IjwVFdUm0eP8DaUwF7nAET_RmnXZj_6KT_M4KCvT-5GPZG9__39z7S1cVOtKOEuT3-fWGuCs4tB3Nk3hsGjaAoQHvpOvcna2T7HmwoiYBXITQnvt8ma0F-pgdt-xOwPiujIaqNdRFL0G6wbdkuAHho9c8lPHm1YistpWTeoPIiwC4URUO.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0946b1305ac47d28016ad12634505487d1b63fe361500aa26b",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 2854,
+			"completion_tokens": 329,
+			"total_tokens": 3183,
+			"cost": 0.00047542,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 2751,
+				"cache_write_tokens": 100,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00047542,
+				"upstream_inference_prompt_cost": 0.00008062,
+				"upstream_inference_completions_cost": 0.0003948
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 64,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

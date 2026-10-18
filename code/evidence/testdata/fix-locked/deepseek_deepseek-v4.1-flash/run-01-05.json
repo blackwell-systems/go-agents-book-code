@@ -1,0 +1,261 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_640956298101436c8c2a42f6",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me start by exploring the project.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_640956298101436c8c2a42f6"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_4c034cbcb7ff4bf59eb7e41e",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration.go\"}"
+						}
+					},
+					{
+						"id": "call_ca226513459c479aa907ba1a",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration_test.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me read the files.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "call_4c034cbcb7ff4bf59eb7e41e"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "call_ca226513459c479aa907ba1a"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_fb7d190342aa4383bf19b3bb",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "The bug: units map has 'm': time.Second, should be time.Minute.\n\nAlso \"1h30\" — rest after \"1h\" is \"30\", i=2, i==len(rest), returns error. Good.\nEmpty string: total == 0 → error. Good.\n\"10y\": unit 'y' unknown → error. Good.\n\nLet me run tests first to confirm.\n\nAlso note: \"0s\" would be... total==0 → error \"empty\". Not tested.\n\nFix the 'm' mapping.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "call_fb7d190342aa4383bf19b3bb"
+			},
+			{
+				"role": "assistant",
+				"content": "The failure is caused by a typo in the `units` table: the `m` (minute) unit is mapped to `time.Second`, so `\"45m\"` parses as 45 seconds and `\"1h30m\"` as 1h0m30s.",
+				"tool_calls": [
+					{
+						"id": "call_bc970d6ca0d943ecb061778e",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"duration.go\",\"old\":\"\\t'm': time.Second,\",\"new\":\"\\t'm': time.Minute,\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "The bug is confirmed: 'm' maps to time.Second instead of time.Minute.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "Error: the file is locked",
+				"tool_call_id": "call_bc970d6ca0d943ecb061778e"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093802-t0jHTCGFOPDBl7sPjRZG",
+		"object": "chat.completion",
+		"created": 1792093802,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Venice",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_calls",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "Hmm, the file is locked? Let me try reading it again, maybe retry.",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_cd44db38d8a54700a906e843",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"duration.go\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "Hmm, the file is locked? Let me try reading it again, maybe retry.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1592,
+			"completion_tokens": 59,
+			"total_tokens": 1651,
+			"cost": 0.000174,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 1280,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000174,
+				"upstream_inference_prompt_cost": 0.0001032,
+				"upstream_inference_completions_cost": 0.0000708
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 19,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

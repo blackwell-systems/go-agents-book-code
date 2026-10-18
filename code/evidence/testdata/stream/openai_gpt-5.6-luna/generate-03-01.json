@@ -1,0 +1,73 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092339-1mIqsKUKu6rUHEWfN7bB",
+		"object": "chat.completion",
+		"created": 1792092339,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, `context.Context` carries request-scoped information across API boundaries and goroutines. It is primarily used to signal cancellation, enforce deadlines or timeouts, and pass small, request-specific values. For example, an HTTP handler can create a context with a timeout, pass it to database and network calls, and automatically stop those operations when the client disconnects or the deadline expires.\n\nContexts form a tree: derived contexts inherit cancellation from their parent, so canceling a parent also cancels its children. Functions that may block or perform significant work commonly accept a `context.Context` as their first parameter, usually named `ctx`.\n\nUse `context.Background()` or `context.TODO()` only as roots, and derive contexts with functions such as `context.WithCancel`, `context.WithTimeout`, or `context.WithDeadline`. Always call the returned cancellation function when appropriate. Contexts should not be stored in structs, used for optional parameters, or used to pass arbitrary application data; values should be small and request-scoped.",
+					"refusal": null,
+					"reasoning": "**Clarifying API requirements**\n\nI need to provide an answer around 150 words, explaining the purpose of certain aspects, including propagation cancellation deadlines and values. I'll also touch on the request-scoped elements of APIs, ensuring not to store arbitrary data and definitely avoiding using nil. It’s crucial that I derive the necessary information clearly. \n\nOkay, I’ll focus on packing it all into a concise, clear explanation that meets the word count while covering these topics!",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Clarifying API requirements**\n\nI need to provide an answer around 150 words, explaining the purpose of certain aspects, including propagation cancellation deadlines and values. I'll also touch on the request-scoped elements of APIs, ensuring not to store arbitrary data and definitely avoiding using nil. It’s crucial that I derive the necessary information clearly. \n\nOkay, I’ll focus on packing it all into a concise, clear explanation that meets the word count while covering these topics!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0Si1RO5VXjf1TXGCGmyXbMc_W1lcDJz91-6n12z3i3p8DgXB2YMjGVHLLIMjpNV9Z2p8h_sle5ou9TkHus4l38kNmLCE1ZsSlio5MxXKOwie2FDA2HJMjUEdq1Zgvn-WcKU8jS8PVr_jykwv0P9BnQIS0_OYCQaxgM_6J0KkkG2sRFbOAsJ9hK7ekKKjaUD1gdqatSYuSxfVOGK8bu0Fv4fOBwLB6VJyGUkSa9pQGcgFDHDOYgGyBupwnAm5MQg97RLvaz-rRiqRBAKqbPqCSxsTyNlIqazQszm31Rf_uqdYiucvbBLC6FeBxzLz4AFyc1k49BBK4rD71A9U-dtw8_iuLq3D2p7iZeIYDB4z_pv54C5jLo7l3T-cjPOTCE1FgidS-0MM1bDpozFLnHi5fUEBjJBASm2MdtjUYli23xY3tjMSnuCOZPclmyS0M1zB5S_QYoHgtI8Kl--uvaJpdJ5I82dPq2mUKrbjA-lNJcqXmcnQNngh61NRNkOSJBPmwk9AP9Y6Yh0D8pGHlFmXwSPev3rdcJMMlNb6fXBQ8vQSMOYDsMDwRpog-p5cyUfxV6AH9Zr0B7rViU4hIyztEgd71PvWZplHjSaPyuW0lUejqQ6p3Uwb9q3f1tfBeTfvCHOrBV3Yde-o5rPXKXOB4SXtv5PJH3DuTfEDlYFVifBMcWIfy4jBSesb6agTrafWb5QbRrh33ctzJsSnv3_yBYjSXQFRsMjSN1vAJij6QkjCgBndXE9d-LbgfuSLBHKr-8j5vgR3Kx8RfpQCG0BNttQGtkD7gDuk_RfKC4ZwT00Dkk_AGkBLuY_1iTe16jao8tJLN2dO99el2b4jpe3fs31LodxfWy0HDK2s40vx-netLLY1xIMWtqTu27LsAY4qnftNoTosFqbzAu-MCh5zBoPrAgVwZDdcDhDC35hfwAXFgzAlHVHoPMZohb3s4751G2dXlkNep9HKYY1hpembsP-f9UiJZAW--ackhuBWzH82cRp042FIyWJddcFXppx4zAKpixnYpg-nEuOgi5ucf-ROyIHs5f3nGDAMleJ-1K_PPna2-hONiiuiLADPQgrGcEMrH0c0WJ2_c2fjV5qDWA8mBSl2p1gXdlhCt3syAJAWHKlBAuAJ9NEd1_hwVflydTmBJUuvoYHwZSVu4FdDnhZYWVfoaMb1eArtr2WQBIfWXB0Nx7HKr9Yloid-zusbTvRU7LOVeYGZYzy-6pk3Nvq7-8-skNEc2Y0Corp7i6hRyf7-8K5oPXgkmf3rdde3gLLYOBQSOCFLiCZS767Vq-Bhlj-KVb3JJiFUcTe0wZLaHzmWHpLyN9dp_UBWJCZgHnTFiJYuzSudhZ8Xo46zP6a9vtThS0khFqC18E9RUWfwxOYkBRwmT2inTiBMP2YzWTy_o5mzymwjn6JXW1IyW54WY0l0BTqtnB01dSPx7d03bVWI5PZuHmuuIUaGStneTQ2KI67V2VVevQfUKBxNwsyRft4Rde_0T_7ExCXjoq2wftYimZNvDDpBFqFKfJgNK54GJ3KQGrpzLCUh0Howf5G1bZSmwmbpWPHWtAmxzoVaG7NC0kmzeu7I-lSwKpbYhTV9LwO3DRpa4_MfYOawaIqm_Qfc3mZcucyLsUTZHpONz3lhMiWDqWnLz_MGvQ-YbU6ruHnbLgwAtIDNWqKP7nhtoU6zPbgZlYX488M-Qfw14HCnpS02jr3ZgA5Wd9QzcMMs04HclSOnetY-1FCHL2J4L4TAC2uwS83Pv5zPYLQGlLBcmc1rGpV-FTLyKZZ6wdwyXjkfCM1GKbkIS_oueVMEBMhEj56_sfCOhaM95AWHpltiWqhWPsBzaHYDS-eIUsVGRZjIcPHJMOty_IbUiE-OLFHZgtZcCxKLcW5mG3KhR8WxFI5y1nA1xBnO78DtFoSchGwoQhU4widB64xPlgcwT-UrKp39JwU-Bwks-lzkovQ9LueELjtXVhppC5kZ6HzyE8cWjZk01E8hNqfFL643M66hLT3hnZEZHBtzfKH1jmUszeZgIUMFYd4iM0kToiemqM8HeKQh2gzbs7sEned0aL2QUP7jRN9ndAI6y5MEqIg=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_01c4566bd8a80e40016ad128b433cc87d1b40a1058b3f17695",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 21,
+			"completion_tokens": 252,
+			"total_tokens": 273,
+			"cost": 0.0003066,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0003066,
+				"upstream_inference_prompt_cost": 0.0000042,
+				"upstream_inference_completions_cost": 0.0003024
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 41,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

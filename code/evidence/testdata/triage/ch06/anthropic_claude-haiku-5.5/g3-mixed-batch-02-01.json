@@ -1,0 +1,152 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "crash-reports.jsonl holds crash reports from this service, remind. Find out what causes the crashes and fix them."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792110169-xyX9knVBTkg2iDVivrNn",
+		"object": "chat.completion",
+		"created": 1792110169,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "I'll start by looking at the project files and the crash reports.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01NPjPmrKgbehaaF3Jb152aN",
+							"function": {
+								"name": "list_files",
+								"arguments": "{}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01RSufYWT6MhSBcrw1rPwBhu",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"crash-reports.jsonl\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSmgUKEAgSGAI4AUIIdGhpbmtpbmcSDKXqTPwAqxfTKqOwqRoMha/oWqTIVfsz49UMIjBsPdQugrf6zDilCSfT9+YPJKewdaplPUSahEtrC6nByZGeA3tOEzG1+bfPxGeDSS0qtwTWZFlcbFqAJA8P1z+ZZPNL54u6598nH8mkoSpKIXAYmzou33SQ3EX4xfrJgFxMVO7nfDbApcVy+7U1dvfV7HRrI6AxgwRZ1TUPqccCCw6W/BJF5982otvDDOm3MFy0DVC4dhRni2jtZQ7wcCIdIoRkLBveUajzZP4DJLzLiDBcw6TnTbSAs5E2bX+cSGhyC6mdmLGUsyxfuBXjHWa6nuWhBiAid/2RZRUmbbRt/jeNJdZLRKuOqt2Er6I2zFKWE30Lrm+6TEWh9eaEcdmLMX9ZgtmbGHMpJTbly9AJ0CXTA4ZYI10sWuuDox2+KvGZbgtOMsY0uV4ivb3QqHJ0qf7ncflJL0seLubZPfnQr7Iq+MZ6+Hzs9REyLxEZlcqlFdoq4cyw19pJuy9CU7LY/LTLqjF9fkOfAAzUgzX0sdz4DJUilZz/Z4r4Va7s3oHuJcTbWeAYaEKP+VKMklrg10d7l+bVpmM+m1laZ7yDVWkbf+RgH3oUlhOZs1WOmsNiccRfz5u4wqu6u92EUPnk5CR/KfiPJ+8Hd+kSzaXskLmzUsaLCH1QIPrMbf+ywWikAIhCQ2QtgrkQjqg/jNIGEa5bYq6rrtdevtSPAfPUfq62kjxoQoiMzYjqGOnFPhy2ej5oEkJyTacxCyBJQJXThcCKUsindeT/6NhT8edUD3iKE9MmE+ISX8FWdZ6ME1YtNo1nT9O/tfckXnbn7Ydq0WZ9S5pl8drLDwVd8qEaw/q1QNZCRAH6POIYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 603,
+			"completion_tokens": 122,
+			"total_tokens": 725,
+			"cost": 0.0001213,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001213,
+				"upstream_inference_prompt_cost": 0.0000603,
+				"upstream_inference_completions_cost": 0.000061
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 24,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

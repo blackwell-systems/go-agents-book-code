@@ -1,0 +1,152 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792094303-ZKy7uQ81otL3daJWLt1R",
+		"object": "chat.completion",
+		"created": 1792094303,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "I'll run the tests and list the project files first.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01M4V2biT6X7wnZVysqbDhYw",
+							"function": {
+								"name": "run_tests",
+								"arguments": "{}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_014b9vJSgcS6e1SY7LhWVyKR",
+							"function": {
+								"name": "list_files",
+								"arguments": "{}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSsgUKEAgSGAI4AUIIdGhpbmtpbmcSDDNzaeV/EUPFa+sl/hoMwL5e0Wd6cezE1bwIIjCNABoboq/RXpewfZQH/X61q51uUWX5ktAccj39/VEYnLvP2oarWf2Y2SdassEfyz4qzwTINcuT6enaSOlJ8OH2xPAuuHXA/31CUTbg/aRBWsvnvrS6ou4yBez3Apcor5Z+KUU1+Gys/MbynFBoYa5WWINkiAehU65QAVoLYLArgQykv8ob6v8HrNFnUn2LveQlIMrlvtccFVupPAzxzh2x/fVLfQwwlAFq+Q6HORScM/8RHuLV1Cl+wRDApZIXfjctt9Ux4nv0ku4OIOC2HNOGDK9t3a/XuQ7z6vnDEe1iu5Mcnz1KB6gQxvWuAiZn+pMC2w8IPZ0/6hzRQFSIDLKsT5L41PhTgCsWnRdNcnUG8Axg8T0TZFXd10MXuPy4Lx7E7ab/0NCNEiNYCOFkJB9lf5gr0HkVgacTOfmLu7JWqKEA3cSXMs0flXalELjGjFiiOfJvQ+cw5o5dYs+jnErMKsqck9JyB3m/yMRpZsCSMYdKLemcFOjK1RLhqOZSo60HFHVyTEwvsRQzitcVtlZeHGb9S/S6/3BAxNjDZA/pXK7jDdf92pl4iJ+e2S73ncOZP3Nz8uWzDCrVB02iZUqZFJGIJBD+izQzgwNAYlvTP22hQ/BnF/VsP956VcAjLy0JUku7IO8jFlC3zPCTkQwP/f1sKUgOb1Ltogjo4gKsBnRFQyLF8wEh5CEkU278/m1KQFpvdGpsFNX2/fw2zr+ERfGfF2NuVUoqlf2+GmEl+DOTfOJpK4Cy7+7NbmA61uDCPyKgBGNThs2qMpsOdjh/ctkF2a6MkgAK4ftP2NG6Rrsw1w9s6hqegdATKngQRoSXHW6K9OsRufjwnn6/7p1vWSAYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 583,
+			"completion_tokens": 89,
+			"total_tokens": 672,
+			"cost": 0.0001028,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001028,
+				"upstream_inference_prompt_cost": 0.0000583,
+				"upstream_inference_completions_cost": 0.0000445
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 24,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,74 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n"
+			}
+		],
+		"max_tokens": 400
+	},
+	"response": {
+		"id": "gen-1792094037-Z6sR68sXV8Qv3w3JVFog",
+		"object": "chat.completion",
+		"created": 1792094037,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "max_output_tokens",
+				"message": {
+					"role": "assistant",
+					"content": "The `m` unit is mapped to seconds instead of minutes:\n\n```go\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Minute, // fixed\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n```\n\nWith the current code, `Parse(\"1m\")` returns `1s` rather than `1m`.\n\nYou may also want",
+					"refusal": null,
+					"reasoning": "**Reviewing user code**\n\nI need to infer the user's task since they just pasted some code without a clear request. It seems like I should review it for potential bugs and possibly identify issues. One thing I noticed is that \"m\" should represent \"time.Minute\" instead of \"time.Second.\" There could also be problems with zero durations and integer overflow during duration multiplication. I might want to suggest corrections, such as pointing out the \"m\" typo, providing a corrected line, and maybe offering a patch or tests.**Correcting user code**\n\nI want to formulate a concise corrected version of the user's code, likely just one line. It seems they're expecting some debugging, so I should include overflow checks. The primary bug I've identified is that there's a mapping issue with units — specifically, ensuring 'm' represents time.Minute. If the intention allows for zero, I should remove any checks for total being zero. Additionally, the parser should correctly handle repeated units, and using the UTF8 byte format could lead to errors. I need to clarify these points.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Reviewing user code**\n\nI need to infer the user's task since they just pasted some code without a clear request. It seems like I should review it for potential bugs and possibly identify issues. One thing I noticed is that \"m\" should represent \"time.Minute\" instead of \"time.Second.\" There could also be problems with zero durations and integer overflow during duration multiplication. I might want to suggest corrections, such as pointing out the \"m\" typo, providing a corrected line, and maybe offering a patch or tests.**Correcting user code**\n\nI want to formulate a concise corrected version of the user's code, likely just one line. It seems they're expecting some debugging, so I should include overflow checks. The primary bug I've identified is that there's a mapping issue with units — specifically, ensuring 'm' represents time.Minute. If the intention allows for zero, I should remove any checks for total being zero. Additionally, the parser should correctly handle repeated units, and using the UTF8 byte format could lead to errors. I need to clarify these points.",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0S9af5v9BpG87h7hELLFAdbcQsDtOgs0qAhsslSP2SCx6vdhmmEk3zlfY8Wzm0CR3g-JmnbQcY2idgFykn889QOc-8GCbYi8q1TBfMdXH54BOIY7ZQbgIVn8K25T21WaycLjGev7hsG4PJtZrgZN942No53XMVOy2QLOfa7PJcI0EoYIpkmm6vr0c2uPBonQevPHp6oc9zxmDqPYUoYK0lRjXZHWScyXKhbMy17uklt2MnGW0yW7QR8zqe9yqjDD-292_NdqVVDNYFM84sRZT4d0uINwnNozoAqQOY1m_3tjg00a3jzBFStaNjKyDLd1iIRzCWD1KYHtTWm5uSqJhzPhVFcIuWy6HmQRw0rTMpggREIl2J02_VLkcEk8SqikXX4CrJq7WGFId7fkswQ6V5gDHQtC4Jm8RFWtQmMFosjDJmMZixtZQTJ_9XXkLGIB7ZPgWQqwdUIuJ6QXtLH2m3WUkehf4eWio7FKSKv1yIM83V4CYRSRzbrQ_8UI5lQhQWl-v2u4g21vurbdwOIUckQpgtyjOm5uEwgWaKDneosgtq3_-PI7Kmte1m5MqfYXSm-QB60asMWZ8Q2ZaGWbP34YUmdzamiJKCOesa-AtaK9T9awjdOXfUQYnuHKFHjdRCkYqVcu3TRe-c3q7mDuwyIC5QtHfZBbj29O7d9hRLu3SUX_4D8xjDraIzxxHSAm_TmsB7wXprVoVctn3VsXv9oOdHSOHEdCOGqV9bU_JvV0rNtTn_Qrft3D5xMA8o8fmTjBoZTuG4OF_m4NafZDMGS2eH4XGHDZ1Ns7XeyJkcdmbJrAWG0xkcdvnjouBcXsaTL0ox_4iwOjRo8dKzfzzMlAuyvCSIUb3dk-Mrmcx6nqZaoesX1zY4Sdpciax_Xm9a5DwksYYkBhGDZeArWSIha3SG8jJMDR3avVmKK4-eoh1Na9UQxWDD752swWSJqwIbUnT2lwbaV0rHTi5lFH7xgrGXvEdjPyWmQP5ejz316rRWHe2FavIpR2oXOmacs8RetQu8wPAQQY9WNIGj53_RbRfW0e9Q2cfeIWfRTTyx_JC8KNdDlnfBrCGMjqdTuyg9VqcubF87Ag8ZctOQXMPpvvNNWE-1np96up0NsHW6e1dS88Qc92ePhszBiGDQ82sgWOSC9pGAVNoKFMhWNQI2zScHV0nwrqy2kT2vn0fgxlKToW8zvrR9l9WLpO6NbEIszrFHNtAUzpYDVv0mjB8A7bnnJfcczlQaK9qNsBTkrphzTfL-n9UrP1FTkIkmNwOOxFxmkAHPwn0HeXmRVSVxGpf0_3CGotbSOLAs4iFrPMmRviMb_H4jKhHs2zPl0BVZoyJRXL5_bHOQwR3O25_E4bx4yHfejTAk5BJT7itRZflpJn4-XC4e_WwlxFLuqt7E_RqxieNzzslI-Vw3Ufj5CUvDpk5kVgQPMTIyGnJAoCg7UN-3XrP1dBCFb8CmTAaTvH3KCDghfiUEng6n17cH2vA_UIu4FIMNYjMy0hGJUNHfpUubTDVOzUN41dlbjODmBSyy5oaPl4Szx9pSPGUukgxrGJ3qP1BegvaviIopFWFTCIg9Ioacm12kEofAFqMWX0IqfLZLzGl6czAQp1HBFu9jRfb_2z_n_GZ-PraWDJe8rOKPzdkEIzWEzb1roAnBOUQ0dkg_gYuw4zVrMamklZJ5TCA14Lp9I-B3Bu6RKId9mbNR0HdH9bLTNyaN48wsTdr5VaXdpdidT0KC_qLaNeaT8qQMPmWml2YhOY7cE6wtCrqjm344aGzAB6qJaJbViuyBIXHF41nRhx5vkFugxfgGfl2lGqjkpiMrsIEVmPrwDrSDNUOgTfuRE-JJJVa53DKsoN5icQR5W7W1DNJf_hgbkCUyDCvalaBYZCTa2Pn4COv5rK-xk1bgm47466RISrXUyADlKaebYahYi_K9qXnaS2JJoQpGF2z4BlM_QTHPka4eLV4-j6Kgu3Vsi2dhB0x_HE7ds2v1M2jXVxAirauj7dmojDbuX4lyCiWI5qmxY7bBO56qw40Fr059SJMmJRq_GYlNI49ERBxDeOdWEs64wnJbh5jZGTE2HwcciQXa02SYooKrM_x02HYG6wIE27yCNnpV8MJAse84ljzpz5_vJMA0oaBYmnBmIKwcXO_PrvXB8ERum0Mdzc_euYw2NdIsKS5KtSjT30Ygx67u37mGeZfKDqi0e0rd7oSSjS3AzIXBS5gg4ojs9iJ6Bg5d0V38g_LIAe66ryxIeEnNdWxqciK09d68NueGD6VlP2-PzhfSqWPQ7fOzbnyQJ2ONcCc_vtDLi3qEfpH0AX2JsgtJJstOQtDy8CLZ3QO-DprkFzpriNdrGpaAdOGGGR5lESJ2qYK2o_2FfAvDRiwW_uZEK9JAcJR-ZCIme2nRaWMQHkeshPEDG8i853WZqJ71AXCYKI4apyhWlAfKiFk0TvdV-0mLbPHE37oI90sw-WdGWUg-EfqjEbG9WSLylD9lLABfmu0svZO4FIQ-eTit5PyWQRUvUE3bUZ-nOVO60sLiDa7lZouZ4xR_vLR2z6hTDORYYawB3ZXDxpKDsohcV51b8zbGqreCrDUQbk53NjJggT5zhi-KJdybtvjyE2-eCnKv0f5A1dHxbg2YWO_zLsyjjI-ce711EsqnxnL9pztSsduLLlDvH6WQnc3w8MfigBTnBXmqdMD5tt20wi8stqXu3AZ8QaY-py-rMrltHKhcK5gBEYgI1fxynAs-1i7TnHcpBr2JYTMBlQWbmq8XKPGeDBpCqNtVEIiPhgJvxROu-ighJnJLBGVSWdyy1nDqmrgRdfrKpNS-DyjVigUkF7EWELuTl0iyn8MyeaTU-TL7OE08iPYzzYqRaAGyJPtQn9FwsJ0VJnLqPrDXoZHt8tCa1pBH6Fib90ixf7kZeVdgLMohwiaAijRcKj1M4XxcTtX_Gq8VDDyEpWRD_lmGRYqAWNgKN3SEHi5WMnp-H9v7ObzWsDuxqCovN-1DWXv81T8-nlol6zcKD9vjItTdBWktCD6MJkkZygMetWUU4syCnF8TjHZwm_mS5qYDKhhsMWD9fxFlo8bQeJ4N5TNLMrKM1B84oE71-ijoQusvIIN6my8sZVY9SYw60irIoCc_s2c7iurg--3l3hlj2Ve5AMJMtRPKbIR1wT-H9HNI2bmmDdZdHlCUZ0JZMVs-N9GJvCR6QjukfhD8hTdP9-pPlOeG_oay9shBeONIxlkPdF-loCjyg5BOor5l1qKc-kQBM4jN-JDwyHF_dJcaFgh_dLZZTcKPcnvZhfjPysvFXvVGEu_G8gv0WQk47pwBwXhoWCbAEgxEhHw2INEgYWA_UQEphRkBVycniyamoKPrwHfHViK_rbL0fHL2bTVyFm9LHJ-nHYxXaNCsrgfNGNSlVLYm7rVvuulDQBwwMAIQlKvkOcd-u4cmwC9F-pBQ8d6vYwN7sbpzLmfYxdwOhofNvVtu5ljXKEYfppe6rSnX2IosbcVKHCQ4w9RXTTybJLIY6PydfZ2_LWbPwadEdbJLUK8KDdT3MddAlZZOMHNAeWZriBeAqGA7S3e18tHEN69FEuLJKEmpHhMHgSOlbC0wRawSCG99c4JJs7vNv_jJ4PuQTIvk8EWQGX9c0fowvTQzW3PI_ijb-HSSf9JvD8pa51mSPAumTY539ohYEK9o-OLm7bNz0PD3HOm-C6sGe32XogI0wswAmDI57LU_aoiUXS6ZCNI5U2astolnMttOzhiVF8kkstAcEZJ8VjTwbz_9VL3MV68kE9nyEBzYjoo2KXiLNudwhmksLNSa7npq9K1cgkYWLDWhc_nacc4cDpTOauUg1XM40xgr-C1QbMSu_4Fck9VXOGNnVOQlKgeV4UKn-nCDhPpORdq7lYMzjeGyU0zG_TEM9U4f7hALAhezH7KiZmL2IS-k0Aebux9q0Enx5g4THnmBYvcoUthdiuU7uLH0LelphmplZvzAXRxMvKv1JnMfSrV6JBfqRTRiDMKgMIU46XqB64owsMpe_b4rTDx55MDtCwdPHZZWAq1Kzybcg4QNj0ykajFXdlmPVDRSesjVXPYX9548wM0klOsN6icDQ4aq2M1kHtWlkrAB1Eq2ajoa2Ym671vjayZP4cBFNQ3mU5EmoOyzx9mg1suyRAaJLFZdEcOzyDohl9sl124-WTAU0EDCZq-aOB7-bzWLziPw8wlfukPbQSYK326mtzTAZEhr5vJS6tKVJl5AjL7DmxxJHWkA3-OwLc0r7_xQwr1aWqj14qbYeqCdfBt1Kk4oM7HbIi9r3iHtOu-Fe00fc40eydMd3fTUGZlwz3krnd4e_EF0xqlyqPjMp8VtHJ6k71e9FS7qzM9KdlAKeBJBU82FTrszxKkbdkrjQL_H_dCnjD2xcSNW4nRZTIIJezFEsFjwRUVB2Ca5vMqqyxEcCaY0URdBvKpmho8WPWlHQAWnDPmqwPRYIjGVhEvyTGzV4oiCxbVfEVBbxHBtQ8ulYFtc3mi1lF5rl4-bX3ChawFxQJorlPX8YraUq1ny3wjIx94xHtVz6r_3bdpXwfVQZT9jwwP0EWJAoFhM6Gmt4dzgAXHtwUqz3HkXYaAiBT_Ix3-1okhlkrcR_DDBblTy1y4IwoNG93Yy6oupdfrv9YjIkh8BDwVVL2KMULpl1Au-pAXm1KHTMJy1FK_G-ITy-mkZEeTQ7ajgP-ZowIqyExUyoYEf4ohGhlzWYxSMbstvMTQ9OMC5h3uoJcXR2Q1mEoVMz7pkbWtjeQTODzS6IxJggZUwrZB-T_rUUA8dLML6vx_QCKZ9wAvJa-pdJM1CDZ8VjaF0sqqZ5kM8vznz5VSo3iQ6K1nsHB_uNLkWLTU2vVcff-qCQVo82-5jPAz1JUKUhZF6YWZ7Npbh9Y5roBuB2qowUNuWTk-gezCklkk4lMXXYGbSm5_zxaK5JyeuH0qPJ0OOCAogvijVnTdsYP0pplQM3GHtCJdWu1MxLzH7q7fyGXl0i7jETkI72__VxCGcRDO0c3IQNf3Og-x2CYwo20xVATsvesqnR86py9UsNiGR8chUuXWaT5njwrDrcWuAYCfdmPz-wx1soQQAM8Q-_lh5iA0mcBwzRYMfHkElNoHtdR936ZacLYj_HAUWMn15J1ec2daJZEBL6FkxnSNlLBvEH78k2x_YOJX2Ojb1zvNirTRBxvJiJQD-sxvDDsmpmjtrPEYqsR8fH0WNLzI8yLZodrCbZlBE2sDP0X8uTnKovchYoAuIjtY2bTn13_ZH8HP3F3l3cdd4look2s09aD-0OLQnwW_d5xGu80V1wGiNthlAKVq4k5pPGxfv-q-Ogw1fnQmZ2wi3-Pm_odjRfjwDBIXTbvSE9Ihmzq1SFvI8iVAc5QXCQwOsattooH2BrbOf834oaK7q0It_t_x7r4LtxPxdiNGaMB8ldTgxJTEAiJHbTs5dc6eq22ofyxOgjCSMaFNge4LbcpF_H6kSsi8mOCFr01H4hnFa853FR0xVqfIzA3H0J7Qnvo6YcqIOvVTh4zFwAeB8Jo7gVCb2A1tz5QQPxWeJZCILv3JJccHOir8NJHzeZpDj4fBg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0ea2765a872b3968016ad12f5657b087d1b4bfca149064f156",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 343,
+			"completion_tokens": 400,
+			"total_tokens": 743,
+			"cost": 0.0005486,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0005486,
+				"upstream_inference_prompt_cost": 0.0000686,
+				"upstream_inference_completions_cost": 0.00048
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 309,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

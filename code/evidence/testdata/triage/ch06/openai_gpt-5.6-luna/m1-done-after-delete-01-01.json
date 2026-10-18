@@ -1,0 +1,150 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "crash-reports.jsonl holds crash reports from this service, remind. Find out what causes the crashes and fix them."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792109913-742HQh3dmUAFuNK0o0MI",
+		"object": "chat.completion",
+		"created": 1792109913,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "**Inspections in progress**\n\nI need to inspect the files. It seems straightforward, but I want to make sure I'm doing it correctly. I should double-check each file for any issues or discrepancies. What exactly am I looking for? I'm curious if there might be specific details or patterns I should focus on. Once I identify what needs inspecting, I can dive in and get things sorted out efficiently. Let’s see what I find!",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_ggfWaxc45PRqILztp9yPssqT",
+							"function": {
+								"name": "list_files",
+								"arguments": "{}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Inspections in progress**\n\nI need to inspect the files. It seems straightforward, but I want to make sure I'm doing it correctly. I should double-check each file for any issues or discrepancies. What exactly am I looking for? I'm curious if there might be specific details or patterns I should focus on. Once I identify what needs inspecting, I can dive in and get things sorted out efficiently. Let’s see what I find!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0W1bxUocsvQqvOMhBw1eVJkRtcG5r4U9hgOEWsv1z9oVnbpxv9NA6ei4yaz8YoiR4hx51xJl7s35aIwAjoj7Cc-dZyGd37_zHu6tZnds60J3U2CVO9HLMpEXJ9fmvpIR9THpPxKBRbPUe9nSRM648LdRYQrxLeiS8O5QUIHhAkxy9Bld5aOUdeludLyNdQY9jdqE_nsbUFJJb2O4tJN-peK5xfSyPsFJP_i9fzWf9kMqa5vJKROwRE5iKMswIQ07KiOK5V7xoS41BQBS-Sfn990iYBu3R7A3HxzPSoEje2kv6rq743jSn_mXTx5001bfWYn96fEWYXgFUGYgfSyATyPPok30b3moRPVgUNpyID2NbU111JuNo_VuUAzmqSDZeWXydSDuW3rJ-W2QyM0ntC2raLg5PsI-pkdLhLjq7dWqyiIZmug_r77QfddGQArNs3OlkYuu4Zv5caL-LnXatvhtxqpN-TMNe1S9PwZ1c7D7K1bJJsIYLp6xFEZYCV4An2C93cfXQAjYesgHvWPmFmDuJpXEAXk_wFRPrNaDzwo4xSk-zUxGkbXOFew_F3SVkJ4xeqHc21p1lCp70BA-tVgXVk7eOqFqm674isQPz5sajtE8Fl5lbqljo6ZBh6D7MJb3wX8ZWK_YI5af0Cn49_n5be8olE5YvgMf6JyENDRIodUy2qhNzFpu9f4sph9gvdPqviNEdM9lqx-h1GS14a71hEtTt08idcKRY_wRbX19bm8_SHVcUEEpQzEElIvuY4fEK48KSKlBXCF0mzw-3r3aXekVCMrkV_9dJGEi7w1RVWPeu6HQZBr-Pc8gEgC8L6oGtyBVpZt7WEgHHlwtbVFjMQgYydpqsG4deOkQC_6m1rVs3TjujmIeCkbE_GE1pLemB5Q8Q-Bt06i0rDZzQAf70LIOHm5_pIFDyYxKEe1c86tq2kB_g4tIrgHYyw76mzMuXZdnRK-RTfPBN0s0hNCIJatureK5-PqjsMbCEIqYQ_1QUbaRuTKA52kiDwshgNTx_a0voRPj1W5F3xic3tQvBJHuXA9ZIZsuEfX4TlwqsoYLIdvveFj8N4VC3AMzi__O_96D91K7c8aAsF2XaEC2rY88ABiaNqi3Dwoo_-4n3FeXWnqmijdptAHGrBKvbTeCcYmgGW6Wujdo9bVy39WehPvDp5rqLtI7LPoT5_iWDZCfkrva2H2RgZTcgcYSl0xLugfo2SOytFOsaRWNFiVX1oq8A1sxWoY66Mqp8Ai2jxwVRutSOmUxTuq94nm3KaiqpsRJRm9kr-RRhAfm4cihr1d_TcFvOXSDYHxOl2p4OG5KFf-hd13MF4eMDR4USMBnv-1idebz6--P774DegATPLQUO7LFwJ15l07xwIrJQZxlX4t_lWSljMobKKceSVl4GsN5B-zf5xfvqZMynQf34UjS3GgLOvpSSqKkTutDD7PdEk1j-9kIeQOoYLjn1G_JsbSF27ezeg2T60XflghDjuU8Mek_rooSTBDgzLkpZLilbGs_hTuyxet22XHHZHO6AhBoKxGCCwE25jklAzWaG6_IIrclvRymq4ReMxaTSBU4n8NdyBWZqBBQH_IpYS1l-a1qtYcKpazN5OGWUWV5DSd2ba28NB61iUq7F6XzjfXiB8j472nTEz8e2odsA0Ufmz236aGfm0BuZjXVdFuZ-Q==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_030fd27832daee24016ad16d5a44c487d18dec6ecee2d556e8",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 137,
+			"completion_tokens": 25,
+			"total_tokens": 162,
+			"cost": 0.0000574,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0000574,
+				"upstream_inference_prompt_cost": 0.0000274,
+				"upstream_inference_completions_cost": 0.00003
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 9,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

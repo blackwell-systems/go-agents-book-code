@@ -1,0 +1,73 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092354-A7NMaWZzl1xK4yz58XuM",
+		"object": "chat.completion",
+		"created": 1792092354,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, `context.Context` carries request-scoped information across API boundaries and goroutines. Its primary purpose is to coordinate cancellation, deadlines, and timeouts. For example, an HTTP handler can create a context with a deadline, pass it to database and service calls, and automatically stop those operations if the client disconnects or the deadline expires. Functions observe cancellation through `ctx.Done()` or check `ctx.Err()`.\n\nContexts can also carry small, request-scoped values, such as tracing IDs or authentication metadata, using `context.WithValue`; values should not be used as a general-purpose parameter-passing mechanism.\n\nContexts form a tree: derived contexts inherit cancellation from their parents, while a child can add its own deadline or cancellation. A context is normally passed as the first parameter and should not be stored in a struct. Use `context.Background()` or `context.TODO()` only at application boundaries; avoid passing `nil` contexts.",
+					"refusal": null,
+					"reasoning": "**Explaining parameters clearly**\n\nI need to explain some parameters, aiming for around 150 words. I should cover the purpose of the request, cancellation deadlines, and value scopes, while also noting that we won’t store items in structs. It’s vital to clarify the first argument as well, particularly how it relates to a nil value—meaning no. Plus, I must remember to provide context or background. I’m counting words, and it looks like I’m at about 148 now. Time to compose!",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Explaining parameters clearly**\n\nI need to explain some parameters, aiming for around 150 words. I should cover the purpose of the request, cancellation deadlines, and value scopes, while also noting that we won’t store items in structs. It’s vital to clarify the first argument as well, particularly how it relates to a nil value—meaning no. Plus, I must remember to provide context or background. I’m counting words, and it looks like I’m at about 148 now. Time to compose!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SjEUT5-K16OctFRijimZdOjzLkkMr5BwA9FSlL-XSS1MI5tG6YaOHIH3yAOJy19uPgEeQvY5JiYEil4wPx-wK6azlR5nHJwIVj_kE23JHa8zVFiPa3z6zoJ2GMJbOYe9pZYHmXQNt5acM35T0BIq2laJuz_o1vMOZLrHXAi-58OSvwbCp5dennACMlgO-SsG9resAp0qkCq_hBYqBZ4zSyAasAr_RQtKG6h4n4aEFGvpG288fcEjVsJzbL7wx595nTxn2r1mVJBYwuLDlzwQNZIKAZTC3g3QtVrjAOsCxif08jnngARpkWScNcrXurGiXP3lWYb0uIpzcmtGQhsPIK2xn-l9zZvgwy5P-6UMeED0sMyGUPXd_c0zZp7RDN6YmBTcQJhWmPIXQO5qGjGFYuHKT_DpdbWRnoId-R6Cj6G9LPtkT6KK39vwXm4nbgn7C-MWVK3eYPCRVkTan20N3QWZUvFmoiH4Pzfdx_x-y1QNC0HH2t6qQ8jHBVNq99YYB_1lmh_JUh9IMCuLbods3O-DY6ircgBjUyDwQTxMal0CWeRjq7tFShoHlNTWy1Rhev3nwCq18hfUOX-H3i1G2VBC9l43phhCpdmKkSAHzfM1RFptRztNU6CyIGiJCOT_RDLUlle52yLDeyi0rg3wdPeTy50v1btqzBFjHsHcrn8suJOxbMpYAIFQr5k1V2mM85VPHtcg-bF_sYh_HF2loieKRlPki04V0B9WCO78EiT6-W2hmZJ2pO4wWU9L-I3pA3FKzGn012XFoPNlDRnzQsaZ7_uCHi_tcHh_IEtQpIhAZzlmT50bR4kiJEPvJyQDLqzHP8P6iO8v2yayLGgvl11Rok6RtSaLKsP_8u5-3E-n7udXEN0Hf3qvDQOnST-w8t-tqn63FNPT2zCD1jGX7QfGwcfw2FZr8fhjTu3pG__bg-HUDvstv9yEdmUWQpWF3AZlJiW1VRnjjyG7Gp-uW8ApmHXu7RQRFTQxADv1-D2HexewKNkpOcN9LiH34ZAFG9bbEFSUVCvdZKwEVjH-rhCMAlc63iObHUPYCGVT9lUCX0JN-TxU0SXagGqHpOSr8VBt0mqDOl8Ld5VpXObCsjVpoueu-W7t0W5BKEvnEyFQC8x8UBvHoaQnUK3E0rON4GOv5EX0OU5uynFxCq2KwimSDlEXoMhweIHSgtbw8beB4q40fEHewOEJkU6gcXztOKxNNkr4jIodYfgcPf9paLTjPrCWsfC0lH0NSowAAq38BWrvo_epiUKFxWd6t-8FO5K16ViejBZBlHBbJNOAKHnZ6wdfJ7vIun8GAjEkyCfXUr26HIA7rcYAWBkLnUUXbZ9sooOExUR9OiqbF9GgBNbevF1WH3wwP9AfhL-kaJA6tbdbF6kPl3z6pyQTmR8oFMPiCVTKZVL0F-Do82RdJGeY9I4TEO84N7dUe6n-wbgZDJcdu14NdMgoiLWY4w06DeO0_r3Y9VH3Op3Qq7FTV-pqTrE6HFoz3srWo5Fzu0z6hHzaLfKxJu-5UTKHibpK6pkNSxryC28Jc7tZ5SW5eRa65GEZngI6Ro0IvN8DcS8X1tGiwtxMaNCmOpCQ2dohkwKDbaZRvJM5L8_ZdRuy6w-c9a6ZwPzs7wkaamG0M9uQUhze8-S4PDUzMv7oXDIC4H_EAvApfHCq4Cox4XkROkVz91XgkYVdJvOlsaFjOMHsJ53LejmvpU3kLoVCEd0risZMJEpqIMSjozi7KMRl8c-1t3AWfrs36YExijcIPJeZaZomqjAhXzSUjfrN4Lc6TcG6i0ux_xcDj_KXbw10ERlm8YFJ9PxqsPmH2o8Yef9zfA66K6bdQvzFK-szTu1fjGRnz4laGWqiQYVTcL-xm6bj_zZOEG6lqIo3AAUOKdq4jiYxEKdDNRwsXwxvS27P6YyqaMnS1e_TSo0ffgKd1aOdVG2YK_tu1GebnZYNW8yUC_7ps7lGh-HbPOc9MnoZkpcOWJDKrjUTm2EApzF5JCbqaAkxTHB6AofcC2UEH0W0opmat-wMKKHpn7bAirycxv4_K-P4B3JvJknQbUUcejtmawmjz21zZZK2WykNiLI56lWAjhj30YwhZDJKA_8tU2isdVlaHkXWO588su5tyOXFw==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0c1aacac3b0d7acf016ad128c2e09087d19fcabae7d69dda4b",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 21,
+			"completion_tokens": 239,
+			"total_tokens": 260,
+			"cost": 0.000291,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000291,
+				"upstream_inference_prompt_cost": 0.0000042,
+				"upstream_inference_completions_cost": 0.0002868
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 44,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

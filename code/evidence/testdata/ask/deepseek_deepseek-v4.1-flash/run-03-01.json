@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091629-2OTq9DcPTXpsRYNgEGea",
+		"object": "chat.completion",
+		"created": 1792091629,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "DeepInfra",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "A nil slice has no underlying array: `var s []int`; it equals `nil`, and `len(s)==cap(s)==0`. An empty slice is non-nil but length zero: `s := []int{}` or `make([]int, 0)`. Both support `len`, `cap`, `range`, and `append` safely. Key differences: `s == nil` is true only for nil; JSON encodes nil as `null`, empty as `[]`; `reflect.DeepEqual` and some APIs distinguish them.",
+					"refusal": null,
+					"reasoning": "We need answer. Need be concise under 100 words. Explain difference nil slice vs empty slice in Go. Nil slice has nil underlying array, len=0 cap=0, equals nil. Empty slice non-nil, len=0 cap=0, not equal nil. Both can be len, cap, append, range safely. JSON: nil slice marshals null, empty marshals []. Reflection/DeepEqual differ. Use var s []int vs s := []int{} or make([]int,0). Ensure under 100 words. Count.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer. Need be concise under 100 words. Explain difference nil slice vs empty slice in Go. Nil slice has nil underlying array, len=0 cap=0, equals nil. Empty slice non-nil, len=0 cap=0, not equal nil. Both can be len, cap, append, range safely. JSON: nil slice marshals null, empty marshals []. Reflection/DeepEqual differ. Use var s []int vs s := []int{} or make([]int,0). Ensure under 100 words. Count.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 53,
+			"completion_tokens": 229,
+			"total_tokens": 282,
+			"cost": 0.0001036,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001036,
+				"upstream_inference_prompt_cost": 0.00000742,
+				"upstream_inference_completions_cost": 0.00009618
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 113,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

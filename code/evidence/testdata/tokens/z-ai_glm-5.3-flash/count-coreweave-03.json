@@ -1,0 +1,72 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "This chapter answers one question: what is an agent, in terms a Go programmer can build?\nIt starts by watching one work, names the parts, and then builds the loop at the center of every agent in this book.\nThe loop you write here runs with no AI at all.\nThat is on purpose: the loop is ordinary Go, and you can see and test every part of it before a real model is involved.\nHere is a small Go project with a bug.\nIts duration package parses strings like 1h30m into a time.Duration, and its tests fail.\nAn agent is given one instruction: The tests in this project fail. Find out why and fix it.\nA large language model, usually just called a model, is a system trained to continue text.\nYou send it text over an API; it sends back the text it predicts should come next.\nChapter 2 calls a real one.\nThe agent is the one you will finish in chapter 4: a Go program working with a model.\nThe table shows one run of it, one row per round trip.\nLater in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key.\nread_file {path: duration_test.go}\nRead the middle column again.\nEvery entry is a request.\nThe model asked to list files, to read them, to run the tests, and to change one line.\nIt never touched a file, and it can't.\nThe model is a remote service, reached in this book over HTTP: your program sends it text and gets text back.\nAnything that happens on your machine, your program has to do.\nEach of these requests is a tool call.\nA tool is something your program can do on the model's behalf, such as reading a file or running the tests, described to the model by a name and the inputs it takes.\nA tool call is the model asking your program to run one tool with particular inputs, such as read_file with the path duration.go.\nThe right-hand column is the other half of the work, and it is all your program.\nYour code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.\n"
+			}
+		],
+		"max_tokens": 400,
+		"provider": {
+			"only": [
+				"coreweave"
+			]
+		}
+	},
+	"response": {
+		"id": "gen-1792094040-ZN6aNuEmlWPzs5ngk6Hm",
+		"object": "chat.completion",
+		"created": 1792094040,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "length",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "Let me carefully understand what's being asked here. The user has pasted what appears to be a passage from a book chapter — likely from an O'Reilly-style book about building AI agents in Go. The text describes chapter 1 (or some early chapter) of a book that teaches Go programmers how to build agents. The passage discusses:\n\n1. The chapter's goal: define what an agent is, in terms a Go programmer can build\n2. Starting by watching an agent work, naming the parts, then building the loop\n3. The loop runs with no AI — it's ordinary Go, testable before a real model is involved\n4. A small Go project with a bug: a duration package parsing \"1h30m\" into time.Duration, failing tests\n5. An agent given one instruction: \"The tests in this project fail. Find out why and fix it.\"\n6. Definition of an LLM: a system trained to continue text; you send text over an API, it sends back predicted text\n7. Chapter 2 calls a real one (the text seems slightly truncated: \"Chapter 2 calls a real one\" — probably \"Chapter 2 calls a real one\" meaning the agent will call a real model in chapter 2)\n8. The agent is one you'll finish in chapter 4: a Go program working with a model\n9. A table showing one run of the agent, one row per round trip\n10. Later in the chapter you replay this run from a script to reproduce it without a model or API key\n11. A row showing `read_file {path: duration_test.go}`\n12. The middle column: every entry is a request — the model asked to list files, read them, run tests, change one line. The model never touched a file and can't. The model is a remote service reached over HTTP.\n13. Definitions: tool call, tool — a tool is something your program can",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "Let me carefully understand what's being asked here. The user has pasted what appears to be a passage from a book chapter — likely from an O'Reilly-style book about building AI agents in Go. The text describes chapter 1 (or some early chapter) of a book that teaches Go programmers how to build agents. The passage discusses:\n\n1. The chapter's goal: define what an agent is, in terms a Go programmer can build\n2. Starting by watching an agent work, naming the parts, then building the loop\n3. The loop runs with no AI — it's ordinary Go, testable before a real model is involved\n4. A small Go project with a bug: a duration package parsing \"1h30m\" into time.Duration, failing tests\n5. An agent given one instruction: \"The tests in this project fail. Find out why and fix it.\"\n6. Definition of an LLM: a system trained to continue text; you send text over an API, it sends back predicted text\n7. Chapter 2 calls a real one (the text seems slightly truncated: \"Chapter 2 calls a real one\" — probably \"Chapter 2 calls a real one\" meaning the agent will call a real model in chapter 2)\n8. The agent is one you'll finish in chapter 4: a Go program working with a model\n9. A table showing one run of the agent, one row per round trip\n10. Later in the chapter you replay this run from a script to reproduce it without a model or API key\n11. A row showing `read_file {path: duration_test.go}`\n12. The middle column: every entry is a request — the model asked to list files, read them, run tests, change one line. The model never touched a file and can't. The model is a remote service reached over HTTP.\n13. Definitions: tool call, tool — a tool is something your program can",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 465,
+			"completion_tokens": 400,
+			"total_tokens": 865,
+			"cost": 0.00026975,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00026975,
+				"upstream_inference_prompt_cost": 0.00006975,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 400,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

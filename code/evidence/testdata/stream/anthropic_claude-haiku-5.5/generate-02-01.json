@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092326-OA60oKhghb5XrBL8jhjv",
+		"object": "chat.completion",
+		"created": 1792092326,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, `context.Context` carries cancellation signals, deadlines, and request-scoped values across API boundaries and between goroutines. It lets a caller tell downstream work to stop, for example when an HTTP client disconnects or a timeout expires.\n\nA context is created from a root such as `context.Background()` and derived with functions like `WithCancel`, `WithTimeout`, or `WithDeadline`. Each derived context can be canceled, and cancellation propagates to all its children. Code checks `ctx.Done()` or `ctx.Err()` to learn whether it should abandon its work.\n\n`WithValue` attaches request-scoped data, such as a request ID or authenticated user, to a context. It should be used sparingly, for data that travels with a request rather than for optional function parameters.\n\nBy convention, `ctx` is the first parameter of a function, and contexts are passed explicitly rather than stored in structs.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQS9QcKEAgSGAI4AUIIdGhpbmtpbmcSDGAAJXiKp45NM/mxxRoMktCjXWkjffSVtwcEIjBES186BzbROaID8SMQF40n/7DVLbjeVIqmO+P53pXP+9TJSQsry3D4KwcxneO52vcqkgfx5C8aRQHGcNbvPmNdGQTMN1wcDawuSU+KIt6SmY74ew08F09HM2r55kCcrE/LHak8ox3YPKKseOGk238gmwaAvQgmLfqVPsFkkXAPKVv9cGjTpLZBAoh8iy1NHhXlcxpJK69WrA+zHR3Mza23Fmu7hsJoi3jeFd4FW+1qFRcrFwMvVFciX+DiMl7qbQANIEWZP75rJB0UkhjYcYdwISS7mng7OLPpu7XKqqbCGALjATKg1+129Q227ra8mzhlHG+2Lx+Ot9dPDyC39FIyzaEqbrtus4yg09IXqnnGVcSfvkg4wMR5sXugcnRu39EBpf6XUaMCf+DwbShN/ex1Oo+usBt9c/8UXpJ9/ExBt/PKD0FxMdLbexM+LOsONbWPBoXI1GoTBBihsWm4BeLlGonMtKbjQXX4xQMAbWsJ7qI5YPhwx6P7JxEQfTDisoc/ncQlvh1ep5Hu/j7/qFrpzO6WM9gT3ZIOBeJ5abnHXXjvxZHzcra0jdjhcoybPT1M4gCA18As/CQadDBbaXqYPYQzr5En5nXjE83lEFPFl+VVjV2YqL9wNH5VnsTKG460QkgPNLqauVulCh1qq6qB+jfyl81ELJfM4u5eixlT5VnsJ+N2lBtj5DMjnl44XXEw+5+NyV8nQbCpN7ohJJrA0MYanfBPsQd0a009FpCBmERgLJWXwIC04YRADT3LI8Jgq2zGdEQ6/Hm9bl6oe+COLJNBVm/8Ld692OeX7D1XabAkEaBriKFpaDGHqjF9N7pLUnPJnIhXs1MBJcfpV6/Hrc6ZvARepyopM5v+wHw8vvHtyCxlgPA2U6Pwo6OgtsPibzLynE7gKsc70ykSSV/G1qK1JJZmICDUxHOr7jhg0sDVarEjy2x7/6xQoGKv2Rw/sSFWtNYyyWb2Li2ZLbeUTgLRCHKbWmo3jY/YNvYGMr8k3qO+dfID2c/fj/yTiIRRq2/d6B8e7oTDyuUjCrhRsvQGngotC8UdDbLXNicNK9mYV4RwAOL3082EjgTQBTUkgyiPnRZQ7ZdFRwsytJCbK6DHdiGvAoA7rYdfA89B06cyI1HFLUv/8A4cM1lQcbqeeAP+e8QTNWEJzwbWycZmTVXee5nVML6qS3BzAy5yOMbpIm4vQMHSKWvAtJ0czN6j2AKLV+nvQUd4irgSSpdYU9B/Rrq4st/AJnd8LdfFAc7NcDdHcFajHVzwzf+VySQxBmwFlhgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 28,
+			"completion_tokens": 440,
+			"total_tokens": 468,
+			"cost": 0.0002228,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002228,
+				"upstream_inference_prompt_cost": 0.0000028,
+				"upstream_inference_completions_cost": 0.00022
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 144,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

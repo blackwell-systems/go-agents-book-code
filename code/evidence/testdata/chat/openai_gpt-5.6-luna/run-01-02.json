@@ -1,0 +1,81 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version (MVP):\n\n- Add a book: title, author, and status (`to-read`, `reading`, `finished`)\n- List all books\n- Update a book’s status\n- Remove a book\n- Save data locally in a simple JSON file\n- Provide basic command-line help and clear error messages"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091657-YS0qEVESMnSZvWj9E7sj",
+		"object": "chat.completion",
+		"created": 1792091657,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "Use a single JSON file in the user’s config/data directory:\n\n- Linux: `~/.local/share/booklist/books.json`\n- macOS: `~/Library/Application Support/booklist/books.json`\n- Windows: `%AppData%\\booklist\\books.json`\n\nExample:\n\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"reading\"\n  }\n]\n```\n\nIn Go, use `encoding/json`. Load the file at startup and rewrite it after changes. Write to a temporary file first, then rename it over the original so interrupted writes don’t corrupt the list.",
+					"refusal": null,
+					"reasoning": "**Recommending JSON file structure**\n\nI think we need to provide a concise answer, so I'll suggest using a JSON file. It’s useful for storing data paths, schemas, and ensuring atomic writes. I might reference XDG for directory structure too, just to keep things organized. We should stick to the Go encoding/json library to handle this efficiently. I’ll emphasize that it’s about one specific file to keep things straightforward and manageable!",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Recommending JSON file structure**\n\nI think we need to provide a concise answer, so I'll suggest using a JSON file. It’s useful for storing data paths, schemas, and ensuring atomic writes. I might reference XDG for directory structure too, just to keep things organized. We should stick to the Go encoding/json library to handle this efficiently. I’ll emphasize that it’s about one specific file to keep things straightforward and manageable!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SYL3j8djNIZDRxwEW-WQksjLgKVVoW7iwz-oIPCdTeqAK37Lc42IojzA5kNzjZ58XBQE84wotH2uh-6ACGVh0ZbRCEOaXFPIDdRtleBziUqJ5TFFB_kDHkm6Szi7EfPDMpo4nKGxGB2TacWe5VFNw2oMBmVI8iUnFgQUhVLNG9c0mJwluIiCa5NnMwNmCUWOT2vpyvE0Amcr1yW4AkI5iGrSuH09LEigiU7F3m8ijO65iN1T-JPC8uW38D9wPRF2cx2Dz_9Dbstqv2CJXYa78nl_hl1Ifl-6FBvBuZTH7UQMmkYysovbdSfokVxvhY2OOk-_0k0K2SI3irhUDNh0cSXNVFlS1-bEclhvRHZoimJHG2bo0U8GGqGKVbaBBHPurDL-8YNhU0-F5xKOoAudXnxv1rl3gBpwIkgp2Wz8aw0uDpIieCx-jtNFpUBcWlDaLLr8UZDWi4FD2OnpRo7vWisdOgevUuc_s912eUdL5-RAc68l4Qy2Crg8I2Smsc_kPNcrzAAH-WWFkOCqSfEe6gqVEf5CSdta628E2r9k3rZWOMmbMtLxD6CHMnEsPEs8QgK1iQvpLXz3YeIfsIZVbxCVb3LYJBm1G2qn-L4KtwPqdSgUO4cVEnpTFtjqdxeWI3eQnIs_np1q0PqGp4b0F2i_RGjRmfMtD0aTBMXtqY62CX5eXXEBI-58mSOCfbBEPuEmifR6GplcG2FmtTxrZ9NIJrf4XXZ0HKJt8SELgq32l0lIwL8NQT9PqkRBXdWUlq_sV69XqwtvrbaXyDpmlqvW_qjemTp9T-KxP790Plyw1ZjgOsHE-r2Om0_MYopTPF2yeROxcRz9G8ikp4V_Kyju62GCVcu_1jmS0joolXIc6K2qMvc5iv8wPzCQYMBAVogOKBdx71LJpXtf7mUumYDqdqImjAvJj0LCcqjZBaQizm-kcpDwL2WYFNiDM980gR3BOsSXjAarEvaGDiWCXXWdrslm80KUpIPc9VlnQ6akO540-hfH9tBb1A0fUAxFm6Ih9zVlEwy2-fpD5qBTJutigL9thWsVpsATEDeOQEkpeXAiCRCcqSfrr89awEBkALWbSGJvO8wfmiCRB15OXzSGuCIVBPeIwVata2Ea9G6v-w_ffYyjk30R2qz-soF1ZE_VW684hH4wNlJz_iJ1aH4F0GLfCu2y6wdyn3rThos3fKttJCw1b3mSs2DgmWOHL_tb863A7mBndFtJ9DA1xaXWRPiOX0ptpgPx1YsA7Y2Twp6hyUAvQWPygl6RQA9d7HZZ9oWPZ3LaRzN_KWl3pFgBAoSfS2kSFcW3Gr05V5EaII14Xeyk5MF5SNLsWgRjYC-N_vd3WIruhhzh2BTtU2OmO8Y-8J1z62V3lshBnd5CjFa-p0l8hjOZCXie-U1CWMNtzbJ_y64NfWXTLeGuliacuzfrGODr1D_bg9NC7pedzJc8l5RyBcfPg8wsbb537IXmmp72zk_MKye8kpvASpf8YzkJHJEhGZ74exkZSrxncN_brtnmPNVuZ0YcoNAL7cMfFyYOiHBsu0dAOIkhWW3_cMYVbzCXru6O0RzhZwNScOvbmhgWikQOVq5Ag-TwnXcW6wBECABs9m2We_mQp2x17reR_jLt9KPkMweRXNJ7kn-M4etukWXRDXqvM9hLgmS5YytGlp9vJZUT0l1_W7PdrZE-a8y9Qx66jag2Khj48c--CB0RY14mY9MBUVZ1mAdqJO2hX_Wv3Brhaqy92rwfoeCffmSJb68z4JYGW0pIDQ4Whq-rgy_36SGfJq1T9I3m9j4CNDWmKBtzaKd8e6cbR7NEyaFHrV3n5_yUc1yKZg_SciTDqOky4KLDHgmphx7HCLm6D8eiOcfuSC-ztnjZ-TMo5NqUH17nINjDdn0Tl3GHrOc3s8dhv7hQUS9yUhvobWe9IKvsqOKVopT5x8PkFCr7_D9c2ytG-eE2A0pD91f5mNpFbzYuR4gYqmBx8TYEQluntcqBb2vwnLypu7UnA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_05413b1fd566ae63016ad1260a643487d1bc4804a08d72722f",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 120,
+			"completion_tokens": 181,
+			"total_tokens": 301,
+			"cost": 0.0002412,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002412,
+				"upstream_inference_prompt_cost": 0.000024,
+				"upstream_inference_completions_cost": 0.0002172
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 35,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

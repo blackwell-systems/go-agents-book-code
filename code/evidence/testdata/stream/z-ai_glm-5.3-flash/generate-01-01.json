@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092343-5aIAuNMSZYaVgmY4Xlwu",
+		"object": "chat.completion",
+		"created": 1792092343,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "`context.Context` is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\nIts main purpose is structured cancellation. When an operation times out or is canceled, that signal propagates down through a call chain so every goroutine working on its behalf can stop early, preventing leaked goroutines and wasted work. Functions that may block receive a context—by convention, the first parameter named `ctx`—and monitor `ctx.Done()`, a channel that closes on cancellation, and `ctx.Err()` to learn why.\n\nNew contexts are derived with `context.WithCancel`, `WithTimeout`, `WithDeadline`, or `WithValue`, forming a tree: canceling a parent cancels all children. Values carry small, request-scoped data such as trace IDs or authentication details—not function arguments.\n\nContexts are safe for concurrent use and are ubiquitous in servers, database calls, and anywhere long-running work needs to be abortable.",
+					"refusal": null,
+					"reasoning": "The user wants an explanation of context.Context in Go, in about 150 words. Let me think about what to cover:\n\n1. What context.Context is - a standard library type used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines.\n\n2. Key purposes:\n- Cancellation: propagate cancellation signals down call chains so goroutines can stop work early\n- Deadlines/timeouts: operations can check if they should abort\n- Request-scoped values: pass small amounts of data (trace IDs, auth info) through call chains\n- Concurrency safety: safe for use by multiple goroutines\n\n3. Key functions: context.WithCancel, context.WithTimeout, context.WithDeadline, context.WithValue; the ctx.Done() channel, ctx.Err(), ctx.Value()\n\n4. Convention: first parameter of functions that may block or do I/O.\n\nLet me draft ~150 words:\n\n---\n\n`context.Context` is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\nIts main purpose is structured cancellation. When an operation is canceled or times out, the context propagates that signal down through a call chain, so every goroutine doing work on its behalf can stop early. This prevents leaking goroutines and wasted work. Functions receive a context (by convention the first parameter, named `ctx`) and monitor `ctx.Done()`, a channel that closes when the context is canceled, and `ctx.Err()` to learn why.\n\nContexts are created with `context.WithCancel`, `WithTimeout`, `WithDeadline`, or `WithValue`, forming a tree: canceling a parent cancels its children. Values are meant for small request-scoped data like trace IDs or authentication details, not function arguments.\n\nContexts are safe for concurrent use. They're essential in network servers, database calls, and anywhere long-running work should be abortable.\n\n---\n\nThat's around 150 words. Let me count roughly... that's close. Good format: short paragraphs, maybe a few key points. Keep it prose since they asked for an explanation in words. 150 words target — I should be close. Let me finalize.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user wants an explanation of context.Context in Go, in about 150 words. Let me think about what to cover:\n\n1. What context.Context is - a standard library type used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines.\n\n2. Key purposes:\n- Cancellation: propagate cancellation signals down call chains so goroutines can stop work early\n- Deadlines/timeouts: operations can check if they should abort\n- Request-scoped values: pass small amounts of data (trace IDs, auth info) through call chains\n- Concurrency safety: safe for use by multiple goroutines\n\n3. Key functions: context.WithCancel, context.WithTimeout, context.WithDeadline, context.WithValue; the ctx.Done() channel, ctx.Err(), ctx.Value()\n\n4. Convention: first parameter of functions that may block or do I/O.\n\nLet me draft ~150 words:\n\n---\n\n`context.Context` is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\nIts main purpose is structured cancellation. When an operation is canceled or times out, the context propagates that signal down through a call chain, so every goroutine doing work on its behalf can stop early. This prevents leaking goroutines and wasted work. Functions receive a context (by convention the first parameter, named `ctx`) and monitor `ctx.Done()`, a channel that closes when the context is canceled, and `ctx.Err()` to learn why.\n\nContexts are created with `context.WithCancel`, `WithTimeout`, `WithDeadline`, or `WithValue`, forming a tree: canceling a parent cancels its children. Values are meant for small request-scoped data like trace IDs or authentication details, not function arguments.\n\nContexts are safe for concurrent use. They're essential in network servers, database calls, and anywhere long-running work should be abortable.\n\n---\n\nThat's around 150 words. Let me count roughly... that's close. Good format: short paragraphs, maybe a few key points. Keep it prose since they asked for an explanation in words. 150 words target — I should be close. Let me finalize.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 27,
+			"completion_tokens": 644,
+			"total_tokens": 671,
+			"cost": 0.00032308,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00032308,
+				"upstream_inference_prompt_cost": 0.00000108,
+				"upstream_inference_completions_cost": 0.000322
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 538,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

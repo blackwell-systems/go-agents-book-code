@@ -1,0 +1,130 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version (MVP):\n\n- Add a book: title, author, and status (`to-read`, `reading`, `finished`)\n- List all books\n- Update a book’s status\n- Remove a book\n- Save data locally in a simple JSON file\n- Provide basic command-line help and clear error messages"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file in the user’s config/data directory:\n\n- Linux: `~/.local/share/booklist/books.json`\n- macOS: `~/Library/Application Support/booklist/books.json`\n- Windows: `%AppData%\\booklist\\books.json`\n\nExample:\n\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"reading\"\n  }\n]\n```\n\nIn Go, use `encoding/json`. Load the file at startup and rewrite it after changes. Write to a temporary file first, then rename it over the original so interrupted writes don’t corrupt the list."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Book struct {\n\tID     int    `json:\"id\"`\n\tTitle  string `json:\"title\"`\n\tAuthor string `json:\"author\"`\n\tStatus string `json:\"status\"` // to-read, reading, finished\n}\n```"
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a subcommand with flags:\n\n```bash\nbooklist add --title \"The Hobbit\" --author \"J.R.R. Tolkien\" --status to-read\n```\n\nExample Go handler:\n\n```go\nfunc addBook(args []string, books *[]Book) error {\n\tfs := flag.NewFlagSet(\"add\", flag.ExitOnError)\n\n\ttitle := fs.String(\"title\", \"\", \"Book title\")\n\tauthor := fs.String(\"author\", \"\", \"Book author\")\n\tstatus := fs.String(\"status\", \"to-read\", \"to-read, reading, or finished\")\n\n\tfs.Parse(args)\n\n\tif *title == \"\" || *author == \"\" {\n\t\treturn errors.New(\"title and author are required\")\n\t}\n\n\tif *status != \"to-read\" && *status != \"reading\" && *status != \"finished\" {\n\t\treturn errors.New(\"invalid status\")\n\t}\n\n\t*books = append(*books, Book{\n\t\tID:     nextID(*books),\n\t\tTitle:  *title,\n\t\tAuthor: *author,\n\t\tStatus: *status,\n\t})\n\n\treturn nil\n}\n```\n\nThen save the updated slice to your JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How should the program handle two books with the same title?"
+			},
+			{
+				"role": "assistant",
+				"content": "Allow them. Different books can share a title, and the same book may have different editions or authors.\n\n- Give every entry a unique ID.\n- Use the ID for update and delete commands.\n- Optionally warn when the title and author match an existing book, but don’t block it.\n\nExample:\n\n```bash\nbooklist add --title \"Dune\" --author \"Frank Herbert\"\nbooklist delete --id 3\n```"
+			},
+			{
+				"role": "user",
+				"content": "Write the function that loads the list from the file."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc LoadBooks(path string) ([]Book, error) {\n\tdata, err := os.ReadFile(path)\n\tif err != nil {\n\t\tif errors.Is(err, os.ErrNotExist) {\n\t\t\treturn []Book{}, nil // Start with an empty list.\n\t\t}\n\t\treturn nil, err\n\t}\n\n\tvar books []Book\n\tif err := json.Unmarshal(data, &books); err != nil {\n\t\treturn nil, fmt.Errorf(\"decode books file: %w\", err)\n\t}\n\n\treturn books, nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n\t\"os\"\n)\n```\n\nA missing file is treated as an empty list; other file or JSON errors are returned."
+			},
+			{
+				"role": "user",
+				"content": "What happens if the file doesn't exist yet?"
+			},
+			{
+				"role": "assistant",
+				"content": "`LoadBooks` treats a missing file as an empty list:\n\n```go\nreturn []Book{}, nil\n```\n\nThe program can then add books normally. When it first saves the list, it should create the parent directory and JSON file."
+			},
+			{
+				"role": "user",
+				"content": "Now write the function that saves the list."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc SaveBooks(path string, books []Book) error {\n\tdata, err := json.MarshalIndent(books, \"\", \"  \")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"encode books: %w\", err)\n\t}\n\n\tif err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {\n\t\treturn fmt.Errorf(\"create data directory: %w\", err)\n\t}\n\n\ttmp, err := os.CreateTemp(filepath.Dir(path), \"books-*.tmp\")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"create temporary file: %w\", err)\n\t}\n\ttmpName := tmp.Name()\n\tdefer os.Remove(tmpName)\n\n\tif _, err := tmp.Write(data); err != nil {\n\t\ttmp.Close()\n\t\treturn fmt.Errorf(\"write books: %w\", err)\n\t}\n\n\tif err := tmp.Close(); err != nil {\n\t\treturn fmt.Errorf(\"close temporary file: %w\", err)\n\t}\n\n\tif err := os.Rename(tmpName, path); err != nil {\n\t\treturn fmt.Errorf(\"replace books file: %w\", err)\n\t}\n\n\treturn nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"os\"\n\t\"path/filepath\"\n)\n```\n\nIt creates the parent directory if needed and uses a temporary file to avoid leaving a partially written JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How do I make sure a crash halfway through saving doesn't lose the list?"
+			},
+			{
+				"role": "assistant",
+				"content": "Write to a temporary file in the **same directory**, flush it to disk, then atomically rename it over the original:\n\n```go\nfunc SaveBooks(path string, books []Book) error {\n\tdata, err := json.MarshalIndent(books, \"\", \"  \")\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tdir := filepath.Dir(path)\n\tif err := os.MkdirAll(dir, 0o755); err != nil {\n\t\treturn err\n\t}\n\n\ttmp, err := os.CreateTemp(dir, \".books-*.tmp\")\n\tif err != nil {\n\t\treturn err\n\t}\n\ttmpName := tmp.Name()\n\tdefer os.Remove(tmpName)\n\n\tif _, err := tmp.Write(data); err != nil {\n\t\ttmp.Close()\n\t\treturn err\n\t}\n\tif err := tmp.Sync(); err != nil { // Flush file contents to disk.\n\t\ttmp.Close()\n\t\treturn err\n\t}\n\tif err := tmp.Close(); err != nil {\n\t\treturn err\n\t}\n\n\t// Because the temp file is in the same directory, this replacement is atomic.\n\treturn os.Rename(tmpName, path)\n}\n```\n\nIf the program crashes before `Rename`, the original file remains unchanged. If it crashes after the rename, the complete new file is available. The temporary file must be in the same directory for this guarantee."
+			},
+			{
+				"role": "user",
+				"content": "How do I mark a book as finished?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091683-mDAoD8CUh9K8rbSLvJQj",
+		"object": "chat.completion",
+		"created": 1792091683,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "Use an update command with the book’s ID:\n\n```bash\nbooklist update --id 3 --status finished\n```\n\nThe handler should:\n\n1. Find the book with ID `3`.\n2. Set its status to `finished`.\n3. Save the updated list.\n4. Report an error if the ID doesn’t exist.\n\n```go\nfunc MarkFinished(books []Book, id int) error {\n\tfor i := range books {\n\t\tif books[i].ID == id {\n\t\t\tbooks[i].Status = \"finished\"\n\t\t\treturn nil\n\t\t}\n\t}\n\n\treturn fmt.Errorf(\"book with ID %d not found\", id)\n}\n```\n\nThen call `SaveBooks` after it succeeds.",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1538,
+			"completion_tokens": 149,
+			"total_tokens": 1687,
+			"cost": 0.00027611,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 1248,
+				"cache_write_tokens": 287,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00027611,
+				"upstream_inference_prompt_cost": 0.00009731,
+				"upstream_inference_completions_cost": 0.0001788
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,82 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version:\n\n- `add \"Title\" --author \"Author\"` — save a book as “reading”\n- `list` — show title, author, status, progress\n- `update <id> --status finished --page 123` — change status/progress\n- `remove <id>` — delete a book\n- Persist to one local JSON file, e.g. `~/.books.json`\n\nUse only Go’s standard library: `flag`, `encoding/json`, `os`.  \nSkip databases, tags, search, sync, and TUIs until later."
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use one JSON file, loaded fully into memory and rewritten on every change.\n\n**Location:** `filepath.Join(os.UserConfigDir(), \"books\", \"books.json\")`  \nOn Linux: `~/.config/books/books.json`, macOS: `~/Library/Application Support/books/books.json`, Windows: `%AppData%\\books\\books.json`.\n\n**Shape:**\n\n```json\n{\n  \"version\": 1,\n  \"books\": [\n    {\n      \"id\": 1,\n      \"title\": \"The Go Programming Language\",\n      \"author\": \"Donovan & Kernighan\",\n      \"status\": \"reading\",\n      \"page\": 42,\n      \"created_at\": \"2026-05-07T12:00:00Z\"\n    }\n  ]\n}\n```\n\nWhy an object instead of a bare array? You can add fields later without breaking the file.\n\n**Save atomically:**\n\n```go\nfunc save(path string, v any) error {\n    b, err := json.MarshalIndent(v, \"\", \"  \")\n    if err != nil {\n        return err\n    }\n\n    dir := filepath.Dir(path)\n    tmp, err := os.CreateTemp(dir, \"books-*.tmp\")\n    if err != nil {\n        return err\n    }\n    defer os.Remove(tmp.Name())\n\n    if err := tmp.Chmod(0600); err != nil {\n        return err\n    }\n    if _, err := tmp.Write(b); err != nil {\n        return err\n    }\n    if err := tmp.Sync(); err != nil {\n        return err\n    }\n    if err := tmp.Close(); err != nil {\n        return err\n    }\n\n    return os.Rename(tmp.Name(), path)\n}\n```\n\n**Rules:**\n\n- Missing file = empty list.\n- Create parent dir with `0700`.\n- Write file with `0600`.\n- Never truncate/overwrite the real file directly.\n- Load once, mutate in memory, save once per command.\n- Don’t add locking yet. If you later run multiple instances or store thousands of books, switch to SQLite."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091670-kwFDL76RhZZI1xyZw0AT",
+		"object": "chat.completion",
+		"created": 1792091670,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "```go\ntype Status string\n\nconst (\n\tStatusReading  Status = \"reading\"\n\tStatusFinished Status = \"finished\"\n)\n\ntype Book struct {\n\tID        int64     `json:\"id\"`\n\tTitle     string    `json:\"title\"`\n\tAuthor    string    `json:\"author\"`\n\tStatus    Status    `json:\"status\"`\n\tPage      int       `json:\"page\"`\n\tCreatedAt time.Time `json:\"created_at\"`\n}\n```\n\n`time.Time` marshals to RFC3339, e.g. `\"2026-05-07T12:00:00Z\"`.  \nAdd `UpdatedAt time.Time \\`json:\"updated_at\"\\`` later if needed.",
+					"refusal": null,
+					"reasoning": "We need answer user asks \"Show me the struct for one book.\" Given previous conversation. Need keep short. We should provide Go struct for one book matching JSON shape. Probably include tags, json tags, types. Need maybe status type. Keep short. Ensure ID uint64? Page int. CreatedAt time.Time. Status string or custom type. Since earlier JSON has status \"reading\". We can define Status string constants. Show struct.\n\nNeed not overdo. Could mention time.Time marshals to RFC3339. Use int64 ID. Maybe Page int. Title Author string. Tags? Previously skipped tags, so no tags. Could include CreatedAt, UpdatedAt? First version earlier JSON only created_at. User asks \"Show me the struct for one book.\" We can show:\n\ntype Book struct {\n    ID        int64     `json:\"id\"`\n    Title     string    `json:\"title\"`\n    Author    string    `json:\"author\"`\n    Status    Status    `json:\"status\"`\n    Page      int       `json:\"page\"`\n    CreatedAt time.Time `json:\"created_at\"`\n}\n\ntype Status string\n\nconst (\n    StatusReading  Status = \"reading\"\n    StatusFinished Status = \"finished\"\n)\n\nMaybe include omitempty? No, page 0 should be included maybe. But if not started, 0. Keep.\n\nCould also mention if using time.Time, JSON marshals to RFC3339 and parses. Good.\n\nNeed answer probable. Keep short. Final.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer user asks \"Show me the struct for one book.\" Given previous conversation. Need keep short. We should provide Go struct for one book matching JSON shape. Probably include tags, json tags, types. Need maybe status type. Keep short. Ensure ID uint64? Page int. CreatedAt time.Time. Status string or custom type. Since earlier JSON has status \"reading\". We can define Status string constants. Show struct.\n\nNeed not overdo. Could mention time.Time marshals to RFC3339. Use int64 ID. Maybe Page int. Title Author string. Tags? Previously skipped tags, so no tags. Could include CreatedAt, UpdatedAt? First version earlier JSON only created_at. User asks \"Show me the struct for one book.\" We can show:\n\ntype Book struct {\n    ID        int64     `json:\"id\"`\n    Title     string    `json:\"title\"`\n    Author    string    `json:\"author\"`\n    Status    Status    `json:\"status\"`\n    Page      int       `json:\"page\"`\n    CreatedAt time.Time `json:\"created_at\"`\n}\n\ntype Status string\n\nconst (\n    StatusReading  Status = \"reading\"\n    StatusFinished Status = \"finished\"\n)\n\nMaybe include omitempty? No, page 0 should be included maybe. But if not started, 0. Keep.\n\nCould also mention if using time.Time, JSON marshals to RFC3339 and parses. Good.\n\nNeed answer probable. Keep short. Final.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 646,
+			"completion_tokens": 451,
+			"total_tokens": 1097,
+			"cost": 0.000363707,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000363707,
+				"upstream_inference_prompt_cost": 0.000002907,
+				"upstream_inference_completions_cost": 0.0003608
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 330,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

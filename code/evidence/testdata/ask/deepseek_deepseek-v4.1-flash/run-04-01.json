@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091631-xgclIq4lgn6mkmJcfVTH",
+		"object": "chat.completion",
+		"created": 1792091631,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "DeepInfra",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "A nil slice has no underlying array; its value is `nil`, with len and cap 0. An empty slice is non-nil, len 0, cap may be 0, but has a valid backing array. Both work with `len`, `cap`, `range`, and `append`. Differences: `nil == nil` is true; empty `!= nil`; JSON encodes nil as `null`, empty as `[]`.",
+					"refusal": null,
+					"reasoning": "We need answer under 100 words. Need explain difference nil slice vs empty slice in Go. Nil slice has nil underlying array, len 0 cap 0, equals nil. Empty slice non-nil, len 0 cap 0, often points to zero-length array, not equal nil. Both work with append, len, cap, range. JSON marshaling: nil -> null, empty -> []. Use var s []int vs s := []int{}. Ensure under 100 words. Count. Let's draft: \"A nil slice has no underlying array; its value is nil, len and cap are 0. An empty slice is non-nil, len 0, cap may be 0, but has a valid backing array (or zero-base pointer). Both behave the same for len, cap, range, append. Key differences: nil == nil true, empty != nil; JSON encodes nil as null, empty as [].\" That's about 65 words. Good.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer under 100 words. Need explain difference nil slice vs empty slice in Go. Nil slice has nil underlying array, len 0 cap 0, equals nil. Empty slice non-nil, len 0 cap 0, often points to zero-length array, not equal nil. Both work with append, len, cap, range. JSON marshaling: nil -> null, empty -> []. Use var s []int vs s := []int{}. Ensure under 100 words. Count. Let's draft: \"A nil slice has no underlying array; its value is nil, len and cap are 0. An empty slice is non-nil, len 0, cap may be 0, but has a valid backing array (or zero-base pointer). Both behave the same for len, cap, range, append. Key differences: nil == nil true, empty != nil; JSON encodes nil as null, empty as [].\" That's about 65 words. Good.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 53,
+			"completion_tokens": 294,
+			"total_tokens": 347,
+			"cost": 0.0001309,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001309,
+				"upstream_inference_prompt_cost": 0.00000742,
+				"upstream_inference_completions_cost": 0.00012348
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 202,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091623-8FnRAN6DBRrbW1m5KzQK",
+		"object": "chat.completion",
+		"created": 1792091623,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "DeepInfra",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "Nil slice: `var s []T`. len=0, cap=0, `s == nil` true; no backing array.  \nEmpty slice: `[]T{}` or `make([]T, 0)`. len=0, cap may be 0 or >0; `s == nil` false.  \nBoth can be appended/iterated. Key practical difference: nil marshals to JSON `null`, empty to `[]`; distinguishable by `== nil`.",
+					"refusal": null,
+					"reasoning": "We need answer under 100 words. Need explain difference in Go: nil slice has nil underlying array, len=0 cap=0, equals nil; empty slice non-nil, len=0 cap=0 or >0? Typically empty slice created with []T{} or make([]T,0), not nil. Both len 0, can append. JSON encoding differs: nil slice -> null, empty -> []. Equality only compare to nil; empty != nil. Need under 100 words. Ensure accurate: nil slice has no underlying array. Empty slice may have underlying array or zero-length backing array. Both work with append. Difference observable via comparison to nil, reflect.DeepEqual, JSON. Word count. Let's craft.\n\n\"Nil slice: var s []T. len=0, cap=0, s == nil true; no backing array. Empty slice: s := []T{} or make([]T,0). len=0, cap may be 0 or >0; s == nil false. Both can be appended/iterated. Key practical difference: nil marshals to JSON null, empty to []; nil vs empty distinguishable by == nil and reflect.DeepEqual.\" Count: Nil(1) slice(2): var(3) s(4) []T(5). len=0(6), cap=0(7), s==nil true(8); no(9) backing(10) array(11). Empty(12) slice(13): s(14) :=(15) []T{}(16) or(17) make([]T,0)(18). len=0(19), cap(20) may(21) be(22) 0(23) or(24) >0(25); s==nil false(26). Both(27) can(28) be(29) appended/iterated(30). Key(31) practical(32) difference(33): nil(34) marshals(35) to(36) JSON(37) null(38), empty(39) to(40) [](41); nil(42) vs(43) empty(44) distinguishable(45) by(46) ==(47) nil(48) and(49) reflect.DeepEqual(50). Under 100. Good. Need final only.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer under 100 words. Need explain difference in Go: nil slice has nil underlying array, len=0 cap=0, equals nil; empty slice non-nil, len=0 cap=0 or >0? Typically empty slice created with []T{} or make([]T,0), not nil. Both len 0, can append. JSON encoding differs: nil slice -> null, empty -> []. Equality only compare to nil; empty != nil. Need under 100 words. Ensure accurate: nil slice has no underlying array. Empty slice may have underlying array or zero-length backing array. Both work with append. Difference observable via comparison to nil, reflect.DeepEqual, JSON. Word count. Let's craft.\n\n\"Nil slice: var s []T. len=0, cap=0, s == nil true; no backing array. Empty slice: s := []T{} or make([]T,0). len=0, cap may be 0 or >0; s == nil false. Both can be appended/iterated. Key practical difference: nil marshals to JSON null, empty to []; nil vs empty distinguishable by == nil and reflect.DeepEqual.\" Count: Nil(1) slice(2): var(3) s(4) []T(5). len=0(6), cap=0(7), s==nil true(8); no(9) backing(10) array(11). Empty(12) slice(13): s(14) :=(15) []T{}(16) or(17) make([]T,0)(18). len=0(19), cap(20) may(21) be(22) 0(23) or(24) >0(25); s==nil false(26). Both(27) can(28) be(29) appended/iterated(30). Key(31) practical(32) difference(33): nil(34) marshals(35) to(36) JSON(37) null(38), empty(39) to(40) [](41); nil(42) vs(43) empty(44) distinguishable(45) by(46) ==(47) nil(48) and(49) reflect.DeepEqual(50). Under 100. Good. Need final only.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 53,
+			"completion_tokens": 588,
+			"total_tokens": 641,
+			"cost": 0.00025438,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00025438,
+				"upstream_inference_prompt_cost": 0.00000742,
+				"upstream_inference_completions_cost": 0.00024696
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 486,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

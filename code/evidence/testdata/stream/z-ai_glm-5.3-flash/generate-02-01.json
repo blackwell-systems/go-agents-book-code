@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092354-MgmvFUhbmySS00zUqoLi",
+		"object": "chat.completion",
+		"created": 1792092354,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "`context.Context` is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. It exists because server code often starts work that becomes unnecessary—a client disconnects, a request times out, or a parent operation fails—and you need a way to tell all downstream work to stop.\n\nA `Context` is passed explicitly to functions, conventionally as the first parameter named `ctx`. Contexts form a tree: calling `WithCancel`, `WithTimeout`, or `WithDeadline` derives a child that is canceled either when its parent is canceled or when its own condition triggers. Cancellation is cooperative—functions must poll `ctx.Done()` (a channel that closes on cancellation) or check `ctx.Err()` to learn why.\n\nContexts can also carry per-request data like trace IDs via `WithValue`, though the docs recommend reserving this for cross-cutting metadata, not passing function arguments.\n\nIn short, `context.Context` is Go's standard mechanism for controlling the lifetime of concurrent work.",
+					"refusal": null,
+					"reasoning": "The user wants an explanation of context.Context in Go, in about 150 words. This is a technical explanation question with a length constraint. Let me think about what to cover:\n\nKey points about context.Context:\n1. It's a standard library package (context) with the Context interface type\n2. Primary purposes:\n   - Cancellation: propagating cancellation signals across API boundaries and goroutines\n   - Deadlines/timeouts: setting time limits on operations\n   - Request-scoped values: carrying values across API boundaries (though this is often discouraged for general use)\n3. Common use cases: HTTP requests, database queries, network calls — anywhere you want to cancel work that's no longer needed\n4. Design: immutable tree structure; derived contexts via WithCancel, WithTimeout, WithDeadline, WithValue\n5. Convention: context.Context is the first parameter of functions, conventionally named ctx\n6. It's cooperative: functions must check ctx.Done() or ctx.Err()\n\nI need to fit this in about 150 words. Let me draft:\n\n---\n\n`context.Context` is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. It exists because server code often starts work that becomes unnecessary — a client disconnects, a request times out, or a parent operation fails — and you need a way to tell all downstream work to stop.\n\nA Context is passed explicitly, conventionally as the first function parameter named `ctx`. Contexts form a tree: calling `WithCancel`, `WithTimeout`, or `WithDeadline` derives a child that is canceled when its parent is canceled or its condition triggers. Functions receive cancellation cooperatively by checking `ctx.Done()` (a channel) or `ctx.Err()`.\n\nContexts are also used to attach per-request data like trace IDs via `WithValue`, though this is discouraged except for cross-cutting concerns. In short: it's Go's standard mechanism for scoped lifetime control of concurrent work.\n\n---\n\nLet me count roughly: that's around 150-160 words. Let me count more carefully.\n\nParagraph 1: \"context.Context is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\" (~22 words) \"It exists because server code often starts work that becomes unnecessary — a client disconnects, a request times out, or a parent operation fails — and you need a way to tell all downstream work to stop.\" (~37 words) Total ~59.\n\nParagraph 2: \"A Context is passed explicitly, conventionally as the first function parameter named ctx.\" (~13) \"Contexts form a tree: calling WithCancel, WithTimeout, or WithDeadline derives a child that is canceled when its parent is canceled or its condition triggers.\" (~25) \"Functions receive cancellation cooperatively by checking ctx.Done() (a channel) or ctx.Err().\" (~12) Total ~50.\n\nParagraph 3: \"Contexts are also used to attach per-request data like trace IDs via WithValue, though this is discouraged except for cross-cutting concerns.\" (~21) \"In short: it's Go's standard mechanism for scoped lifetime control of concurrent work.\" (~13) Total ~34.\n\nGrand total: ~143 words. Good, that's about 150.\n\nFormat: The user asked for ~150 words of explanation. Prose paragraphs work well. Could use a few short paragraphs. Should I use code formatting for function names? Yes, backticks for `context.Context`, `WithCancel`, `ctx.Done()` etc. is appropriate for a technical explanation. Headers aren't needed for 150 words. Keep it as flowing prose, maybe 2-3 short paragraphs.\n\nOne clarification: WithValue isn't strictly discouraged — the docs say use it only for request-scoped data that transits process boundaries (like trace IDs), not for passing optional function parameters. My phrasing captures that.\n\nAlso worth mentioning it's immutable/safe for concurrent use? Maybe briefly — \"Contexts are safe for concurrent use and immutable\" — but I'm at word count. I'll keep it lean.\n\nFinal check on accuracy:\n- First parameter convention: yes, Go style guide says ctx should be the first parameter.\n- Done() returns a channel that's closed on cancellation: correct.\n- Err() explains why: correct.\n- Child canceled when parent canceled: correct (cancellation propagates down).\n- WithValue for request-scoped values: correct.\n\nGood.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user wants an explanation of context.Context in Go, in about 150 words. This is a technical explanation question with a length constraint. Let me think about what to cover:\n\nKey points about context.Context:\n1. It's a standard library package (context) with the Context interface type\n2. Primary purposes:\n   - Cancellation: propagating cancellation signals across API boundaries and goroutines\n   - Deadlines/timeouts: setting time limits on operations\n   - Request-scoped values: carrying values across API boundaries (though this is often discouraged for general use)\n3. Common use cases: HTTP requests, database queries, network calls — anywhere you want to cancel work that's no longer needed\n4. Design: immutable tree structure; derived contexts via WithCancel, WithTimeout, WithDeadline, WithValue\n5. Convention: context.Context is the first parameter of functions, conventionally named ctx\n6. It's cooperative: functions must check ctx.Done() or ctx.Err()\n\nI need to fit this in about 150 words. Let me draft:\n\n---\n\n`context.Context` is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. It exists because server code often starts work that becomes unnecessary — a client disconnects, a request times out, or a parent operation fails — and you need a way to tell all downstream work to stop.\n\nA Context is passed explicitly, conventionally as the first function parameter named `ctx`. Contexts form a tree: calling `WithCancel`, `WithTimeout`, or `WithDeadline` derives a child that is canceled when its parent is canceled or its condition triggers. Functions receive cancellation cooperatively by checking `ctx.Done()` (a channel) or `ctx.Err()`.\n\nContexts are also used to attach per-request data like trace IDs via `WithValue`, though this is discouraged except for cross-cutting concerns. In short: it's Go's standard mechanism for scoped lifetime control of concurrent work.\n\n---\n\nLet me count roughly: that's around 150-160 words. Let me count more carefully.\n\nParagraph 1: \"context.Context is a Go standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\" (~22 words) \"It exists because server code often starts work that becomes unnecessary — a client disconnects, a request times out, or a parent operation fails — and you need a way to tell all downstream work to stop.\" (~37 words) Total ~59.\n\nParagraph 2: \"A Context is passed explicitly, conventionally as the first function parameter named ctx.\" (~13) \"Contexts form a tree: calling WithCancel, WithTimeout, or WithDeadline derives a child that is canceled when its parent is canceled or its condition triggers.\" (~25) \"Functions receive cancellation cooperatively by checking ctx.Done() (a channel) or ctx.Err().\" (~12) Total ~50.\n\nParagraph 3: \"Contexts are also used to attach per-request data like trace IDs via WithValue, though this is discouraged except for cross-cutting concerns.\" (~21) \"In short: it's Go's standard mechanism for scoped lifetime control of concurrent work.\" (~13) Total ~34.\n\nGrand total: ~143 words. Good, that's about 150.\n\nFormat: The user asked for ~150 words of explanation. Prose paragraphs work well. Could use a few short paragraphs. Should I use code formatting for function names? Yes, backticks for `context.Context`, `WithCancel`, `ctx.Done()` etc. is appropriate for a technical explanation. Headers aren't needed for 150 words. Keep it as flowing prose, maybe 2-3 short paragraphs.\n\nOne clarification: WithValue isn't strictly discouraged — the docs say use it only for request-scoped data that transits process boundaries (like trace IDs), not for passing optional function parameters. My phrasing captures that.\n\nAlso worth mentioning it's immutable/safe for concurrent use? Maybe briefly — \"Contexts are safe for concurrent use and immutable\" — but I'm at word count. I'll keep it lean.\n\nFinal check on accuracy:\n- First parameter convention: yes, Go style guide says ctx should be the first parameter.\n- Done() returns a channel that's closed on cancellation: correct.\n- Err() explains why: correct.\n- Child canceled when parent canceled: correct (cancellation propagates down).\n- WithValue for request-scoped values: correct.\n\nGood.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 27,
+			"completion_tokens": 1128,
+			"total_tokens": 1155,
+			"cost": 0.00056508,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00056508,
+				"upstream_inference_prompt_cost": 0.00000108,
+				"upstream_inference_completions_cost": 0.000564
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 1101,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

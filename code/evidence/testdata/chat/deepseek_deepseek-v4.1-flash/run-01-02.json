@@ -1,0 +1,74 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version:\n\n- `add \"Title\" --author \"Author\"` — save a book as “reading”\n- `list` — show title, author, status, progress\n- `update <id> --status finished --page 123` — change status/progress\n- `remove <id>` — delete a book\n- Persist to one local JSON file, e.g. `~/.books.json`\n\nUse only Go’s standard library: `flag`, `encoding/json`, `os`.  \nSkip databases, tags, search, sync, and TUIs until later."
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091658-GDxbf4p9EWs15FvpFP0Z",
+		"object": "chat.completion",
+		"created": 1792091658,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "Use one JSON file, loaded fully into memory and rewritten on every change.\n\n**Location:** `filepath.Join(os.UserConfigDir(), \"books\", \"books.json\")`  \nOn Linux: `~/.config/books/books.json`, macOS: `~/Library/Application Support/books/books.json`, Windows: `%AppData%\\books\\books.json`.\n\n**Shape:**\n\n```json\n{\n  \"version\": 1,\n  \"books\": [\n    {\n      \"id\": 1,\n      \"title\": \"The Go Programming Language\",\n      \"author\": \"Donovan & Kernighan\",\n      \"status\": \"reading\",\n      \"page\": 42,\n      \"created_at\": \"2026-05-07T12:00:00Z\"\n    }\n  ]\n}\n```\n\nWhy an object instead of a bare array? You can add fields later without breaking the file.\n\n**Save atomically:**\n\n```go\nfunc save(path string, v any) error {\n    b, err := json.MarshalIndent(v, \"\", \"  \")\n    if err != nil {\n        return err\n    }\n\n    dir := filepath.Dir(path)\n    tmp, err := os.CreateTemp(dir, \"books-*.tmp\")\n    if err != nil {\n        return err\n    }\n    defer os.Remove(tmp.Name())\n\n    if err := tmp.Chmod(0600); err != nil {\n        return err\n    }\n    if _, err := tmp.Write(b); err != nil {\n        return err\n    }\n    if err := tmp.Sync(); err != nil {\n        return err\n    }\n    if err := tmp.Close(); err != nil {\n        return err\n    }\n\n    return os.Rename(tmp.Name(), path)\n}\n```\n\n**Rules:**\n\n- Missing file = empty list.\n- Create parent dir with `0700`.\n- Write file with `0600`.\n- Never truncate/overwrite the real file directly.\n- Load once, mutate in memory, save once per command.\n- Don’t add locking yet. If you later run multiple instances or store thousands of books, switch to SQLite.",
+					"refusal": null,
+					"reasoning": "We need answer. User asks: \"How should I store the list on disk?\" Context: small Go CLI book tracker. They want first version do. We gave JSON. Now asks storage. Need keep short? Likely concise. Need advise: use JSON file in user config dir, atomic writes, maybe line-delimited JSON? For small list, single JSON array or object. Need mention schema, file location, concurrency, atomic write via temp + rename, permissions 0600, version field. Also maybe SQLite if growth, but first version JSON. Need answer likely: Store as JSON object with version and books array. Use os.UserConfigDir() (~/.config/books/books.json on Linux, Library/Application Support on macOS, AppData on Windows). Or home dotfile. Load: read all, unmarshal. Save: marshal indent, write to temp file in same dir, fsync, rename, chmod 0600. Lock? CLI single process, but atomic rename prevents corruption. Keep IDs stable: incrementing integer or UUID; if array, ID field. Could store map by ID to simplify updates? JSON object mapping id to book. But arrays easier. Example schema. No DB in v1. If more than few thousand or concurrent, use SQLite.\n\nNeed keep short. Maybe include code snippet? User asks \"How should I store the list on disk?\" We can answer with recommendation and maybe small Go snippet. Desired oververbosity 5. We can be helpful. Let's draft:\n\nUse a single JSON file. Location: `filepath.Join(os.UserConfigDir(), \"books\", \"books.json\")` (create dir). Schema:\n```json\n{\n  \"version\": 1,\n  \"books\": [\n    {\"id\":1,\"title\":\"...\",\"author\":\"...\",\"status\":\"reading\",\"page\":0,\"created_at\":\"...\"}\n  ]\n}\n```\nWhy object not bare array: can add metadata later. Load whole file on start, mutate in memory, save whole file after each command. Atomic save:\n```go\nfunc save(path string, data any) error {\n    b, err := json.MarshalIndent(data, \"\", \"  \")\n    if err != nil { return err }\n    dir := filepath.Dir(path)\n    tmp, err := os.CreateTemp(dir, \"books-*.tmp\")\n    if err != nil { return err }\n    defer os.Remove(tmp.Name())\n    if err := tmp.Chmod(0600); err != nil { return err }\n    if _, err := tmp.Write(b); err != nil { return err }\n    if err := tmp.Sync(); err != nil { return err }\n    if err := tmp.Close(); err != nil { return err }\n    return os.Rename(tmp.Name(), path)\n}\n```\nHandle missing file as empty list. Don't overengineer locking. If multiple instances, add lock file or just use SQLite. But first version no.\n\nNeed mention permissions 0600. Directory 0700 maybe. Use JSON so human-editable/debuggable. Could also use JSONL? For appending? But updates/removes easier with full rewrite. For small lists, full rewrite fine. Avoid CSV due escaping. Avoid SQLite until needed. Hmm.\n\nMaybe mention \"Do not store in current working directory unless user specifies.\" Use config dir. If you want portable, allow `--data path`.\n\nCould also mention \"Write only after successful operation; never truncate original in place.\" That's important.\n\nLet's answer concise. No code? Could include minimal. The user likely wants guidance. We'll include schema and atomic write pattern.\n\nNeed ensure not too long. Desired oververbosity 5, but user says earlier \"Keep it short\" for first version. Now asks storage. We can be short. Maybe 400-600 words? Oververbosity 5. Let's aim ~300-400 words. Use bullet points. Include code snippet maybe 20 lines. That's okay.\n\nLet's formulate final.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer. User asks: \"How should I store the list on disk?\" Context: small Go CLI book tracker. They want first version do. We gave JSON. Now asks storage. Need keep short? Likely concise. Need advise: use JSON file in user config dir, atomic writes, maybe line-delimited JSON? For small list, single JSON array or object. Need mention schema, file location, concurrency, atomic write via temp + rename, permissions 0600, version field. Also maybe SQLite if growth, but first version JSON. Need answer likely: Store as JSON object with version and books array. Use os.UserConfigDir() (~/.config/books/books.json on Linux, Library/Application Support on macOS, AppData on Windows). Or home dotfile. Load: read all, unmarshal. Save: marshal indent, write to temp file in same dir, fsync, rename, chmod 0600. Lock? CLI single process, but atomic rename prevents corruption. Keep IDs stable: incrementing integer or UUID; if array, ID field. Could store map by ID to simplify updates? JSON object mapping id to book. But arrays easier. Example schema. No DB in v1. If more than few thousand or concurrent, use SQLite.\n\nNeed keep short. Maybe include code snippet? User asks \"How should I store the list on disk?\" We can answer with recommendation and maybe small Go snippet. Desired oververbosity 5. We can be helpful. Let's draft:\n\nUse a single JSON file. Location: `filepath.Join(os.UserConfigDir(), \"books\", \"books.json\")` (create dir). Schema:\n```json\n{\n  \"version\": 1,\n  \"books\": [\n    {\"id\":1,\"title\":\"...\",\"author\":\"...\",\"status\":\"reading\",\"page\":0,\"created_at\":\"...\"}\n  ]\n}\n```\nWhy object not bare array: can add metadata later. Load whole file on start, mutate in memory, save whole file after each command. Atomic save:\n```go\nfunc save(path string, data any) error {\n    b, err := json.MarshalIndent(data, \"\", \"  \")\n    if err != nil { return err }\n    dir := filepath.Dir(path)\n    tmp, err := os.CreateTemp(dir, \"books-*.tmp\")\n    if err != nil { return err }\n    defer os.Remove(tmp.Name())\n    if err := tmp.Chmod(0600); err != nil { return err }\n    if _, err := tmp.Write(b); err != nil { return err }\n    if err := tmp.Sync(); err != nil { return err }\n    if err := tmp.Close(); err != nil { return err }\n    return os.Rename(tmp.Name(), path)\n}\n```\nHandle missing file as empty list. Don't overengineer locking. If multiple instances, add lock file or just use SQLite. But first version no.\n\nNeed mention permissions 0600. Directory 0700 maybe. Use JSON so human-editable/debuggable. Could also use JSONL? For appending? But updates/removes easier with full rewrite. For small lists, full rewrite fine. Avoid CSV due escaping. Avoid SQLite until needed. Hmm.\n\nMaybe mention \"Do not store in current working directory unless user specifies.\" Use config dir. If you want portable, allow `--data path`.\n\nCould also mention \"Write only after successful operation; never truncate original in place.\" That's important.\n\nLet's answer concise. No code? Could include minimal. The user likely wants guidance. We'll include schema and atomic write pattern.\n\nNeed ensure not too long. Desired oververbosity 5, but user says earlier \"Keep it short\" for first version. Now asks storage. We can be short. Maybe 400-600 words? Oververbosity 5. Let's aim ~300-400 words. Use bullet points. Include code snippet maybe 20 lines. That's okay.\n\nLet's formulate final.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 195,
+			"completion_tokens": 1273,
+			"total_tokens": 1468,
+			"cost": 0.0010192775,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0010192775,
+				"upstream_inference_prompt_cost": 8.775e-7,
+				"upstream_inference_completions_cost": 0.0010184
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 853,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

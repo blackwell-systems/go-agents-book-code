@@ -1,0 +1,152 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "crash-reports.jsonl holds crash reports from this service, remind. Find out what causes the crashes and fix them."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792109913-6I7zLT7EIbMob3BkZ54H",
+		"object": "chat.completion",
+		"created": 1792109913,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "I'll start by looking at the project files and the crash report log.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01EhGnBwmFhKGchGef1wyuyD",
+							"function": {
+								"name": "list_files",
+								"arguments": "{}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01C4Q7yRETttWpPwjQLiDwvH",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"crash-reports.jsonl\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQStQYKEAgSGAI4AUIIdGhpbmtpbmcSDDjAvu/guPFq9zr9nhoMbyd91YDviflj6/BGIjCYLGcd1tGBCMH+RcDFPpsmyVPQjkX4eAWtshfiDr+kU6wEHFb7MXheaJ70l0qglHEq0gXRuPQ/ikE44AW7KeqhqmMzY+b8BK7HbGewPhTlHCApJMNzsHZ7tF0K1PVC+VpCWkz8v7iSAiTdMMEBesnHZsP3JqpgstzMiUfA2RlCfYc8kxCyoVqzMfdyg30R7uh3kOw758es8aAnlN6Hpwb1/0H1JncgZ1hVIr+SzcNEq91LG+vYfkj3JlXlgT++4Ut0KcS+9uZsiBaoPpRoyOOlohG2fqzUHSO9G3yu5s7Wx7T4Z5AfsFOQCwogr0Va+EefDItj3Z7yAEocI95qThM3XcWrAPtHe0qE/YDEBL2RW7cv1jw3boHHl6sWEImEAVbl+b4FfQME+Q1sHmabNEygmfCxx5nt4EDfLNSyDp2A64KGPZwCLppzyNTCNhu++miOzJIYaNaLHMtEMWPBA+68wTyIvTExi8fgh+ZG1biDmk8jzcCQk5yAK5UbMMn3jHJUvIu96poshSjMY6/S8whcWx5rqVtQpNfFRaAIptaWrRpb4IrpT2CHM2cBSqAD3ssKBu2kz3w9xUfbkGVaG9lZ7IzhtaK62RY4yLD10130TiXt17TavR022AFYmVx/JvG9b/zUcgCCrfFonIpwmA9lSV8Xjuw/HJ/ecDXOI+ONocUdWkgIRkhzKJNJr+mv0WZr0nZ1/BilK0IztROXhvFMaX/ClTw/lFEQ/Uyn4wO2xKfGl35Iwex5lQ2+6U3YWaazAHtjZlUPw6Eg5qulYgzQaYgDC9gLQW4FkdpIxBzszDco5s8ZY1skWVNmVn7qJGj1SYYm4+YPBVhUa1ZPklyvI6TpczYrJZI9nw3hTnOBF2CDVrt5RokCG8RuSWkN2aQT0Eeblbk08Df0xmFfE+Tbqn2DEUDlYu/dd/nOdkm+8cM9dHjfcYquaBY07fcDmkl81a4ecp0z7KJPGQbb2KJKqiqwWBpmHJ6+Pt4l0/gefG8vl8fj1vnKVwidmuB7DtZMkHqZFhgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 603,
+			"completion_tokens": 172,
+			"total_tokens": 775,
+			"cost": 0.0001463,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001463,
+				"upstream_inference_prompt_cost": 0.0000603,
+				"upstream_inference_completions_cost": 0.000086
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 74,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

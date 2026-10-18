@@ -1,0 +1,25 @@
+This chapter answers one question: what is an agent, in terms a Go programmer can build?
+It starts by watching one work, names the parts, and then builds the loop at the center of every agent in this book.
+The loop you write here runs with no AI at all.
+That is on purpose: the loop is ordinary Go, and you can see and test every part of it before a real model is involved.
+Here is a small Go project with a bug.
+Its duration package parses strings like 1h30m into a time.Duration, and its tests fail.
+An agent is given one instruction: The tests in this project fail. Find out why and fix it.
+A large language model, usually just called a model, is a system trained to continue text.
+You send it text over an API; it sends back the text it predicts should come next.
+Chapter 2 calls a real one.
+The agent is the one you will finish in chapter 4: a Go program working with a model.
+The table shows one run of it, one row per round trip.
+Later in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key.
+read_file {path: duration_test.go}
+Read the middle column again.
+Every entry is a request.
+The model asked to list files, to read them, to run the tests, and to change one line.
+It never touched a file, and it can't.
+The model is a remote service, reached in this book over HTTP: your program sends it text and gets text back.
+Anything that happens on your machine, your program has to do.
+Each of these requests is a tool call.
+A tool is something your program can do on the model's behalf, such as reading a file or running the tests, described to the model by a name and the inputs it takes.
+A tool call is the model asking your program to run one tool with particular inputs, such as read_file with the path duration.go.
+The right-hand column is the other half of the work, and it is all your program.
+Your code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.

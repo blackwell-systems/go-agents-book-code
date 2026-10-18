@@ -1,0 +1,72 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "."
+			}
+		],
+		"max_tokens": 400,
+		"provider": {
+			"only": [
+				"morph"
+			]
+		}
+	},
+	"response": {
+		"id": "gen-1792094036-Eb1AYo42piS8bFtGTqKs",
+		"object": "chat.completion",
+		"created": 1792094036,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Morph",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "Hi! What can I help you with?",
+					"refusal": null,
+					"reasoning": "We need answer to user. User just sent \".\" maybe empty? Need respond. Need infer maybe they expect? We need ask how can help. Since only \".\", likely accidental. We should be polite, ask what they need. Could be testing. Final concise.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer to user. User just sent \".\" maybe empty? Need respond. Need infer maybe they expect? We need ask how can help. Since only \".\", likely accidental. We should be polite, ask what they need. Could be testing. Final concise.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 31,
+			"completion_tokens": 64,
+			"total_tokens": 95,
+			"cost": 0.00003933,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00003933,
+				"upstream_inference_prompt_cost": 9.3e-7,
+				"upstream_inference_completions_cost": 0.0000384
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 54,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

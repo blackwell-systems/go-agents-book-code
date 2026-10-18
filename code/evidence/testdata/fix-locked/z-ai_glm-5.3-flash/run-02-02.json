@@ -1,0 +1,178 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "5642a8ce-801c-4c16-a82e-9e3b1ff2917c",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me start by listing the files in the project to understand what we're working with.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "5642a8ce-801c-4c16-a82e-9e3b1ff2917c"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093819-E1GbNWwphiuXn5ipYDZl",
+		"object": "chat.completion",
+		"created": 1792093819,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_calls",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "Let's read both files.",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "b3609446-ae1b-4ad3-84fb-50c0e38a1741",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"duration.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "2d7096e2-c80a-4311-807e-1c79cc92a94d",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"duration_test.go\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "Let's read both files.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 351,
+			"completion_tokens": 31,
+			"total_tokens": 382,
+			"cost": 0.00002655,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 320,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00002655,
+				"upstream_inference_prompt_cost": 0.00001105,
+				"upstream_inference_completions_cost": 0.0000155
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 7,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,129 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version (MVP):\n\n- Add a book: title, author, and status (`to-read`, `reading`, `finished`)\n- List all books\n- Update a book’s status\n- Remove a book\n- Save data locally in a simple JSON file\n- Provide basic command-line help and clear error messages"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file in the user’s config/data directory:\n\n- Linux: `~/.local/share/booklist/books.json`\n- macOS: `~/Library/Application Support/booklist/books.json`\n- Windows: `%AppData%\\booklist\\books.json`\n\nExample:\n\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"reading\"\n  }\n]\n```\n\nIn Go, use `encoding/json`. Load the file at startup and rewrite it after changes. Write to a temporary file first, then rename it over the original so interrupted writes don’t corrupt the list."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Book struct {\n\tID     int    `json:\"id\"`\n\tTitle  string `json:\"title\"`\n\tAuthor string `json:\"author\"`\n\tStatus string `json:\"status\"` // to-read, reading, finished\n}\n```"
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a subcommand with flags:\n\n```bash\nbooklist add --title \"The Hobbit\" --author \"J.R.R. Tolkien\" --status to-read\n```\n\nExample Go handler:\n\n```go\nfunc addBook(args []string, books *[]Book) error {\n\tfs := flag.NewFlagSet(\"add\", flag.ExitOnError)\n\n\ttitle := fs.String(\"title\", \"\", \"Book title\")\n\tauthor := fs.String(\"author\", \"\", \"Book author\")\n\tstatus := fs.String(\"status\", \"to-read\", \"to-read, reading, or finished\")\n\n\tfs.Parse(args)\n\n\tif *title == \"\" || *author == \"\" {\n\t\treturn errors.New(\"title and author are required\")\n\t}\n\n\tif *status != \"to-read\" && *status != \"reading\" && *status != \"finished\" {\n\t\treturn errors.New(\"invalid status\")\n\t}\n\n\t*books = append(*books, Book{\n\t\tID:     nextID(*books),\n\t\tTitle:  *title,\n\t\tAuthor: *author,\n\t\tStatus: *status,\n\t})\n\n\treturn nil\n}\n```\n\nThen save the updated slice to your JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How should the program handle two books with the same title?"
+			},
+			{
+				"role": "assistant",
+				"content": "Allow them. Different books can share a title, and the same book may have different editions or authors.\n\n- Give every entry a unique ID.\n- Use the ID for update and delete commands.\n- Optionally warn when the title and author match an existing book, but don’t block it.\n\nExample:\n\n```bash\nbooklist add --title \"Dune\" --author \"Frank Herbert\"\nbooklist delete --id 3\n```"
+			},
+			{
+				"role": "user",
+				"content": "Write the function that loads the list from the file."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\nfunc LoadBooks(path string) ([]Book, error) {\n\tdata, err := os.ReadFile(path)\n\tif err != nil {\n\t\tif errors.Is(err, os.ErrNotExist) {\n\t\t\treturn []Book{}, nil // Start with an empty list.\n\t\t}\n\t\treturn nil, err\n\t}\n\n\tvar books []Book\n\tif err := json.Unmarshal(data, &books); err != nil {\n\t\treturn nil, fmt.Errorf(\"decode books file: %w\", err)\n\t}\n\n\treturn books, nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n\t\"os\"\n)\n```\n\nA missing file is treated as an empty list; other file or JSON errors are returned."
+			},
+			{
+				"role": "user",
+				"content": "What happens if the file doesn't exist yet?"
+			},
+			{
+				"role": "assistant",
+				"content": "`LoadBooks` treats a missing file as an empty list:\n\n```go\nreturn []Book{}, nil\n```\n\nThe program can then add books normally. When it first saves the list, it should create the parent directory and JSON file."
+			},
+			{
+				"role": "user",
+				"content": "Now write the function that saves the list."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091672-qSXB9OzHjalCE1vfZFyd",
+		"object": "chat.completion",
+		"created": 1792091672,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "```go\nfunc SaveBooks(path string, books []Book) error {\n\tdata, err := json.MarshalIndent(books, \"\", \"  \")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"encode books: %w\", err)\n\t}\n\n\tif err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {\n\t\treturn fmt.Errorf(\"create data directory: %w\", err)\n\t}\n\n\ttmp, err := os.CreateTemp(filepath.Dir(path), \"books-*.tmp\")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"create temporary file: %w\", err)\n\t}\n\ttmpName := tmp.Name()\n\tdefer os.Remove(tmpName)\n\n\tif _, err := tmp.Write(data); err != nil {\n\t\ttmp.Close()\n\t\treturn fmt.Errorf(\"write books: %w\", err)\n\t}\n\n\tif err := tmp.Close(); err != nil {\n\t\treturn fmt.Errorf(\"close temporary file: %w\", err)\n\t}\n\n\tif err := os.Rename(tmpName, path); err != nil {\n\t\treturn fmt.Errorf(\"replace books file: %w\", err)\n\t}\n\n\treturn nil\n}\n```\n\nImports:\n\n```go\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"os\"\n\t\"path/filepath\"\n)\n```\n\nIt creates the parent directory if needed and uses a temporary file to avoid leaving a partially written JSON file.",
+					"refusal": null,
+					"reasoning": "**Formulating code structure**\n\nI need to create concise and robust code using functions like mkdir. I should infer the path, using a function like SaveBooks(path string, books []Book) error. I'll utilize mkdirall for directories, marshal data with indentation, and manage temporary files properly, making sure to include os.CreateTemp and cleanup steps. I must consider Windows issues with renaming. Keeping it compact while mentioning necessary imports is key, as is addressing the MkdirAll(\".\") case. Let's put this together!",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Formulating code structure**\n\nI need to create concise and robust code using functions like mkdir. I should infer the path, using a function like SaveBooks(path string, books []Book) error. I'll utilize mkdirall for directories, marshal data with indentation, and manage temporary files properly, making sure to include os.CreateTemp and cleanup steps. I must consider Windows issues with renaming. Keeping it compact while mentioning necessary imports is key, as is addressing the MkdirAll(\".\") case. Let's put this together!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SYar7zpbAKwhjr1mw3iMuZLiAV07TUbW0EsG7DxFFE3bkPURPN1HUP2wDevT95Q3lO-ckKGaSxi2PKOtnQuFDy1tTvxd09GfM7Hk4ARhpBj3I90Ts2c1wmwuQv6vv_M6Ddvj-J-47msto0MKM5HOc3Ju8VOCCzZuLSB4kwZcVTkizHfoWqUMo6o0GyDNFrVQCIjuL0PYRsXvRhjX9YF0LaNKt1L5GZnGLV04YkbyL2oXGs-oXBQ_chQOT2-OU1jIRMjPs9blGKePcbqpO6kxhcH-77pS4InzgmkdHEGWqKca1hmC-ZcyXdPqUwkHv5tJEHfdvPzF28nABDgiZoyDxoHQ0DcWSOuomhR3rjlwU8XR1yGhU92Wmtd-OTjQUIKSYLJGsjYay-T5Hti0jIme_6YIbBHBUelV1e3gaXHbppJcWN7V-r1uOUKVaYH-oAq0zzWtiNTzJLxWtEIDNfGE-zv8AX_9aT2Z75rB4YhHTAUM3b0QiNadp_RaCdfL7bcBvigKJG8BQKbGuc-NqdncUTpDbSavawGKn6hTAocHvGN0zKY1AVLpPkwnVx1L1D6zz66Txo6mZyf3-OwmsMhrKmLtFephuJAvXM7hHHTHqt1LmcowCO-pVOR1k9m8F30SfSc3VhXNvmDYd04b2xkhNhnciA_QWf4vNXIFMEgrtBnp6aDxnzYCdMMRVw_N5eFpUqz7d_5kBFpVnO0SFUg6kOpx0dWKOc8aGklKM2gOPsVbJK0yEIbfrG4E7aHbHGVmgAP9VhbsMZ1RSYdpPEESrHTzOfsLqQP6CNJNGDHoy8_vOvI7U8Vd0Mc1zBBFhTKoKFbkRaG4SxzMa9sF52GBdElNOLZHZeGOCBSixvU2nohhwClH9hNs3ph_ET9yrXvHPVpNSQQ278SM_JkfIUJOC9Cf7dFgrqjfUfAoezjTKkTGDUnuAuqgFu89BJskIq6fLLNc_ydTxzbth1ni6sTKtP3lkD_imKfUAAqnxcvoFu6aMc7IVy5EhIseEeXQwuhoMI4HKQadP4sfe3Qa29z6oeczzl1ppJZa-8BLYLmTLEQz2f9oSvw_O-t5Tc-0F2cBlv_ZsvxHVQ5Gw-Ir5-u7vuJKcZoCpi2FrPGhHSsDYVx0qC9XnmY3j3ErxwjaPbnBQXdfrM9bhKKsCtnEVO7xM3VoOZtYONMqItmIzplcJJ93ukJLS5_AzJIDeoNrn1A2I8efJzMEQ98j05OfoI7WjBjY1MttG3KvQ_9B7DWhGs17NVGudkK9Oqb98QCjWodzbS-ZPOezSZV_Xc73E5Tit-mdaBtd3a_w0MJ_EsjY8QRVhd5tYE1jpO7TQ2QX3gyl25Jt-i7OhIy7NE1-V9CNloZGeMss80bh5U3oKNkl0pPGvHKPFDwW-r1kaspVoHh22osJCQknutVvT2A1xmNfBKjTVm_fiqjf_TounxlFc98LBLCE8TZBJfVWEqo_vQDn7OXCl9jcu_n7V6C0OvDCPRiA-3nfRo5OcCpqfvLQMuPv9crsWCW_xbpI1VTPldeJGRSxQQ7Co7B01IxLo80mqTNq99CzIVt-rAc0BhzwRKsYdgTr3j5Ntj3patmDl3VfdcaDCHoX-vI-pqnQoASBmQfbps1_wRIPRZ1yfbRszzdFRpFrV6ivmlmzy3tkZn7jbYNusb5p1F4E8DprlKROLhgcxpqc1INTlGn0CLwbfFFf_95GA5f_6pv92QTj9cRsoW2pCukqfwywlASUUXJ3uUgrEHtTJk2rfejHpC3JKf5Lmfc3zAnSirTs4q71u2hFP2UPVPz4dqZqWcyTNKSAI0sFLr0bGzjHqRjKbOUCGv-UFFYoaUH0GMfZ3YgY02Qxn06H2Z4FdaG0jE7VH0Yk0DhRa_zkXMYfO85iqHsE8kpEK4EG2LBRxnGlWhb4inCMsQ2Rq5Pz7kls836a4NBYxFGrU8XJEX_mc3MbioUZYGopbERFyi_dmtOPXvxxSYdNNrf49UVL_ce_eEKnumq2Xn5cGlFiRfEysD5mnGSzy12bnZ-kkPiVO_1SeidzhYvRy7974496-W73KE8TRp7nMzX9mkHZJ2TJGl-Ip4cbGKuW86lSCyh_AJ2RNfiasKUFV2mUTOdE0JD3NkkGCgJYU2KKYeU9LkBsG6_B1xxp-elpNa3Y_uZYbYMtZOauYnFJ-kLJsXCjziZL77XZrP0y_dt8oRPRnwLI38LFtsT32HHg9NWozmFCakW4p3Ca_oEaI9AZJqZIKRQkarr8yk_snFvdBsmMD0rLYOtA3wtgYHf3yASmJCvHC-3GjJwZ5aoOTAj1FB9xNN6VMWvp01wMKG2gDaXNz7WFrvVNbEAU7E7Hrf-pe9vA_-zAuruVwkwbl8zRPiM-iF2hfkqXeghnk9Fczs-LYe9Bht7ZcHgk1_AjRBVh0w25duOfSAQFujno48morfhpg12ZHtKUnvFb9XIeUccCKCKe7zmG-dn06Hj3qNklRUh8rVTZBU_NNRD7BU6LfkksSo3pWgoTiRkrrd56KbHsq0_i074jA8_4mu7gXDShrB7ZT67Q9fbd5seWvMHnxXsMOPJoPqNhRsedSNs6_hFWn8X1s3i-OSAczjF8UkEycus6JK4Zyp95ecqX7BvI2jlh2ToICxOe__beiJxA5YCPhApsnu0iVG46XUlptTpZJgUwYyMvAwUI_O1epUvWWDKqQX8VVwAOOVnw2cjuZh5H5G5P-_n_X1ib2Csag-PlDSWe8kUMonX6idzTg2epQBDfxQnrLLzcZYX4E82MaUCnd9q0O1GzYQs57UDyy0cjR2IkbxDDrRwFValT51aJpARn0Ognd2nejERvucIXPJhvc5Boh5JmPCMssKVw-BFTwS_xlZc5ehSFY9ce50ZHxxg5qrq6mmfuPblokGEzg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0dccc7b0229d80e9016ad12618cda087d18eef8d63e36ad16d",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 951,
+			"completion_tokens": 385,
+			"total_tokens": 1336,
+			"cost": 0.0006522,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0006522,
+				"upstream_inference_prompt_cost": 0.0001902,
+				"upstream_inference_completions_cost": 0.000462
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 104,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

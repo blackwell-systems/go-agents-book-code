@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092335-eN0gtSkVeTv2nt6L6Qnf",
+		"object": "chat.completion",
+		"created": 1792092335,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Baidu",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "In Go, `context.Context` carries cancellation signals, deadlines, and request-scoped values across API boundaries and goroutines. It lets a caller cancel an operation—manually, on timeout, or at a deadline—and have all downstream work observe that cancellation via the `Done` channel and `Err` method. This prevents wasted work, leaked goroutines, and lingering resources. Contexts are created from `Background` or `TODO` and derived with `WithCancel`, `WithTimeout`, `WithDeadline`, or `WithValue`. They are immutable and safe for concurrent use. By convention, functions that perform I/O or long work take `ctx context.Context` as their first parameter and pass it along. Values should hold only request-scoped metadata, such as request IDs or auth data, never optional arguments. Context is not a general dependency-injection or logging mechanism. In servers, it helps abandon work when clients disconnect or shutdown begins. Overall, it provides a standard way to propagate control-flow signals through Go programs.",
+					"refusal": null,
+					"reasoning": "We need answer about context.Context in Go, about 150 words. Need explain purpose. Should be concise. Need ensure about 150 words. Let's craft. Explain context.Context carries deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines. Used to propagate cancellation to downstream calls, avoid leaks, manage timeouts. It's immutable, safe for concurrent use? Actually Context is interface, derived via WithCancel, WithTimeout, WithDeadline, WithValue. Conventional first param ctx context.Context. Don't store in struct; pass explicitly. Values only for request-scoped data like request IDs, auth tokens, not optional params. When Done channel closed, operations should return. Err explains cancellation/deadline. Use context.Background/TODO root. Helps graceful shutdown and resource cleanup. ~150 words. Need count. Let's draft and count.\n\nDraft:\n\"In Go, context.Context carries cancellation signals, deadlines, and request-scoped values across API boundaries and goroutines. It lets a caller cancel an operation—manually, on timeout, or at a deadline—and have all downstream work observe that cancellation via the Done channel and Err method. This prevents wasted work, leaked goroutines, and lingering resources. Contexts are created from Background or TODO and derived with WithCancel, WithTimeout, WithDeadline, or WithValue. They are immutable and safe for concurrent use. By convention, functions that perform I/O or long work take ctx context.Context as their first parameter and pass it along. Values should hold only request-scoped metadata, such as request IDs or auth data, never optional arguments. Context is not a general dependency-injection or logging mechanism. Overall, it provides a standard way to propagate control-flow signals through Go programs.\"\n\nCount words: In(1) Go,(2) context.Context(3) carries(4) cancellation(5) signals,(6) deadlines,(7) and(8) request-scoped(9) values(10) across(11) API(12) boundaries(13) and(14) goroutines.(15) It(16) lets(17) a(18) caller(19) cancel(20) an(21) operation—(22) manually,(23) on(24) timeout,(25) or(26) at(27) a(28) deadline—(29) and(30) have(31) all(32) downstream(33) work(34) observe(35) that(36) cancellation(37) via(38) the(39) Done(40) channel(41) and(42) Err(43) method.(44) This(45) prevents(46) wasted(47) work,(48) leaked(49) goroutines,(50) and(51) lingering(52) resources.(53) Contexts(54) are(55) created(56) from(57) Background(58) or(59) TODO(60) and(61) derived(62) with(63) WithCancel,(64) WithTimeout,(65) WithDeadline,(66) or(67) WithValue.(68) They(69) are(70) immutable(71) and(72) safe(73) for(74) concurrent(75) use.(76) By(77) convention,(78) functions(79) that(80) perform(81) I/O(82) or(83) long(84) work(85) take(86) ctx(87) context.Context(88) as(89) their(90) first(91) parameter(92) and(93) pass(94) it(95) along.(96) Values(97) should(98) hold(99) only(100) request-scoped(101) metadata,(102) such(103) as(104) request(105) IDs(106) or(107) auth(108) data,(109) never(110) optional(111) arguments.(112) Context(113) is(114) not(115) a(116) general(117) dependency-injection(118) or(119) logging(120) mechanism.(121) Overall,(122) it(123) provides(124) a(125) standard(126) way(127) to(128) propagate(129) control-flow(130) signals(131) through(132) Go(133) programs.(134) 134 words. Fine. Need \"about 150 words\". 134 acceptable? Could expand a little. Maybe add \"It helps servers handle client disconnects...\" etc. Need maybe 150 exact. Add sentence: \"In servers, this helps abandon work when clients disconnect or shutdown begins.\" That's 11 words -> 145. Add \"Use it deliberately.\" 3 -> 148. Good. But final should be answer only. Ensure no citations. We can mention context.Context. That's fine. Need maybe 150 words. Final. \n",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer about context.Context in Go, about 150 words. Need explain purpose. Should be concise. Need ensure about 150 words. Let's craft. Explain context.Context carries deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines. Used to propagate cancellation to downstream calls, avoid leaks, manage timeouts. It's immutable, safe for concurrent use? Actually Context is interface, derived via WithCancel, WithTimeout, WithDeadline, WithValue. Conventional first param ctx context.Context. Don't store in struct; pass explicitly. Values only for request-scoped data like request IDs, auth tokens, not optional params. When Done channel closed, operations should return. Err explains cancellation/deadline. Use context.Background/TODO root. Helps graceful shutdown and resource cleanup. ~150 words. Need count. Let's draft and count.\n\nDraft:\n\"In Go, context.Context carries cancellation signals, deadlines, and request-scoped values across API boundaries and goroutines. It lets a caller cancel an operation—manually, on timeout, or at a deadline—and have all downstream work observe that cancellation via the Done channel and Err method. This prevents wasted work, leaked goroutines, and lingering resources. Contexts are created from Background or TODO and derived with WithCancel, WithTimeout, WithDeadline, or WithValue. They are immutable and safe for concurrent use. By convention, functions that perform I/O or long work take ctx context.Context as their first parameter and pass it along. Values should hold only request-scoped metadata, such as request IDs or auth data, never optional arguments. Context is not a general dependency-injection or logging mechanism. Overall, it provides a standard way to propagate control-flow signals through Go programs.\"\n\nCount words: In(1) Go,(2) context.Context(3) carries(4) cancellation(5) signals,(6) deadlines,(7) and(8) request-scoped(9) values(10) across(11) API(12) boundaries(13) and(14) goroutines.(15) It(16) lets(17) a(18) caller(19) cancel(20) an(21) operation—(22) manually,(23) on(24) timeout,(25) or(26) at(27) a(28) deadline—(29) and(30) have(31) all(32) downstream(33) work(34) observe(35) that(36) cancellation(37) via(38) the(39) Done(40) channel(41) and(42) Err(43) method.(44) This(45) prevents(46) wasted(47) work,(48) leaked(49) goroutines,(50) and(51) lingering(52) resources.(53) Contexts(54) are(55) created(56) from(57) Background(58) or(59) TODO(60) and(61) derived(62) with(63) WithCancel,(64) WithTimeout,(65) WithDeadline,(66) or(67) WithValue.(68) They(69) are(70) immutable(71) and(72) safe(73) for(74) concurrent(75) use.(76) By(77) convention,(78) functions(79) that(80) perform(81) I/O(82) or(83) long(84) work(85) take(86) ctx(87) context.Context(88) as(89) their(90) first(91) parameter(92) and(93) pass(94) it(95) along.(96) Values(97) should(98) hold(99) only(100) request-scoped(101) metadata,(102) such(103) as(104) request(105) IDs(106) or(107) auth(108) data,(109) never(110) optional(111) arguments.(112) Context(113) is(114) not(115) a(116) general(117) dependency-injection(118) or(119) logging(120) mechanism.(121) Overall,(122) it(123) provides(124) a(125) standard(126) way(127) to(128) propagate(129) control-flow(130) signals(131) through(132) Go(133) programs.(134) 134 words. Fine. Need \"about 150 words\". 134 acceptable? Could expand a little. Maybe add \"It helps servers handle client disconnects...\" etc. Need maybe 150 exact. Add sentence: \"In servers, this helps abandon work when clients disconnect or shutdown begins.\" That's 11 words -> 145. Add \"Use it deliberately.\" 3 -> 148. Good. But final should be answer only. Ensure no citations. We can mention context.Context. That's fine. Need maybe 150 words. Final. \n",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 45,
+			"completion_tokens": 1239,
+			"total_tokens": 1284,
+			"cost": 0.0007486497,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0007486497,
+				"upstream_inference_prompt_cost": 0.0000067365,
+				"upstream_inference_completions_cost": 0.0007419132
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 1031,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

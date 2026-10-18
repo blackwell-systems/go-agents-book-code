@@ -1,0 +1,67 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092328-hc6PhBTyPo4Ot3Q7W0Rw",
+		"object": "chat.completion",
+		"created": 1792092328,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "`context.Context` in Go carries request-scoped information across function and goroutine boundaries. Its main purposes are coordinating cancellation, enforcing deadlines or timeouts, and storing small, immutable values associated with a request—such as trace IDs or authentication metadata.\n\nA function that may perform work, block, or make I/O should generally accept a context as its first parameter:\n\n```go\nfunc FetchUser(ctx context.Context, id string) (User, error)\n```\n\nCallers can derive contexts with `context.WithCancel`, `context.WithTimeout`, or `context.WithDeadline`, then call the returned cancellation function when work should stop. Functions should monitor `ctx.Done()` or check `ctx.Err()` and return promptly when cancellation occurs.\n\nContexts are commonly passed from HTTP or RPC handlers down through database, network, and service layers. They should not be stored in structs, used as a general-purpose parameter bag, or passed as `nil`; use `context.Background()` or `context.TODO()` when no better context is available.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SiqojkKttoLzk0u3UlGZEwWB6cZhxnH18OO1Vdh_M3qFosddpslT0Bk49Ps6Z9mAko7Jy809bn7oJs0W3B7RjNY2aQ3ETWOFyGp1H5aie83bnWmVwnrt2jekqNHmlvNRafCnn-GLvBP09fh1ZEVL0URRDdJZSzGcidD35eypEuBNphDu4PhjJ7kMA1dZ7qnXXMUa88wKym4ROs3m3elTnZAgL2dX7KrYxnPPjI7JeWONDFwu4Yo0d-9qFKscSua3srYXSpexn27lyzrkrdYWPIqUzZgIgbI8NqlXATsI5xVl8jy1RQN8kW9yydFSsQRAyvg6TaGPpsdSkyT4G_pZo8tUemKz2Uen0CxAr82CpSYHOBXISuUvcRKxJJyDdJtvCIUNr5rNioClqTuskojzsF6uxpNJd725HY-PhDpTVnjCWxCEsqjkmd6fLggYHYf8MdeAX1uYggTJaVCq7YW_uSdSvZBNn3GjeZsG8Vz2KK7uqlGrF_Yx9E-v-YuaAvDCVmpSow7MbbrEFqV7spKcXbZYirtve2U9wS4AZCZD2btpHTUrQMDhsHTz_Nd8ccmbAF0WbAFomEsEWKhRDXzrDTxUmZB1qPnMUihYJsmVz9B07tLhHTqwvZavoNizlCIhvlzR201o878cu2Y-IG1Hk5knr1RkzqYfpXqyLAsj-_lerQPFcfXWGntWUeGqVjg2zwiSN1LtNntVbnv3mxeKqVcSjTzNKgDULZL74kdoG4lTc32hK0yOvtDenbuxpRPraf536sGGqoiqi77n4AotZrMZNBekIufEszgzIn88SjiJ-7UUTXlneodhe3lwwNlNGFON52Awp8OOwupFGPjohxVbwHrp2fn2HzNHBMQqVpp0PNfvEYjwRyWR7wOe9rlrZcwQ1bEC5GK2UjpPhCYd8iZKID5rfb0q1mUBlKvbZyWguhm5qQ1ZvL3sIIKnVj5LxzIPRUI0_kERkbPz5CA8Lr1rn4psNysSh8MIqXF8zJbHJCg8sQHuhT1h_KlX5G3PV_AQFCtJncI9Ba-meXg_wS6jX6NfqMz5FUatXsjRpnrfA5uliTN2MpwTiEsmDmVSZJAlY-oZRddHDpxFRcJWBGBQU61gCC0KKB2tEDTluf2Kd5T_1lOBVj7szc93C0YRWTBRz6MxKr9VCFSM_ZzHRakjspQBVHtBhPDkEfH2BLyf_dqDMRaobFNFeOmYSgcOFNkq4MWk_gNBJ0K6AvFy6nz1Skc-ym4yOFMB9fR5kuY3-XVdv4AP6RSNWMcr2WvJ-aA8zRc3w3G-tbaJ6_CSjqBkz4-b5eeNDaCil3yJPwEzbJ2OE-kA1bl_xD0-MDxBekUf0h8vXfT_oc7SpQirC2vDQuUciNQ5GaCeyOqgWKSkIUGrakLTVnPrjFYnKrc4FWBiEUirGaEaB1rKJMjeGU2hDUVS9_Ml0HCC--W6Q1LsNBxSFrFzZnuBInIWHEC3gohdW0RAwXAd-2bjAUsHd5mjSnu6KwBl2kcNXdegqO4s9aYxIj7Y812_783R1NmjrNONfZIzIY-H0a5l2Kavouxuvio0o_J5w8ZpllVkvtoqR6Kow6az2m4Zq58YecdcI0TR_avDerV1EIgcuhBwAp-p0N-kWmn2jM0q9gh2a8qknpfAco-rvhK4OYuBNYtb_lcH9AlLdoaPvp1tFJu9q5YM6xaWdCZx3IAFlcQuN5U2WQBYisc24z9Bw8z6lq7xTYvEIVaAZudAisIks5QUc87XcUSAKWDIiSe7eBImHQ0rM2lUypa-Oz6s67bihwAkyUde28wpEu3FfiZht11STErnKloSNvNucg-HyjeXq4JeLbKKJo8ItimprWVwH4NEm9CDZCNLznakHAqeHYfYRjHZodI-yb-QYWm8S1s25aRmmqNuYj6zTYmgfhm0HzhDEeXl5juoBcOW9YllPsOBYYXeA1cpwwMDTAiZD6rzXtFnOj8iWxjOkBG58N-fG9nvZR-78vDDflkGbwyU8ikKTUwGxWhLdQeBqCWY2CHHSwcPDSG8jdvynr2IFIfGZ_ojQIHPkSEpuS2l8i680g7wWXixk3laXPm_n1rOSMRSg6lAKUdJmphoUNW-3G1qSKt06Fjt-JLDNOj_G3eINCs8uMN2g==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0b1c760bb30ef1f5016ad128a9505c87d198f9513111167af6",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 21,
+			"completion_tokens": 256,
+			"total_tokens": 277,
+			"cost": 0.0003114,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0003114,
+				"upstream_inference_prompt_cost": 0.0000042,
+				"upstream_inference_completions_cost": 0.0003072
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 45,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,58 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092339-WYOIKiaZJk6nE25b45k5",
+		"object": "chat.completion",
+		"created": 1792092339,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "Go's `context.Context` is a standard-library type for carrying deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. Its main purposes are:\n\n- **Cancellation:** When a client disconnects or a parent operation is abandoned, cancelling the context tells every goroutine working on its behalf to stop, preventing wasted work and leaked goroutines.\n- **Timeouts and deadlines:** Functions like `context.WithTimeout` and `context.WithDeadline` make operations automatically cancel after a set time.\n- **Request-scoped values:** `context.WithValue` can carry data such as request IDs or authentication info through a call chain. It should be used sparingly, mainly for cross-cutting concerns rather than function parameters.\n\nBy convention, `ctx` is the first parameter of functions that do I/O or long-running work, and it is passed down rather than stored in structs. Libraries like `net/http`, database drivers, and gRPC all accept contexts, so one cancellation or deadline propagates through the entire chain of calls.",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 28,
+			"completion_tokens": 351,
+			"total_tokens": 379,
+			"cost": 0.0001783,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001783,
+				"upstream_inference_prompt_cost": 0.0000028,
+				"upstream_inference_completions_cost": 0.0001755
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

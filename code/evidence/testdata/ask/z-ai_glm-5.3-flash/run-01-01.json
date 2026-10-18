@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091610-f7cK5uKKzG2BtLbXI8gM",
+		"object": "chat.completion",
+		"created": 1792091610,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "A **nil slice** (`var s []int`) has no underlying array—its slice header is zero-valued, so `s == nil` is true. An **empty slice** (`s := []int{}` or `make([]int, 0)`) points to a valid zero-length array, so `s == nil` is false.\n\nFunctionally they're nearly identical: both have length 0 and capacity 0, and `append`, `len`, `range`, and indexing all behave the same. Differences appear in `reflect.DeepEqual`, JSON encoding (nil → `null`, empty → `[]`), and explicit nil checks. In most code, you can treat them interchangeably.",
+					"refusal": null,
+					"reasoning": "The user asks about the difference between nil slice and empty slice in Go, with an under-100-word constraint. Let me think about the key points:\n\n1. Nil slice: `var s []int` — no underlying array, len=0, cap=0, s == nil is true\n2. Empty slice: `s := []int{}` or `make([]int, 0)` — len=0, cap=0 (usually), but has a non-nil pointer to a zero-length underlying array, s == nil is false\n3. Functionally nearly identical: len, cap, append, range, indexing all work the same\n4. Differences: nil slice has nil pointer in slice header, JSON marshals to null vs [], reflect.DeepEqual, == nil checks\n5. Both are safe to use\n\nNeed to keep under 100 words. Let me draft:\n\n\"A nil slice (`var s []int`) has a nil underlying array pointer—its slice header is zero-valued, and `s == nil` is true. An empty slice (`s := []int{}` or `make([]int, 0)`) points to a valid zero-length array, so `s == nil` is false.\n\nFunctionally they're nearly identical: both have length 0 and cap 0, and appending, ranging, and indexing behave the same. Differences appear in `reflect.DeepEqual`, JSON encoding (nil → `null`, empty → `[]`), and comparisons. Both are safe to use interchangeably in most code.\"\n\nWord count check: Let me count... roughly 90 words. Good.\n\nFormat: short prose, maybe two short paragraphs. Code in backticks. Keep it tight.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user asks about the difference between nil slice and empty slice in Go, with an under-100-word constraint. Let me think about the key points:\n\n1. Nil slice: `var s []int` — no underlying array, len=0, cap=0, s == nil is true\n2. Empty slice: `s := []int{}` or `make([]int, 0)` — len=0, cap=0 (usually), but has a non-nil pointer to a zero-length underlying array, s == nil is false\n3. Functionally nearly identical: len, cap, append, range, indexing all work the same\n4. Differences: nil slice has nil pointer in slice header, JSON marshals to null vs [], reflect.DeepEqual, == nil checks\n5. Both are safe to use\n\nNeed to keep under 100 words. Let me draft:\n\n\"A nil slice (`var s []int`) has a nil underlying array pointer—its slice header is zero-valued, and `s == nil` is true. An empty slice (`s := []int{}` or `make([]int, 0)`) points to a valid zero-length array, so `s == nil` is false.\n\nFunctionally they're nearly identical: both have length 0 and cap 0, and appending, ranging, and indexing behave the same. Differences appear in `reflect.DeepEqual`, JSON encoding (nil → `null`, empty → `[]`), and comparisons. Both are safe to use interchangeably in most code.\"\n\nWord count check: Let me count... roughly 90 words. Good.\n\nFormat: short prose, maybe two short paragraphs. Code in backticks. Keep it tight.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 35,
+			"completion_tokens": 492,
+			"total_tokens": 527,
+			"cost": 0.00025125,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00025125,
+				"upstream_inference_prompt_cost": 0.00000525,
+				"upstream_inference_completions_cost": 0.000246
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 348,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,64 @@
+{
+	"status": 200,
+	"request": {
+		"model": "meta-llama/llama-3.1-8b-instruct",
+		"messages": [
+			{
+				"role": "user",
+				"content": "This chapter answers one question: what is an agent, in terms a Go programmer can build?\nIt starts by watching one work, names the parts, and then builds the loop at the center of every agent in this book.\nThe loop you write here runs with no AI at all.\nThat is on purpose: the loop is ordinary Go, and you can see and test every part of it before a real model is involved.\nHere is a small Go project with a bug.\nIts duration package parses strings like 1h30m into a time.Duration, and its tests fail.\nAn agent is given one instruction: The tests in this project fail. Find out why and fix it.\nA large language model, usually just called a model, is a system trained to continue text.\nYou send it text over an API; it sends back the text it predicts should come next.\nChapter 2 calls a real one.\nThe agent is the one you will finish in chapter 4: a Go program working with a model.\nThe table shows one run of it, one row per round trip.\nLater in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key.\nread_file {path: duration_test.go}\nRead the middle column again.\nEvery entry is a request.\nThe model asked to list files, to read them, to run the tests, and to change one line.\nIt never touched a file, and it can't.\nThe model is a remote service, reached in this book over HTTP: your program sends it text and gets text back.\nAnything that happens on your machine, your program has to do.\nEach of these requests is a tool call.\nA tool is something your program can do on the model's behalf, such as reading a file or running the tests, described to the model by a name and the inputs it takes.\nA tool call is the model asking your program to run one tool with particular inputs, such as read_file with the path duration.go.\nThe right-hand column is the other half of the work, and it is all your program.\nYour code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.\n"
+			}
+		],
+		"max_tokens": 400,
+		"provider": {
+			"only": [
+				"novita"
+			]
+		}
+	},
+	"response": {
+		"id": "gen-1792094039-zhWHhBaHneZghtzAsnhq",
+		"object": "chat.completion",
+		"created": 1792094039,
+		"model": "meta-llama/llama-3.1-8b-instruct",
+		"provider": "Novita",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "This text does not contain a specific problem that needs to be solved, but rather presents a chapter from a book that is developing a Go program to build an agent that interacts with a large language model. The agent is designed to work with a model that predicts text based on given input. \n\nHowever, a smaller issue is presented - a bug in a small Go project, specifically the duration package, which parses strings like \"1h30m\" into a time.Duration. The tests for this package fail, and the reader is tasked with finding out why and fixing the bug.\n\nIf you'd like, I can help with the smaller, specified problem of identifying and fixing the bug in the duration package.",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 464,
+			"completion_tokens": 141,
+			"total_tokens": 605,
+			"cost": 0.00001633,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00001633,
+				"upstream_inference_prompt_cost": 0.00000928,
+				"upstream_inference_completions_cost": 0.00000705
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

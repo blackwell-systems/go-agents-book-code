@@ -1,0 +1,246 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"content": "I'll run the tests and list the project files first.",
+				"tool_calls": [
+					{
+						"id": "toolu_01V76rinA9EiMNbuemNKZyPM",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "toolu_01AjRtmENeSQTXP2EJtc39xP",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSsgUKEAgSGAI4AUIIdGhpbmtpbmcSDHWIgxiBUb6uKwyvsBoM2rJlWZ9wxXpoNKh7IjBqCR9ghUi7QVU3Xyc3+osEhUHwoeUMBB54gv5y9ikpVBTANCR3syG1lx+ERJ0lWdYqzwRYQNOVl0wS6qDuw7MTaxNcPkU/1Gwl7uqXfGaE381kxU7kkvEFrXRIZA1Q9LewwWMiaQwQUs2TKAfqV4CtZx7Q+yMC4VqJASUR1iiT59EzWT5m7oCcVz1pGm3uYBQN3yWZojKlEU/LPS06+q7Re0/macqeC/8Nk15A2KP246zULcVsXYvbg+pj5g1u16yl1Qfhglsx9MeU3sq+wx8J//2VxGwxjrkXoQBPbv5a6uwPtChdHli+Qxa+/A1ELbsPhlorzsN1VhweYQk858kQdbYlTqt8O5jdwHhUqz3XUrYFrarUbfM4mdGoq0PwEmQOJn3K938iJtIH7zPj966cTW1/WnoX6N4zkLTl3iKwgp3qjOeIe6879mNhwNEN2teoqKn19iXJZ5bU+z+dFao2xTlmFds0495pvMroC7cef2UeWCi/T6jV4Ok3RcIueMqwHWwPHnuqVTFGFeRt4KC5uFvTOyZLNsRsJV5Dyl9XB2RBB6yk3XMludZB7JMkVPM9orfkjl1B5rydU1v+Vsemebb4rsueg2KP+veYE7JSrjpBXH99mOdzhlhT3weHohg2Mw58LtLuDhSU0c/t75ItaLw+RaFSbUOc6fiO7SzhhZfiORDVCuiuqpKl727mOgCCAAIsrkSjoTgS6V5AS46+yop0aN5ayVjMpkXu5vjC4hfUl376TsLhYbGG9iJ5q4s4WJ9N3FlcMSSio5umeHXUvbAvEtw6NdO4BHHR4Saf3Q1jyQP60InJ/Q7SMXBlwFknA71g5nkwn6ZpB6ON6Chf4moYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "toolu_01V76rinA9EiMNbuemNKZyPM"
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "toolu_01AjRtmENeSQTXP2EJtc39xP"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01MxczT8qo5of9EUh8XJcXCV",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\": \"duration.go\"}"
+						}
+					},
+					{
+						"id": "toolu_01TgxCeCToyXvLcx1t3X4CrC",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\": \"duration_test.go\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "toolu_01MxczT8qo5of9EUh8XJcXCV"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "toolu_01TgxCeCToyXvLcx1t3X4CrC"
+			},
+			{
+				"role": "assistant",
+				"content": "The bug is in the unit table: `'m'` is mapped to `time.Second` instead of `time.Minute`. That's why \"45m\" parses as 45 seconds, and \"1h30m\" comes out as 1h0m30s. I'll fix that line.",
+				"tool_calls": [
+					{
+						"id": "toolu_01LoiT5w5Ue8PxDfkWHnusUu",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\": \"duration.go\", \"old\": \"\\t'm': time.Second,\", \"new\": \"\\t'm': time.Minute,\"}"
+						}
+					},
+					{
+						"id": "toolu_013PyoD9Jh86aUhDAmXf8Ni8",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "Error: the file is locked",
+				"tool_call_id": "toolu_01LoiT5w5Ue8PxDfkWHnusUu"
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "toolu_013PyoD9Jh86aUhDAmXf8Ni8"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093806-nW4L8oocWmm3rwmAPpWA",
+		"object": "chat.completion",
+		"created": 1792093806,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "The edit failed because the file is locked. I'll retry once in case the lock is temporary.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01UGi8WkAdvfZ6etdYGRgEnG",
+							"function": {
+								"name": "edit_file",
+								"arguments": "{\"path\": \"duration.go\", \"old\": \"\\t'm': time.Second,\", \"new\": \"\\t'm': time.Minute,\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQS4wcKEAgSGAI4AUIIdGhpbmtpbmcSDJVRSCeKAJZZdVzEfRoMRY65LvbgyjmtTDb4IjDhtVkxnmJ2Rq2qb9c3pqW4+pUVRj8XwWPvfxvlRN1HDo2fCUl/g/MI90poQGV3d8sqgAeY+DvkvYfJIeSyJcZcQBiyyO7oaj6qzwqBU9Kg9Fgc+Iyd5bTsDVHVB3lslqMVsL9Nriy6UUPiduHvk9jGetVPIh+9aXVR3ZYb5T0gcXi89MqquTVjuf18kRYoGp8LZQLHHnUe74/Vl/Ffynh92YFSORZJpI6SbiAU4JPZ/UgaRg4ZP65y6fWwrctGegSVheV1tR3ozNFDHhrAbPRFf81ZunQ8T4i4GdXDABz4rKHGn3y4b76JFJS1ThGw4Qjd3I0iKsLcUL81X3Chw/1zTH8K/wIon18UceHVB8BQG+8L3d5S6al0VLQO8aF4whF+43f1rLoSpjtJ0suqTcIYlBzFleu/Um/ZmbMY1iAOR+2b+gNV7GD0Yi49M4p5GKwXplRXF6db9TVxlQUg5fvoGHr06MxiR8Blr0mPNq6YM6aSaGnL7qEAxwfwtIQv+PtkODHoQUy0Q0T+lgmleY5BH/LJ/uNhamXgkHQAI8XmewAiDPmUwz3AuZG2UEsiWiUuZRyi+QFNTzFfGnRs1Ojl9pWyRcbCBhFIB+igkfeqRbXHFVotdazN8vJq0wRoc4b/ullK+627IyooWDmevd+z5nZe4OOT0SRUYGUmgcn9DBAuT9YFMjE1IGZrCRTJVzaLhToa4dxJBznRqWgFUIWNnnnQy/Cnai2Q9BZWBFbBcwTY6VkdolJU++bG0QBajg0AyNZy0eFf+qI7ByMNKyWJEfcFaQWCbtvQup9cZXnqfazrwiHrYuoh2sz3Jn8qWj0zqXBhobED9FwbIwWVyenbuiPrcDu3Rc7CkxCiMurqI/if8wcZNDd9DV6y4gyfUNtCBsGahcajQdN0XzgLiIlkgNqKQSGNLSlCdxlnnPy7gOdHZ+KLbvZ0EPnE/+kdnIQPA0KttT8vb79oLECbbeBrXx0YbRmDg6R25D9zlPFll8OLoPoIOuj1i3NluMB5hXNQGXH2iTtzBy8YI+pjHOx4BvauAdEBXQAXeOcuGdSxAb4FBm79N4tKTCw5qrVNy14Nz4o1OuS+2j96N9zxfVHfS3pKOJYxh00n/AvCvWrKrDPzDdWmVQLOwRHJxqPMIaVRT8zQQwI97cA+vSg+4/7PZMRu+M93BFLE06Yqcl1c+ZF9fRGX6bx6iiiuGQgotJmVHe/GIVOcCfvdzq9nlfjg5FFBkbq41uzGbUyJdrfIaq+h7RgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 2212,
+			"completion_tokens": 232,
+			"total_tokens": 2444,
+			"cost": 0.0003372,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0003372,
+				"upstream_inference_prompt_cost": 0.0002212,
+				"upstream_inference_completions_cost": 0.000116
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 93,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

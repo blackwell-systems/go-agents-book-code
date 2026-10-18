@@ -1,0 +1,162 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_xIQW7Fmwivirgs5GtwG9i8ga",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0S5DsUUh7YOuD-hpyQdng0Z8CFhh1TbPA22NnRwoCt57hnyhIEtySc13Ix0GizkfI_c1UWf4OSeQ_XBCDwAjyIEjgaSjUtyKbXhRZqdMP1UroD0sjo_JxkTeGaoaTvtX7WutHWzDqV0yp4s9arnwASJn8srWgHHzlfSU-qUdMHR9SUvy1oFhM70eCNtMYslgWBYd_5CXY3qSXYVvxt3eP7flEAtJYg3NWiPGj0AC9Jk4_zEEY-22U3HCEIgYpHWMPTpq9ehvYwkQtaTdLoxbIAaTRkhnYs3vQD4MqnYVqTplhLzgxJscGEXPvS1U0NVvD9YFtMQPYPmI8RFaRI8cpkloGr2jbAomsX6p_zMmsD-HIeMoTZc6qu9PWj9F6JvlWwfoNQLD607OxiN7cNwmSPQOHca1mt5wB5ci4qSMnqHNNdCw7HNgY2rf51ZZZ2EoV3yc6_QiJZUvGeZTfidIk0cmCYIJqWY1vclkfgTL7YyTmLr4WG7Mo8-oCpkAt4U-6GbUR9-A-BGXa8Kbwmi0Q00o2xEYg7w5Cx3RpQtAu3q1I2phq0yON6uFiGdtGR0ZXLXPSn9EPz_ICr6pJf3gFemiGuKSFKBrhuOyOt1FU48y2CVp6etmxL4uBcnon48d7Tlpx8dgXQBNWja01MQjH3NBNsT_KVM29knCUV3QQhU0VQ8Vr7bxhUsnso_zp9lH2Vqg6wUOopOB6y3bpEOQYKfN_iV9gvfhQnp4uAes2fL_I2uJ-tQzGhr5U8nllljS-TqFfiN-_zrMemgekjfcPdhxMQbn461iyMV-vcVohACgEBC63d2_8yPBUnNKzyRFLEC30ruuYSjTxFMxrPPkIp341t-jHCXLfrJf2yZ4ThHtTZyYxcOb4Jejw2NsH8vqJGYYzp-N-UTSUs9Il3sELA1qQELBmqS_UjAl-vB_nZCvJwXoyA-WD1Vms0bnQJ4PeU0KHOhloXO6GymkCJZtRCgawr1LmfHjf_S7LaT8TODqF-aFTRCS3wvW5iWKrRg-FZapwvNLAlFbZu0Hk9zdujF__mkNWXAJfihpSgErUlK6N6g1r4YUtxHpWaVs2kgGwo1AW4Ldh_1YYsUYbi5xYpL7ZhwRxtwiI18NQr5kzSPim868-Mrlw4IklTzibSgNcYYI8rKmVpPOzbbSQqjYP4H6jJdaW-cxn0gIaD-tczFrrkiofRImrUcrdz4NDyOrb4q3w9SOhAIgLuCsj8tp8ymhQfO_lIL8Rgp0MYCYnIgeKoxcdGzxMP-aoVTS_dNqWN_2Ol0l5MbLtRpRorQh00Z3c6cZDPZO9iqEr-YAOvRzHPxGdDxDxndyS0Fgf3JCqZZhv2xmDuxoXaNYjolO_LrHcpYyWydtykh3zT-IYU5JxfvhxT-SWqQF0Yz8p0ZErZpUdDOhtg8x33-t_X_Vbn7WcVca-AYKoXKIfCXugc9SuMO8w2Zx249b8ALLxDV3npNMjE3G5vdh-cR8W3q4Q-1bUY1DdVqjNWf1sIG7P2SstSUPUu2wqwcRr6pLTKGwT_jnptcFjNwxGm9SLI0f_niU1kdVkf2iljYmApp8gpCh0egcbVPK0uLPM2XvBq3_DNAcUMtlomlEKiFgHr2UVB1aB5BiSTTrdJ2vurHB59wZezDqLuYZ-UdNku63MTAyY0yFjWuNUuYnz7HyUPPL-hmTAA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_0237c2909c93f19b016ad12e43583087d19ef9dd4b4bd0bfaf",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_xIQW7Fmwivirgs5GtwG9i8ga"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file. Prefer reading the test file first.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093763-VPAXMX0BcSt12rWx0KK1",
+		"object": "chat.completion",
+		"created": 1792093763,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_z8lxzpBRK77q5pEzZuesjrOn",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"duration_test.go\"}"
+							}
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 171,
+			"completion_tokens": 20,
+			"total_tokens": 191,
+			"cost": 0.0000582,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0000582,
+				"upstream_inference_prompt_cost": 0.0000342,
+				"upstream_inference_completions_cost": 0.000024
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

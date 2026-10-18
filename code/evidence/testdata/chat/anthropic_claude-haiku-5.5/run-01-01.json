@@ -1,0 +1,58 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091656-ON0LPlkoyP1GFIakzxk7",
+		"object": "chat.completion",
+		"created": 1792091656,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "Here's a sensible scope for a first version:\n\n**Core commands**\n- `add <title> <author>`: add a book with status \"to read\"\n- `list`: show all books, with their status\n- `start <id>`: mark a book as \"reading\"\n- `finish <id>`: mark a book as \"done\"\n- `remove <id>`: delete a book\n\n**Storage**\n- Save to a single JSON file (e.g., `~/.books.json`) so the list persists between runs\n- Load the file on startup; create it if it doesn't exist\n\n**Data per book**\n- ID (auto-incremented integer)\n- Title\n- Author\n- Status (to read / reading / done)\n\n**Skip for now**\n- Ratings, notes, dates, tags, search, sorting, editing, and multiple lists. These are easy to add once the basics work.\n\n**Go pieces you'll need**\n- `os.Args` or the `flag` package for parsing commands\n- `encoding/json` for reading and writing the file\n- A simple `struct` for the book and a slice to hold them",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 49,
+			"completion_tokens": 330,
+			"total_tokens": 379,
+			"cost": 0.0001699,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001699,
+				"upstream_inference_prompt_cost": 0.0000049,
+				"upstream_inference_completions_cost": 0.000165
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

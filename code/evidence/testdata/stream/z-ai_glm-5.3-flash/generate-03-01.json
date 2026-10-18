@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092415-PDxa57YqheyPf4LHJGp8",
+		"object": "chat.completion",
+		"created": 1792092415,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "`context.Context` is a standard library type that carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. By convention, it's the first parameter of functions that may block or perform I/O, typically named `ctx`.\n\nIts three main purposes:\n\n**Cancellation**: A context can be cancelled explicitly (e.g., when a client disconnects). Functions monitor `ctx.Done()`, a channel that closes on cancellation, so they can abort early and free resources. Cancelling a parent context automatically cancels all derived child contexts, propagating cancellation through entire call chains.\n\n**Deadlines and timeouts**: Constructors like `context.WithTimeout` bound how long an operation may run—useful for HTTP requests, database queries, or any call that shouldn't hang forever.\n\n**Values**: `context.WithValue` attaches request-scoped data (trace IDs, auth credentials) that must pass through middleware and deep call stacks.\n\nContexts form a tree: you derive child contexts from parents rather than modifying them, and they should always be passed explicitly, never stored in structs.",
+					"refusal": null,
+					"reasoning": "The user wants an explanation of `context.Context` in Go, in about 150 words. This is a technical question with a specific length constraint. Let me think about what context.Context does:\n\n1. It carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines\n2. It's typically the first parameter of functions (named `ctx`)\n3. Key uses:\n   - Cancellation propagation (e.g., when a client disconnects)\n   - Deadlines/timeouts\n   - Carrying request-scoped values (like request IDs, auth credentials)\n4. It's immutable - derived contexts via WithCancel, WithTimeout, WithDeadline, WithValue\n5. Parent-child relationship: cancelling a parent cancels children\n\nI should aim for around 150 words. Let me draft:\n\n---\n\n`context.Context` is a standard library type used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. It's conventionally the first parameter of functions that may block or do I/O, typically named `ctx`.\n\nIts main purposes:\n\n**Cancellation**: A context can be cancelled explicitly or when a deadline passes. Operations watching the context (via `ctx.Done()`, a channel) can abort early, freeing resources and avoiding wasted work. Cancelling a parent context automatically cancels all derived child contexts, enabling propagation through call chains.\n\n**Deadlines and timeouts**: `context.WithTimeout` and `context.WithDeadline` let you bound how long an operation may run—useful for HTTP requests, database queries, etc.\n\n**Values**: `context.WithValue` attaches request-scoped data (trace IDs, auth info) that traverses middleware and deep call stacks.\n\nContexts are immutable; you create derivatives rather than modify them. Functions should not store contexts in structs—they pass them explicitly.\n\n---\n\nLet me count roughly. That's about 160 words. Close enough to 150. Maybe trim slightly. Format: the question is technical and deserves a clear structured answer. Some light formatting with bold or a short list could help, but given ~150 words, maybe flowing prose with a few short paragraphs or a compact list. I'll keep it concise.\n\nLet me finalize at ~150 words.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user wants an explanation of `context.Context` in Go, in about 150 words. This is a technical question with a specific length constraint. Let me think about what context.Context does:\n\n1. It carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines\n2. It's typically the first parameter of functions (named `ctx`)\n3. Key uses:\n   - Cancellation propagation (e.g., when a client disconnects)\n   - Deadlines/timeouts\n   - Carrying request-scoped values (like request IDs, auth credentials)\n4. It's immutable - derived contexts via WithCancel, WithTimeout, WithDeadline, WithValue\n5. Parent-child relationship: cancelling a parent cancels children\n\nI should aim for around 150 words. Let me draft:\n\n---\n\n`context.Context` is a standard library type used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. It's conventionally the first parameter of functions that may block or do I/O, typically named `ctx`.\n\nIts main purposes:\n\n**Cancellation**: A context can be cancelled explicitly or when a deadline passes. Operations watching the context (via `ctx.Done()`, a channel) can abort early, freeing resources and avoiding wasted work. Cancelling a parent context automatically cancels all derived child contexts, enabling propagation through call chains.\n\n**Deadlines and timeouts**: `context.WithTimeout` and `context.WithDeadline` let you bound how long an operation may run—useful for HTTP requests, database queries, etc.\n\n**Values**: `context.WithValue` attaches request-scoped data (trace IDs, auth info) that traverses middleware and deep call stacks.\n\nContexts are immutable; you create derivatives rather than modify them. Functions should not store contexts in structs—they pass them explicitly.\n\n---\n\nLet me count roughly. That's about 160 words. Close enough to 150. Maybe trim slightly. Format: the question is technical and deserves a clear structured answer. Some light formatting with bold or a short list could help, but given ~150 words, maybe flowing prose with a few short paragraphs or a compact list. I'll keep it concise.\n\nLet me finalize at ~150 words.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 27,
+			"completion_tokens": 676,
+			"total_tokens": 703,
+			"cost": 0.00033908,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00033908,
+				"upstream_inference_prompt_cost": 0.00000108,
+				"upstream_inference_completions_cost": 0.000338
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 558,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,73 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this Go project fail. Below are the test output and the source files. Reply with only a JSON object {\"path\": ..., \"old\": ..., \"new\": ...} describing one edit that fixes the bug: old is text that appears exactly once in the file, and new replaces it.\n\nTest output:\n    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject\n\nFile duration.go:\n// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n\n\nFile duration_test.go:\npackage duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092925-lxxtuZLuVLBW1cZXC5tb",
+		"object": "chat.completion",
+		"created": 1792092925,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "{\"path\":\"duration.go\",\"old\":\"\\t'm': time.Second,\",\"new\":\"\\t'm': time.Minute,\"}",
+					"refusal": null,
+					"reasoning": "**Correcting JSON output**\n\nI need to fix a bug in the JSON output. Specifically, it seems like the time value should be in minutes instead of seconds. I'll change the old value of \"'m': time.Second,\" and update it to reflect the correct minute format. It’s a simple edit, but I want to ensure it’s right since accuracy is important for the user’s needs. I’ll keep the output to just the JSON as requested.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Correcting JSON output**\n\nI need to fix a bug in the JSON output. Specifically, it seems like the time value should be in minutes instead of seconds. I'll change the old value of \"'m': time.Second,\" and update it to reflect the correct minute format. It’s a simple edit, but I want to ensure it’s right since accuracy is important for the user’s needs. I’ll keep the output to just the JSON as requested.",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0Sr_0Zekqbt-i0nY1j-h5tmE0lHwKMZPTsYUaz9fs7jkaIcilsoez081A6zCg38Cvm1bKL6r49NG3Y-1iFJvH1PNwFrHuwuqL-XSs9yuLMd-JRN4qgOcMStvRk-ulDF5Qq4Lscv9CDa6EH5vsM-N9PHg0GJSxKp2dkn3H8nIYjxqaXKkF6zdcbiS-A-NdLe5FE4iztHOOPE5lCkbv0vbDIrOQmFuQBQ9UYwoLYOTmHYe9SgClNpBDwFQP4Fxn6pLz82UtbmUmS1etUlvxocurKzVIoZtf4x6qg67knIMpWHJs4T1TTqZoqXabX2vplwxh28rsfCWvmB6D1VgCS1r7Kfz_ranJxq9X8-FRXWy7xtfMNkNoKEZBLZzgTchr78bthK3KvFUxqYkuPhvlGnChzWM0uzrkr73iSAPS5ZSI3zkD6_8o4isfgjnpWExhgf3r-RHdkLtFBxN_fc7ZrIQMqsV18qyVmmHPGms6vxo7LxSBNEiOD0JNt8g2b5hOGd3lvtExVmytOt3XwgE59T6S8xOAlXgHK3Nt3GtJKhSkXgyg0EDgdmV9rZV8npgU5W5MC_3AbfiPgi9y6hI7MXC4Te8u3giOYL4JKOz0bT15nhtBenXDQqJI-KmdoZgzIWGdDY2gvFzG_lEICedjLHQiTAJhi6ZFSu0leUKfisCrdVje2p5idiQVGcpDod6TLeProypWjSdBDIZDp1ZVfnkAr3IGTdidhsXMGVx9TuULC8sUh0GUCDW3tZXx10QJcNYszE4iPVnKRw3IdJAE_UnFpO1aYSDIgK9gJ_J8uC7aeyFHR6L7tp8qxQP7cGHgZzpSauWiAN_4uODHCFFHHfjlWZpMHo0BQmVcs4ve31voAZ3F-2uBYYqt_hh6WlyKFhN9MR2PB5klJSSzpFRvaJ5KWFjz2yx7J6NKBLVxoHM4ThVO7gxFuPVvPwMbFAfZ6JTnlLEbjn7c_esHrbe0ULEq5i6YzFRpKzVfBSUM8wdkMq_EcNRiQo9lV9TQmcIwbCVUL46mfwktK7_ioNJIZQjMGfQH2yd07vZAgKv-wPMB6y-WXfuznhWBM_Kj2za5WKeDZnFnNOH5xkb69266F4jaOk-6N3FRTQE3Xck8OhQv49Jy44q2TPPNOs9kr6I82L3nKH36AoRYXS_1TqaiwsM32f1g7eaZvezNuMq1UwNzR9MjW0hnQDYYX13-HEgu-fwv1Eql3zSQUcOOQGfEsDbR02XaMhUL48rA_Mu8fPZ-4uxgozPAhHUGpUnOxSsYi73J9zbsxZumwONY5Z1jCNK307NhyOXF4FGK2MqjbC6m9ti5KFgcbJQImBkR_ipr64tunWzqN5dlo7_dec5gtN3BhAcApNzIrt0XH8jczjjvLdQPhjzlhNJ5KZ-3wqc4ZgZ2fxMW8VBHfToqSNBZNX1v8p3tca23PsFjmJTJeB15fbooSwU8mwm5m_eWGijfDwxJK2dwp1TTRll-GgIaBw1BwP_KBYm_lA_ZhQd0fZJKl4b08pmL0V7bytXusE9qsQSrGWVvspHrCosNGORRuSCttFUY-9azp7iWpRd7qdSYQRtyEChKGWIgykTxDOYcja1eKMEC9CFxOue5sh_r6YCNCsf2n75Of5F1iFxyEXCkx-2bNvrNOIUe_Ayyxg19eQ5Ezn0jEacLJOaJDwVfmBokZX5ay6jWs6ll7TH3u2zFymHjpAeaPFI3FbNuBA5siKbfuZ6QCzpyOcaTubTq3fbpnsinXjrpF1geOQqbPr1HxJGC4auw_Wggdaqdbxt598w7RzccpB1tGffPAisls8xpPmcIwZbhJmoapDGNl-J2ypaAtRl5_MVOTkKwyvzL9-gzEEBD-alARadojS_8SW0IqxQMXhwd8AGc-K1MKohn3wG_HDfvKD5TY6G_1ETgZaLFhTGRocFz97polNbQYmVMfOAF_NCmFv6Xwby_2OZ-ppaG7BLbCbsLtKBQ4lqya560jJg.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0827173d4969eeda016ad12afea1bc87d183137a286937c6b9",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 719,
+			"completion_tokens": 66,
+			"total_tokens": 785,
+			"cost": 0.000223,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000223,
+				"upstream_inference_prompt_cost": 0.0001438,
+				"upstream_inference_completions_cost": 0.0000792
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 34,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

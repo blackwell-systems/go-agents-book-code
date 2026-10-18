@@ -1,0 +1,210 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "crash-reports.jsonl holds crash reports from this service, remind. Find out what causes the crashes and fix them."
+			},
+			{
+				"role": "assistant",
+				"content": "I'll start by looking at the project files and the crash report log.",
+				"tool_calls": [
+					{
+						"id": "toolu_01EhGnBwmFhKGchGef1wyuyD",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "toolu_01C4Q7yRETttWpPwjQLiDwvH",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\": \"crash-reports.jsonl\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQStQYKEAgSGAI4AUIIdGhpbmtpbmcSDDjAvu/guPFq9zr9nhoMbyd91YDviflj6/BGIjCYLGcd1tGBCMH+RcDFPpsmyVPQjkX4eAWtshfiDr+kU6wEHFb7MXheaJ70l0qglHEq0gXRuPQ/ikE44AW7KeqhqmMzY+b8BK7HbGewPhTlHCApJMNzsHZ7tF0K1PVC+VpCWkz8v7iSAiTdMMEBesnHZsP3JqpgstzMiUfA2RlCfYc8kxCyoVqzMfdyg30R7uh3kOw758es8aAnlN6Hpwb1/0H1JncgZ1hVIr+SzcNEq91LG+vYfkj3JlXlgT++4Ut0KcS+9uZsiBaoPpRoyOOlohG2fqzUHSO9G3yu5s7Wx7T4Z5AfsFOQCwogr0Va+EefDItj3Z7yAEocI95qThM3XcWrAPtHe0qE/YDEBL2RW7cv1jw3boHHl6sWEImEAVbl+b4FfQME+Q1sHmabNEygmfCxx5nt4EDfLNSyDp2A64KGPZwCLppzyNTCNhu++miOzJIYaNaLHMtEMWPBA+68wTyIvTExi8fgh+ZG1biDmk8jzcCQk5yAK5UbMMn3jHJUvIu96poshSjMY6/S8whcWx5rqVtQpNfFRaAIptaWrRpb4IrpT2CHM2cBSqAD3ssKBu2kz3w9xUfbkGVaG9lZ7IzhtaK62RY4yLD10130TiXt17TavR022AFYmVx/JvG9b/zUcgCCrfFonIpwmA9lSV8Xjuw/HJ/ecDXOI+ONocUdWkgIRkhzKJNJr+mv0WZr0nZ1/BilK0IztROXhvFMaX/ClTw/lFEQ/Uyn4wO2xKfGl35Iwex5lQ2+6U3YWaazAHtjZlUPw6Eg5qulYgzQaYgDC9gLQW4FkdpIxBzszDco5s8ZY1skWVNmVn7qJGj1SYYm4+YPBVhUa1ZPklyvI6TpczYrJZI9nw3hTnOBF2CDVrt5RokCG8RuSWkN2aQT0Eeblbk08Df0xmFfE+Tbqn2DEUDlYu/dd/nOdkm+8cM9dHjfcYquaBY07fcDmkl81a4ecp0z7KJPGQbb2KJKqiqwWBpmHJ6+Pt4l0/gefG8vl8fj1vnKVwidmuB7DtZMkHqZFhgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "CHANGELOG.md\nREADME.md\nVERSION\napi/admin.go\napi/api.go\napi/api_test.go\napi/lists.go\napi/reminders.go\napi/search.go\napi/users.go\naudit/audit.go\naudit/audit_test.go\nauth/auth.go\nauth/auth_test.go\ncalendar/calendar.go\ncalendar/calendar_test.go\ncalendar/rrule.go\ncmd/remind/main.go\nconfig/config.go\nconfig/config_test.go\ncrash-reports.jsonl\ncrash/crash.go\ncrash/crash_test.go\ncrash/logring.go\nduration/duration.go\nduration/duration_test.go\ngo.mod\ni18n/accept.go\ni18n/catalog.go\ni18n/i18n.go\ni18n/i18n_test.go\ninternal/must/must.go\nmetrics/instrument.go\nmetrics/metrics.go\nmetrics/metrics_test.go\nnotify/notify.go\nnotify/notify_test.go\nnotify/text.go\nquota/limit.go\nquota/quota.go\nquota/quota_test.go\nschedule/every.go\nschedule/schedule.go\nschedule/schedule_test.go\nschedule/weekly.go\nschedule/zone.go\nsearch/search.go\nsearch/search_test.go\nsearch/tokens.go\nserver/server.go\nshare/share.go\nshare/share_test.go\nstore/store.go\nstore/store_test.go\nstore/users.go\ntextutil/textutil.go\ntextutil/textutil_test.go\nwebhook/client.go\nwebhook/queue.go\nwebhook/webhook.go\nwebhook/webhook_test.go",
+				"tool_call_id": "toolu_01EhGnBwmFhKGchGef1wyuyD"
+			},
+			{
+				"role": "tool",
+				"content": "{\"id\":\"cr_f9ee9e\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: index out of range [1] with length 1\",\"stack\":\"goroutine 22 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/auth.parseBearer({0xc000010350?, 0xc0000104f8?})\\n\\t/app/remind/auth/auth.go:66 +0xa8\\nexample.com/remind/auth.authenticate(0xc0000106a0, 0xc000010848?)\\n\\t/app/remind/auth/auth.go:50 +0x34\\nexample.com/remind/auth.Require.func1({0xc0000109f0, 0xc000010b98}, 0xc000010d40)\\n\\t/app/remind/auth/auth.go:18 +0x3c\\nnet/http.HandlerFunc.ServeHTTP(0xc000010ee8?, {0xc0000109f0?, 0xc000010b98?}, 0xc000011090?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000109f0, 0xc000010b98}, 0xc000010d40)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011238, 0xc0000113e0}, 0xc000010d40)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011238?, 0xc0000113e0?}, 0xc000011588?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011730, 0xc0000118d8}, 0xc000010d40)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011a80?, {0xc000011730?, 0xc0000118d8?}, 0xc000011c28?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011730, 0xc0000118d8}, 0xc000010d40)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0xc000011dd0?, {0xc000011730?, 0xc0000118d8?}, 0xc000011f78?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0x10?}, {0xc000011730?, 0xc0000118d8?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000012120, {0xc0000122c8, 0xc000012470})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 21\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"POST\",\"path\":\"/v1/reminders\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer\",\"Content-Length\":\"15\",\"Content-Type\":\"application/json\",\"User-Agent\":\"okhttp/4.12.0\",\"X-Request-Id\":\"6ac3ae14-0002\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\\\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\\\"\"],\"first_seen\":\"2026-10-05T14:04:59.017Z\",\"last_seen\":\"2026-10-05T14:07:14.0306Z\",\"count\":3}\n{\"id\":\"cr_1e2ea0\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: invalid memory address or nil pointer dereference\",\"stack\":\"goroutine 25 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/api.(*API).owned(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848)\\n\\t/app/remind/api/reminders.go:144 +0xe8\\nexample.com/remind/api.(*API).markDone(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc0000109f0?)\\n\\t/app/remind/api/reminders.go:171 +0x28\\nnet/http.HandlerFunc.ServeHTTP(0xc000010b98?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010d40?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/auth.Require.func1({0xc0000104f8, 0xc0000106a0}, 0xc000010b98)\\n\\t/app/remind/auth/auth.go:23 +0x9c\\nnet/http.HandlerFunc.ServeHTTP(0xc000010ee8?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000011090?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000104f8, 0xc0000106a0}, 0xc000010b98)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011238, 0xc0000113e0}, 0xc000010b98)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011238?, 0xc0000113e0?}, 0xc000011588?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011a80?, {0xc000011730?, 0xc0000118d8?}, 0xc000011c28?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc000011730?, 0xc0000118d8?}, 0xc000011dd0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011f78?}, {0xc000011730?, 0xc0000118d8?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000012120, {0xc0000122c8, 0xc000012470})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 24\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"POST\",\"path\":\"/v1/reminders/rem_0001/done\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_4f9c2a7e81d03b56\",\"Content-Length\":\"0\",\"User-Agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\",\"X-Request-Id\":\"6ac3ae14-0005\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\\\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\\\"\",\"2026-10-05T14:09:46Z INFO reminder created id=rem_0001 user=usr_ana\",\"2026-10-05T14:09:46Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:12:55.0629Z\",\"last_seen\":\"2026-10-05T14:13:09.0697Z\",\"count\":2}\n{\"id\":\"cr_ee551c\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"runtime error: invalid memory address or nil pointer dereference\",\"stack\":\"goroutine 26 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/api.(*API).owned(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848)\\n\\t/app/remind/api/reminders.go:144 +0xe8\\nexample.com/remind/api.(*API).getReminder(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc0000109f0?)\\n\\t/app/remind/api/reminders.go:152 +0x30\\nnet/http.HandlerFunc.ServeHTTP(0xc000010b98?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010d40?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/auth.Require.func1({0xc0000104f8, 0xc0000106a0}, 0xc000010b98)\\n\\t/app/remind/auth/auth.go:23 +0x9c\\nnet/http.HandlerFunc.ServeHTTP(0xc000010ee8?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000011090?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000104f8, 0xc0000106a0}, 0xc000010b98)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011238, 0xc0000113e0}, 0xc000010b98)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011238?, 0xc0000113e0?}, 0xc000011588?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000011a80?, {0xc000011730?, 0xc0000118d8?}, 0xc000011c28?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011730, 0xc0000118d8}, 0xc000010b98)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc000011730?, 0xc0000118d8?}, 0xc000011dd0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011f78?}, {0xc000011730?, 0xc0000118d8?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000012120, {0xc0000122c8, 0xc000012470})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 25\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"GET\",\"path\":\"/v1/reminders/rem_0001\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_live_4f9c2a7e81d03b56\",\"User-Agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\",\"X-Request-Id\":\"6ac3ae14-0006\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\\\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\\\"\",\"2026-10-05T14:09:46Z INFO reminder created id=rem_0001 user=usr_ana\",\"2026-10-05T14:09:46Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\"],\"first_seen\":\"2026-10-05T14:15:39.0765Z\",\"last_seen\":\"2026-10-05T14:15:39.0765Z\",\"count\":1}\n{\"id\":\"cr_fd4982\",\"service\":\"remind\",\"version\":\"v1.4.0\",\"commit\":\"9c41e7a\",\"go_version\":\"go1.27.0\",\"kind\":\"panic\",\"panic\":\"close of closed channel\",\"stack\":\"goroutine 28 [running]:\\nruntime/debug.Stack()\\n\\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\\n\\t/app/remind/crash/crash.go:102 +0x168\\npanic({0xc000010000?, 0xc0000101a8?})\\n\\t/usr/local/go/src/runtime/panic.go:859 +0x120\\nexample.com/remind/notify.(*Dispatcher).Stop(...)\\n\\t/app/remind/notify/notify.go:103\\nexample.com/remind/api.(*API).stopDispatcher(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848?)\\n\\t/app/remind/api/admin.go:69 +0x30\\nnet/http.HandlerFunc.ServeHTTP(0xc0000109f0?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010b98?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/auth.RequireAdmin.func1({0xc0000104f8, 0xc0000106a0}, 0xc0000109f0)\\n\\t/app/remind/auth/auth.go:39 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc000010d40?, {0xc0000104f8?, 0xc0000106a0?}, 0xc000010ee8?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.(*ServeMux).ServeHTTP(0x18?, {0xc0000104f8, 0xc0000106a0}, 0xc0000109f0)\\n\\t/usr/local/go/src/net/http/server.go:2903 +0x194\\nexample.com/remind/server.accessLog.func1({0xc000011090, 0xc000011238}, 0xc0000109f0)\\n\\t/app/remind/server/server.go:130 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0x18?, {0xc000011090?, 0xc000011238?}, 0xc0000113e0?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/metrics.Instrument.func1({0xc000011588, 0xc000011730}, 0xc0000109f0)\\n\\t/app/remind/metrics/instrument.go:24 +0xc4\\nnet/http.HandlerFunc.ServeHTTP(0xc0000118d8?, {0xc000011588?, 0xc000011730?}, 0xc000011a80?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nexample.com/remind/crash.(*Reporter).Middleware.func1({0xc000011588, 0xc000011730}, 0xc0000109f0)\\n\\t/app/remind/crash/crash.go:106 +0x240\\nnet/http.HandlerFunc.ServeHTTP(0x0?, {0xc000011588?, 0xc000011730?}, 0xc000011c28?)\\n\\t/usr/local/go/src/net/http/server.go:2338 +0x38\\nnet/http.serverHandler.ServeHTTP({0xc000011dd0?}, {0xc000011588?, 0xc000011730?}, 0x1?)\\n\\t/usr/local/go/src/net/http/server.go:3413 +0xb0\\nnet/http.(*conn).serve(0xc000011f78, {0xc000012120, 0xc0000122c8})\\n\\t/usr/local/go/src/net/http/server.go:2137 +0x5a0\\ncreated by net/http.(*Server).Serve in goroutine 27\\n\\t/usr/local/go/src/net/http/server.go:3581 +0x3e8\\n\",\"request\":{\"method\":\"POST\",\"path\":\"/v1/admin/dispatcher/stop\",\"headers\":{\"Accept-Encoding\":\"gzip\",\"Authorization\":\"Bearer rk_admin_e5a8137c09bd2f64\",\"Content-Length\":\"0\",\"User-Agent\":\"curl/8.12.1\",\"X-Request-Id\":\"6ac3ae14-0008\"}},\"logs\":[\"2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\\\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\\\"\",\"2026-10-05T14:09:46Z INFO reminder created id=rem_0001 user=usr_ana\",\"2026-10-05T14:09:46Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\\\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\\\"\",\"2026-10-05T14:16:53Z WARN dispatcher stopped by an administrator\",\"2026-10-05T14:16:53Z INFO request method=POST path=/v1/admin/dispatcher/stop status=204 dur=3.4ms ua=curl/8.12.1\"],\"first_seen\":\"2026-10-05T14:18:44.0952Z\",\"last_seen\":\"2026-10-05T14:18:44.0952Z\",\"count\":1}\n",
+				"tool_call_id": "toolu_01C4Q7yRETttWpPwjQLiDwvH"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792109915-hDblI2dVF1guLIQG5aoo",
+		"object": "chat.completion",
+		"created": 1792109915,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "The reports show four panics: an index out of range in `auth.parseBearer`, two nil dereferences in `api.owned`, and a double close in `notify.Dispatcher.Stop`. I'll read the code at those locations.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01QXy14rJQoobiHtjDEsX9p8",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"auth/auth.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01Jy6rMzqu4btkekcSmjD6Rt",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"api/reminders.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 2,
+							"id": "toolu_01ANX99J1JMJGdZvd7n5Gosz",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"notify/notify.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 3,
+							"id": "toolu_013Fs2b9oThshz2iSqNXAo5h",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"api/admin.go\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQS1wYKEAgSGAI4AUIIdGhpbmtpbmcSDPiF3qOVJrfVrqK6LhoMfeNcIbpAlIJc7gx3IjDz+smIEa/9D7IHUH77wH18XCM0kPZjBsDBqI4VntvOEHlaPnBCI7ui0IVka0rpUyAq9AVKLMorkqgeE4nHH94piKKFVcP4r2gGV9+DRh5wwyPbSNkyMvZoKTbVjz7stL7cc2+H77dA4Ber2L2nPj9DsfMjAMxDZ5L/jlwL54bFgTQ6a3DbSHYxpNLVzgUmvzZMimIGcXlZ9sodfe1NOv0SNmIsGr2xkIE3KEkjS0D/huHEeaNPd+tMYwFRpMY/YHmXkpT8ofpGeBjKPhau2s8pOPf370VaLuA8iDVeeVo7TLx6GhxLeW8uMyA/qOPCwut6QHuB9kyv/St/kcecwaK0OLzsjSSYSjPWT5cWUQHAG48jra2rmnDlP+z89K7/QXg+49cyfEV0k/v1J8YLzKApFcHqJ7b6k1fzbPp221e+UIKgbKwZb5Z3QWt+iTkmQtr6wHBFZAmRomU60uGFrlU43xkFdbab8V5KTFwWY7hZa4c718ikz7BuFYHBson2g9sKdHeMoxQqvr1YMjw5c3r8iqjK+wnO6s/SuWE7Un/7C9NiNuxqMSWCx5W7Fskdb4zwQz0YmXpNtXauneOa1stv84wbAOBwFOHH5Y7hdfRo8yJY3BVe0DVfvgoekY8/eqlAvIztD3fID52Tl7LBLVRM5fMmfZO0V2JdI0TkQ0zAIFWMMAYjY3PFez6wp8OoAoXuJUeKAEN82ysA/uf6b7b7PSHs3zXjbpcPtC5Hw6KARzI9iiC7WvvX3WqXRHPjQFz2TvdrngMHhepX9V5ZwJVyJgeU9tXl59Wo4j0qg/I1opCLYOoancjhuCKFp2C7iJTeFXmSPP+709Vxerj4qoWcfXmLJKb6MY/REy07P2TGXp1+tI9Lp47GXO6x4Vgjcu6cXuQ4irJARcVNrC2Z2CqCi2T00rznw/CGKQDVSpD9MzCToNuP6K0Tu3eOMmNAHLM/NwNFCZr/qoTlVhQdCTawRiMUtHERRFk+rQpIcejoPHVtJ1fThoaqmkXeodHvYz/1ZRdQ7U+GuxYwDaJe//f2QsHenL9JK8G4haoQ3isZ+Z4Ojz870qcYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 9357,
+			"completion_tokens": 347,
+			"total_tokens": 9704,
+			"cost": 0.0011092,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0011092,
+				"upstream_inference_prompt_cost": 0.0009357,
+				"upstream_inference_completions_cost": 0.0001735
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 72,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

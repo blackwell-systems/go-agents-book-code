@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In Go, what is the difference between a nil slice and an empty slice? Answer in under 100 words."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091623-1gh8V0xvM0BIWntLcg5S",
+		"object": "chat.completion",
+		"created": 1792091623,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "A **nil slice** (`var s []int`) has no underlying array—it equals `nil`, with len 0 and cap 0. An **empty slice** (`[]int{}` or `make([]int, 0)`) is non-nil, pointing to a valid (possibly zero-length) array, also with len 0.\n\nThey behave identically for `len`, `range`, `append`, and most operations. Key differences:\n\n- `s == nil` is true only for nil slices\n- JSON encoding: nil → `null`, empty → `[]`\n- `reflect.Value.IsNil()` distinguishes them\n\nIn practice, prefer nil slices as the zero value; the distinction matters mainly for serialization and API semantics.",
+					"refusal": null,
+					"reasoning": "The user is asking about Go's nil slice vs empty slice. They want an answer under 100 words. Let me think about the key differences:\n\n1. **Nil slice**: `var s []int` - declared but not initialized. Its value is `nil`, length 0, capacity 0. It points to no underlying array. `s == nil` is true.\n\n2. **Empty slice**: `s := []int{}` or `s := make([]int, 0)` - it's a non-nil slice with length 0 and capacity 0 (or possibly > 0 if it was truncated). It points to a valid (zero-length or some) underlying array. `s == nil` is false.\n\nKey points:\n- Both have len() == 0, so you can't distinguish via len\n- `s == nil` distinguishes them\n- Both work identically with range, append, len, cap in most operations\n- JSON marshaling differs: nil slice marshals to `null`, empty slice to `[]`\n- append works on both\n\nKeep it under 100 words. Let me draft:\n\n\"A nil slice (`var s []int`) has no underlying array; it equals nil, with len 0 and cap 0. An empty slice (`[]int{}` or `make([]int, 0)`) is non-nil, pointing to a valid (possibly zero-length) array, also with len 0.\n\nFunctionally, they behave identically for len, range, append, and most operations. Key differences:\n- `s == nil` is true only for nil slices\n- JSON encoding: nil → `null`, empty → `[]`\n- Reflection/`reflect.Value.IsNil()` distinguishes them\n\nIn practice, prefer nil slices as the zero value; the distinction rarely matters except for serialization and API semantics.\"\n\nLet me count words... roughly 95 words. Let me trim a bit to be safe. Count: A(1) nil(2) slice(3) (var(4) s(5) []int)(6) has(7) no(8) underlying(9) array;(10) it(11) equals(12) nil,(13) with(14) len(15) 0(16) and(17) cap(18) 0.(19) An(20) empty(21) slice(22) ([]int{}(23) or(24) make([]int,(25) 0))(26) is(27) non-nil,(28) pointing(29) to(30) a(31) valid(32) (possibly(33) zero-length)(34) array,(35) also(36) with(37) len(38) 0.(39)\n\nFunctionally,(40) they(41) behave(42) identically(43) for(44) len,(45) range,(46) append,(47) and(48) most(49) operations.(50) Key(51) differences:(52) s(53) ==(54) nil(55) is(56) true(57) only(58) for(59) nil(60) slices;(61) JSON(62) encoding:(63) nil(64) →(65) null,(66) empty(67) →(68) [](69) reflection's(70) IsNil()(71) distinguishes(72) them.(73)\n\nIn(74) practice,(75) prefer(76) nil(77) slices(78) as(79) the(80) zero(81) value;(82) the(83) distinction(84) rarely(85) matters(86) except(87) for(88) serialization(89) and(90) API(91) semantics.(92)\n\n~92 words. Good. Format: short paragraphs, maybe a few bullets. Keep concise.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user is asking about Go's nil slice vs empty slice. They want an answer under 100 words. Let me think about the key differences:\n\n1. **Nil slice**: `var s []int` - declared but not initialized. Its value is `nil`, length 0, capacity 0. It points to no underlying array. `s == nil` is true.\n\n2. **Empty slice**: `s := []int{}` or `s := make([]int, 0)` - it's a non-nil slice with length 0 and capacity 0 (or possibly > 0 if it was truncated). It points to a valid (zero-length or some) underlying array. `s == nil` is false.\n\nKey points:\n- Both have len() == 0, so you can't distinguish via len\n- `s == nil` distinguishes them\n- Both work identically with range, append, len, cap in most operations\n- JSON marshaling differs: nil slice marshals to `null`, empty slice to `[]`\n- append works on both\n\nKeep it under 100 words. Let me draft:\n\n\"A nil slice (`var s []int`) has no underlying array; it equals nil, with len 0 and cap 0. An empty slice (`[]int{}` or `make([]int, 0)`) is non-nil, pointing to a valid (possibly zero-length) array, also with len 0.\n\nFunctionally, they behave identically for len, range, append, and most operations. Key differences:\n- `s == nil` is true only for nil slices\n- JSON encoding: nil → `null`, empty → `[]`\n- Reflection/`reflect.Value.IsNil()` distinguishes them\n\nIn practice, prefer nil slices as the zero value; the distinction rarely matters except for serialization and API semantics.\"\n\nLet me count words... roughly 95 words. Let me trim a bit to be safe. Count: A(1) nil(2) slice(3) (var(4) s(5) []int)(6) has(7) no(8) underlying(9) array;(10) it(11) equals(12) nil,(13) with(14) len(15) 0(16) and(17) cap(18) 0.(19) An(20) empty(21) slice(22) ([]int{}(23) or(24) make([]int,(25) 0))(26) is(27) non-nil,(28) pointing(29) to(30) a(31) valid(32) (possibly(33) zero-length)(34) array,(35) also(36) with(37) len(38) 0.(39)\n\nFunctionally,(40) they(41) behave(42) identically(43) for(44) len,(45) range,(46) append,(47) and(48) most(49) operations.(50) Key(51) differences:(52) s(53) ==(54) nil(55) is(56) true(57) only(58) for(59) nil(60) slices;(61) JSON(62) encoding:(63) nil(64) →(65) null,(66) empty(67) →(68) [](69) reflection's(70) IsNil()(71) distinguishes(72) them.(73)\n\nIn(74) practice,(75) prefer(76) nil(77) slices(78) as(79) the(80) zero(81) value;(82) the(83) distinction(84) rarely(85) matters(86) except(87) for(88) serialization(89) and(90) API(91) semantics.(92)\n\n~92 words. Good. Format: short paragraphs, maybe a few bullets. Keep concise.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 35,
+			"completion_tokens": 958,
+			"total_tokens": 993,
+			"cost": 0.00048425,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00048425,
+				"upstream_inference_prompt_cost": 0.00000525,
+				"upstream_inference_completions_cost": 0.000479
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 807,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

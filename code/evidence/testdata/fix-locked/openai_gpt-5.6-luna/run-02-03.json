@@ -1,0 +1,215 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_zbBZ19SXiERKINwvHv4EyAaW",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0S6JZGLtIiLlSfWDuGUPe4QxqgzrE-uT9Q4RdKd9vHjShFMtnJR7a1g20Z0D09c6aKLEC454hzWLLHd-AqItKuq9MwbAqea4avnHalOGQTvZRBeHEAMyx6pZCcG9LxUBiTJiaTrlc-54fuTP65rWmEs8f8hPPhFoH6IVie2D4A7lbYJw-ULw-2PTaQ0o9mXbJA49qMbczyi81g2-6rkW_KMPbXxNTmySHpKM2Fw5ZYH_U6r_8jppKps8wW95YshYqIm8-5vjE0msrqazhHPbrARV6AZFSQqcw9_0sBPsVCZDK0nZA4ik6ioIb5cu_fV-tu4pJJICFMZ2MAG1gI5qXL12ynZtxEQgP7yfeCXzu5TjYrmwvuFeeyGXqEv2sc6SQ69a83n3_-KmdqxpF-qU3KzoGcbFtQynw_cql2iJZDs5_mbIjPv5FZoVxmCOaijtW9M0EcV7miKjl0Gi39vGXRdrJGr-fwrEmpj0RqUVNqfsrQyIQW8xeqV_Y1UU14W6v7PhpSACJUH6MxbbCbRcwp3yy88D5GUQOhiS-XgsfDs470RFiGzYfQxRwkEXP37sZUH5j3O8eQKZO1PjHqgMb-QfFLofk2BhzRRMk-6y_YfemNnQcBkS0376aeWI-Aap2ZFI8hCWmLMYsOLIw7jIe03LckNfNZdexIky-unTMLoIOqu_XawKQvJ273my6eSO0O13baPGy_aVycnrS1GEP2nTix_PLkRb8FxIPdoKLZ-D2Pz0oM_vxlmfKp-q_ztAx2qLDB76tTZ1SsAxNetl9ysHJYoEuOBiMG91-q4tRiBQ60-rf_u5uAQ4AB8ap7YAd3pSN1SCppG_1Gy38Cc7x0NZZNhdU_QXeLwxK--MLm6r-wDLKOEW0RIpPhcFg56EvjBE05B236VGGrM2pmULvQm7CFE_UlcBhsXCqjSjKE6LFpIZAwK6_jAhpNqnuFPGyYCwTXm4TwG7NxQMVPouVz31G0DDYKp91MQetIBJ6-m9k9Mqy_WvV9Jc8tgx6Xs2pat-p1bPzZXfRKUIRXaLacZpQL8QTDSGNVjODUPeqP4D4AfeEYPJdzI_zglkIXyzx-3EZpSm4ER9lWzdk10N1AuDCD9VUZ7RvXUZsLQAUqfksGevwMIrnJunl4E7ffmolPPR4gKvhl7qgZBbilH1ouQx83413-hEDK_zzuOG1evFCDwnFAMUukKJvbVuO_-CTMgkiu_ANdEBFSxpAbsiqPgCjFPFcAJb6K0j_5EUh7fVWBk08Uyk7TQWP1uPqqKt1xvNbv10ndpN_U3DtvH-YKdUM7J34rK-LoH38fc0IaP81Tdc0wgM9DCDxQfiXiAqMdb3gCyMXW15dyyVYOmqzSi2G3LIs3EkuJ0J7zII0IjRHDlyhCcrn1GSBaEH4Iivanc-3a2g3RQ94maTvzwn4Qo2TEFAmuzBEP66S6il3X09UAJdP8Ovc3jYvYI0JIlw1BKlK2S8awIIYd2RFpwzhg-h68yGdb5kN4vsqEuV9EPLvS32qJ-_OJ01EITuGVgbz7XKQHMdAUr3fKYp717oyglYNWC20kosmTXhlNbQIFZKM4yJnxbucusEH5_C1-_ryQmsn8Zyo23StZH4wJK2Ear_gTNI3NCvEGi_3U7CZJAWvOr8kGSc5GCZr16njuh95VUIDl86B1BfIb3af0y42qhw1g==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_04916280213db834016ad12e88e7c087d18ac84555ea0a03fd",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_zbBZ19SXiERKINwvHv4EyAaW"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_DuCxjWIi1TeOt1DqIDmIGVRN",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration.go\"}"
+						}
+					},
+					{
+						"id": "call_T8Wodw7qCLfhHOp6IvPasWbc",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration_test.go\"}"
+						}
+					},
+					{
+						"id": "call_biszwXg01Lw6dR9lLT8O1vM0",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "call_DuCxjWIi1TeOt1DqIDmIGVRN"
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "call_T8Wodw7qCLfhHOp6IvPasWbc"
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "call_biszwXg01Lw6dR9lLT8O1vM0"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093835-Glf8kO80HqVDT9oYitzg",
+		"object": "chat.completion",
+		"created": 1792093835,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_7aQQNecgMbYIy6Ysvi81J2Vq",
+							"function": {
+								"name": "edit_file",
+								"arguments": "{\"path\":\"duration.go\",\"old\":\"\\t'm': time.Second,\",\"new\":\"\\t'm': time.Minute,\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0S6MUxJxlMREbaaKsoyKeDQEfJ3cxU1gxKVuNP7h_rmcP0X89-Dmd070igCLG_NP6dUfz9A5OMw1xeDeGn-3k6WiWVNnec9zQWQL1s-KoIkcwKB0MuW6hPP9jiBtCKdN6pqaeMclQSiNA4sGXA9u3qifyFbD_cIZFKa2yqO5HU7gqFZBUq77XWWuuD3d43GEssQX5KYtWkcvdaQnyiU-01WVut0r8JZPVi1QmGsJmdkRnooCYAJQLM_nS0yMHZ2_UmeF2mamrT4fwfcCYyzHdZkIkDEEm43OiBYhXeIMI1V2yewfyHd0OWzyRPiXnzKhM4HdXlLDWkLc4o87qFdn8ETEUuG9_wZrKIi4Z4SvXenvrYKAHJ5vwIqHgQdwmldhmBBbQXOKzFg_JkPSmaj1eRChuZ4j9F21nfqXyJWhXfrZI9NepxtzYT9x0oTCtNu7rXWHyhjqiqm6waxXdU8Z3graxdY2dLrRVyiR6H9CL3RDLKmotEnt_BXROyi4VRLg_0WcVBUHujQBj0SJytjWXTl6koC7yVqFda4hjcqvfuwcrYHC0nw36ZXX-VfqPodcett3eRwaU_ArLGV8darGvkusSAtEuIOKcVLeXTHmRi6rR1Ve6i2OoqUtDBCkAaMAneUCmbe5rAySDLv4_eec0GbSKz-XX3YDRQslBrCn1ivOZiqPiVEoSo2pI8VnVz7gGBENY1XRbo91A58Wrc6ZpGGtBewkm62dD_tkIO9yoZ5C9RAhJ09s5SnPZGv-AfOTaFBSuQ3sHGH7nV9tfQjggq2ki-sH0nr0-vWAfrrQ6bI96nR6NdiEcpO4KT5qQceXFIXUrSUu6G-Yd9ILyFOflKt_E0WfVYFhGt1mdVh6MymAJnsaWyy3B3C42yXWBHvMp6m9qQOi02nJkv3lfyMs9LwK2Q3S9OlCxjH7PiEV8bTNLzek43nJCFL4GWbKavJboFafMCrdpTQnCqx7IgYnbXx2sqU3pX6i_XJ8GZ3opdzvNiocRnQKEnNnpLNUt4fOvYo9XzwmTW_0n7uTGixsdAuIO903qTateJjv-FZQEDE5e7bfHKvOAPa-P_M5lcGjum7BucNLsrB1-Qf1u121t9nzYxWlZJiBM-CzHCJ9RmSHVPd9M11iTWttl8kddTX1-xg7F99hpv5YwkiT8zh7S5y-RbmFBgEgB0kBaPt2cfp_fb-95yBJqjWynpT9UhfkIzv-yvtQIwMl7LwsIMgT_YsAP0z5yGzafSjm2WH_w0Wru8q_dIS_QZaLndC1mz-dOd9Kv8mp_Jqbc5lNiqVVw1XbXOKrhpm4oTK-wBfKjLvxBxwQsfWow0rHtDXro5umY21EbJX3Ja_d63hFjEXxZBja8R_lQW4s4wJGUGhyFMsy9avyCIQ2l3iLrWCPwvLIm6kUQODrNfinnT7mLik9Ddr-v-BB5CruDkUzGzjlbMYtk24wQrcBhfBtAalKjiqZ42i_kFnEgtR35IojfGGUElb06Ge5eL1s0Ifij62z10Hwc6yID4cKq-LDuUscVbwqq8Fn-EeSDdIIqyRK62c06eLKXVEX95TpwP5DiSWRlH_6nstKffWbJ7DIDT_dmTCz7bKIiS1qgVJzc56eZA8wF9PZvV1NUORTyN6fC-CkyMJAI5xohQze9DeOk-HBuzbdiQlWX47KDutZfxU_LQ74dwmGm_pxuR8P9TI8Jjh725Fq3lGQ2Tk0bYjNTw4wI7VGCiX7.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_04916280213db834016ad12e8c168c87d187b0c00e6480c32d",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 899,
+			"completion_tokens": 54,
+			"total_tokens": 953,
+			"cost": 0.0002446,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002446,
+				"upstream_inference_prompt_cost": 0.0001798,
+				"upstream_inference_completions_cost": 0.0000648
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 13,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

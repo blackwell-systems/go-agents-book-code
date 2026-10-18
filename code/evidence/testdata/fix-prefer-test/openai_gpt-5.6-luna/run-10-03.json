@@ -1,0 +1,180 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_CAtW2QLv9aO81kjGlG4lHJEm",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0S5U8165l90u4BlKRKBoN4lkL2MTufZ_NTV_ewUuyjud6We4ClCEcLow4UODApig-cLa5kvbKexOvla752rR1Wo1TUV1TVRN4oLcloOGycz8iUVMlNjiCvibAyipwQKeIZSaPygaWbuM1FLoyteXBLfMctJ_De36bvrq0bY_qZiRtb4BH9JYaeiVbPceytYvKHMbCMlRVe6cv_bKmIQ1TYEyBYfeOuWymz4CzZrL08BPdRYjCIDDGgqHWbO08B3GqIW480fU5lCgl3TC1UcZS-jK5AJsgROvBvK_sCC3Uaz6xoTVM1tkIJicb1mEC06FZNuidg2Q54au9EjmmWfUIJWAXeMouOxfOPH_uV7trJ_Yn1E4LEDcQvel6k8iFA5pkGGUQ0Jo-JuWGRPnTcHfz5hvBL3WLQPRJGR76YYeD2TpFF14BaGgGDmW3qaHIctGh9gsaZJidxGJFRg7QcseDSO5J3xaRpMo5LeV4bD4jmk1zgJvokNIKUG4wAE_vhHLqoAtSRK_PJVhBhdAgvx1p0eCIrEwdvKYjbisEVTS1bGchzxH7XT-ocxE3HCYtULvG59d_MVL2SdqCyVnI0otG9dqUlPSj_DGjaKTPRn_CxxAMQVzf2BhEm2LvJ7KxMeYlUR3RH8jhj36FCIM887CQQejZ88Nu20QQ5UojecI90fDH59qta924-ejAXZ85SBJhV1DUFjuYXnZCT3ufnAED91ooYZKvREBppsLdPRKKosZ1tNZKEmyhNI7SIvvMnlrTOyKR91dpJKayvrBE1BZBidHVYC43Zn8TZloHxjc9kAsfZkOPSxRVtWDTHM65VfHM1Gg0a52QucOzLzn_Obx9Lo-ngW8TK59pzoDK_Xa2MW1v_43IaPoG9aaLn0aq50VfImrJA0S_xI3zWyyyPbGFUoxD5E_mZPQbGddXqvzUaoCG7tCkbFD4e4JzGjon93H44NReWesJKZY3Azj2DMMfKNjciPdy1ExiaK5tYmcnDhBa6rTaJX1-7lbbFCgRJ_hBHGm3TVFUeDr66_40MVdpbrLrEFF4GsyvUGUIlUcghVxET8Cb6TMqge3tI9Om9s7-fnehg_P7jmuhkhkvKx9uENNIevqvT4DRny91VGMJEeRBaP8eEKOwz6N6J1PqYyTX1jvQGr_QAo_wu2Kr72TwhK5VktXQ_5kAeY94GjIc7JzPSCbmQluuqb4u9CrW90rdZ6pNFMjWIaXmV8Q18eup9kCavPz_NIuuYiG3LImloJIpHxQKyP1VboTLbbbfx74fhYitxvemPjsdVJdKhTUQZ7Ww6F_uk-yh56SOqj1SUTwe1KMvQ2iaFgaYEXPc1bFFsK7OIDRWgiEuO-MJJicRVozCFqdapldMYROnJ5lnB-qV5FAwHRp6M24XhSL6tLvXXKpTam-QBikd0rAego8GmZYZsPjpERCeyJhi-1ShipgXZE6trjk_BxWwRW6e93G4VTcS5bd4OpyMd7XbLdA7dxyLA2oGwjxS1oXQVQlpkRSU39cmWc6xdU9xokhn9ALufzQlym_V6dn6R9hSRoikrzwML64svrWsrb4FuonS8_iVmkyK0kQwgDasY3CFT2rov4539nwwZhwEmAQnFHW3B5Mdk__WICF6q4r4lIHpis2LvwJCiyiucaTXv4xnKxgWNgu1BBmsi1fZ5RfP3_aZ8fkGg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_0b0e078652b885db016ad12e541c8887d1b3bd2ed79533f313",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_CAtW2QLv9aO81kjGlG4lHJEm"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_4llhZU5npmHdbPQC5ggNXXVI",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration_test.go\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "call_4llhZU5npmHdbPQC5ggNXXVI"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file. Prefer reading the test file first.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093781-vmO9m4C4wacotpvlV9ID",
+		"object": "chat.completion",
+		"created": 1792093781,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_pS1RoEBnbI9JkiMRGRcIxyns",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\":\"duration.go\"}"
+							}
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 439,
+			"completion_tokens": 19,
+			"total_tokens": 458,
+			"cost": 0.0001106,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001106,
+				"upstream_inference_prompt_cost": 0.0000878,
+				"upstream_inference_completions_cost": 0.0000228
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

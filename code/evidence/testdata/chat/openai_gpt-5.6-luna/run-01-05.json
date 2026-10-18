@@ -1,0 +1,105 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "First version (MVP):\n\n- Add a book: title, author, and status (`to-read`, `reading`, `finished`)\n- List all books\n- Update a book’s status\n- Remove a book\n- Save data locally in a simple JSON file\n- Provide basic command-line help and clear error messages"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file in the user’s config/data directory:\n\n- Linux: `~/.local/share/booklist/books.json`\n- macOS: `~/Library/Application Support/booklist/books.json`\n- Windows: `%AppData%\\booklist\\books.json`\n\nExample:\n\n```json\n[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"reading\"\n  }\n]\n```\n\nIn Go, use `encoding/json`. Load the file at startup and rewrite it after changes. Write to a temporary file first, then rename it over the original so interrupted writes don’t corrupt the list."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Book struct {\n\tID     int    `json:\"id\"`\n\tTitle  string `json:\"title\"`\n\tAuthor string `json:\"author\"`\n\tStatus string `json:\"status\"` // to-read, reading, finished\n}\n```"
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a subcommand with flags:\n\n```bash\nbooklist add --title \"The Hobbit\" --author \"J.R.R. Tolkien\" --status to-read\n```\n\nExample Go handler:\n\n```go\nfunc addBook(args []string, books *[]Book) error {\n\tfs := flag.NewFlagSet(\"add\", flag.ExitOnError)\n\n\ttitle := fs.String(\"title\", \"\", \"Book title\")\n\tauthor := fs.String(\"author\", \"\", \"Book author\")\n\tstatus := fs.String(\"status\", \"to-read\", \"to-read, reading, or finished\")\n\n\tfs.Parse(args)\n\n\tif *title == \"\" || *author == \"\" {\n\t\treturn errors.New(\"title and author are required\")\n\t}\n\n\tif *status != \"to-read\" && *status != \"reading\" && *status != \"finished\" {\n\t\treturn errors.New(\"invalid status\")\n\t}\n\n\t*books = append(*books, Book{\n\t\tID:     nextID(*books),\n\t\tTitle:  *title,\n\t\tAuthor: *author,\n\t\tStatus: *status,\n\t})\n\n\treturn nil\n}\n```\n\nThen save the updated slice to your JSON file."
+			},
+			{
+				"role": "user",
+				"content": "How should the program handle two books with the same title?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091663-e8QCiWLEzVqJXZIlgPnY",
+		"object": "chat.completion",
+		"created": 1792091663,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "Allow them. Different books can share a title, and the same book may have different editions or authors.\n\n- Give every entry a unique ID.\n- Use the ID for update and delete commands.\n- Optionally warn when the title and author match an existing book, but don’t block it.\n\nExample:\n\n```bash\nbooklist add --title \"Dune\" --author \"Frank Herbert\"\nbooklist delete --id 3\n```",
+					"refusal": null,
+					"reasoning": "**Considering unique IDs for answers**\n\nI'm thinking we should provide a short answer that allows duplicates, especially since there might be unique IDs, and maybe the same title could have different editions or authors. I wonder if I need to give an optional warning about this. It seems important to clarify that these variations could exist, so the user knows they might see similar titles or entries multiple times. So, I need to weigh clarity against brevity here!",
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Considering unique IDs for answers**\n\nI'm thinking we should provide a short answer that allows duplicates, especially since there might be unique IDs, and maybe the same title could have different editions or authors. I wonder if I need to give an optional warning about this. It seems important to clarify that these variations could exist, so the user knows they might see similar titles or entries multiple times. So, I need to weigh clarity against brevity here!",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0SYRwzVI0V_Gi3d5mXdg59VjrURxIKNkx23rhYQ2jsTZVosLlcTj7ul25bS7diDlwYxsBl2ZNoh7G-Gh2uIh_xW2JG4WFG7EnTRoiIiIIC0eNJjgOiYLilt24_jQfbo0VCR9Zk-rNKkJFTu6oNkVQHhBxVvAlE_-TYgIhAOtGETXAJwHSDcnHewVOdwm_3mTWLH0tXyn43ANhtyGP0UtjEozpdzHkH4JBJZiVMutqUX-R48oykkZ0JxDk20H0f9si9HdG4Ljj5C7bKxvOItGUq03QySpOHzjKXwMjmh8ND90prW0dVoX1HIcKGb39R3xWIUXCIoZ2Qc6pUYEl6X8JhwJYN6a7Ab_cUkzZTenkrtrDOTP_Qz2ZRskXOuxjK-kKGelCdHs4lijfFqF6XSB66DptepM_UBsc62GFQFM93GZ0sqiXmTs0V5Y8skPAv5fHdulibqPqTPDzeSt0-1v6IcTIVV9lku4NtWz-gqqdidGVs5Y_b1BU42ZMNZ4U7VizOQS7OdHyDLSMPhRpDiSYcCnbZsHtqX3JHDU8I4QCGYVGngh42Y8VU6BkHVAwgA2Y7BZfyr0yjl4sN7iBnfRNU8UNQoVIlPyweq57-kF34og0f3tUKA2vRbne5nd7UTcsXjANIJhmnIb_9vzPfQmP_jUBnAwqyZjT0KHHC0ZC9KZYIuFYFlRHc4HlUzTqTxBAMxUuW82QLFZcqvZ4BP3PUSMwmAMAG5SJApyQQjdYxxSVtF-l8-q_i4fgtiZ3IkuwJUUOJmjm0KDPGTV0uqhNokNVJoOzIcRYpJbZpzAkdHx9W99qwtUr_rxqEMPvvYvtJpg9GIp_9dTOEg3X7rRySr__N8ykto6hvVVrRy1tRejLMQ2KNpAb71-qDD7t-4IzGzd8JfNz5KtRsDWOZb52FL32PvgEcGMX67yJQmv81xWbdP_vN_C58DMCGIhvK4fgGmjIKKnpJmYC3lGTbgUIW7GoPtnkz8vdp7QUmMNvXgQtwhMrw8s28scmw9H1B0pvCJ-gZmaEp7yJOtGI7RuOp13w6XKWmWbc2TC39c3fb5fwFJt2o0U4DDsvMtPoN4aSld8W6xULKWJxYVadzlkNFiN9NqtGfkhOxZD-_hfjPkiwpHI6zPfklGgbILTiwHvPRmpLGbbet9VyVwk5Ya2cb606lGZXet1KydnmbZa_YpY8A_suFv023X9YI_OwxFWRaEURY-6atsbcVUuTLJXmHIki9drrJWC0WisW_WYpbHKsv7MBA1Xcim1yJAWxXYyXXfKxcqEr4hEj_8dYVKOQ77s8qBbI7_TrMPHF8osyKazvZVMp9iKy7rcZcl0n-XTxfxeA4KHhCkdEPDYiOJoXpce3Ym7tpBcMrcDWgQkUdILQX4bFRZ0guKTKzqH8DM318u-MAVxhEgy2S68Y_nvw9k9NIiIoAeM0TA8Pu9DTGNmjpd-PBWLiAMJcFyc4FUOMp2ph0hOWCSJXgZM7QIuxkTMpfpSsb40ioSyUYELcTzfJUssFayqITPc7jHOtjisGZZ5fr4NZe8ALDHOYXzKSAMNqnzPmskqUR_1SHq3P2Dg9vTtUwIKhflobeJVUZH7fTtYsD_Db_zO_NaBlPlWKf4dniUkQ8G1_NwYJyrd2r99trOf78K06QckMlYB70tExq4eRwcpcXwqMuhHwqMlsEpexrKWxdeLNj3BnHbYg5mzhBMDbvE4N8OLoi5xiGIO5QiXCZhHAnC-8UMM2imMOYfaaRfGmtma65jKOQM9-uHg1KVotZBv6-O6tSRvdXiqI8WWST2AklnSVCs3xk28cFkTpjgkRfoVovzvTMiw-DOLClU1CigrN7SOsBfOU2K1TnXyWRMrrOsgmFdtY8PaqmZ2y_ENM3Ch1Dyn02eiLW0LbCnin7GhWp9Y3ht4EzV5Fcpix_jt7ijtrbwwVM3Ny5yMzRqGlmMvIC6FpocPqQQyjXM=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_0e7de7f6fddfdcf1016ad12610a7e087d1a3fe901dc68cb084",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 604,
+			"completion_tokens": 121,
+			"total_tokens": 725,
+			"cost": 0.000266,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000266,
+				"upstream_inference_prompt_cost": 0.0001208,
+				"upstream_inference_completions_cost": 0.0001452
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 27,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

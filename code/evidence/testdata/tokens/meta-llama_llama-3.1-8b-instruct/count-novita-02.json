@@ -1,0 +1,64 @@
+{
+	"status": 200,
+	"request": {
+		"model": "meta-llama/llama-3.1-8b-instruct",
+		"messages": [
+			{
+				"role": "user",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n"
+			}
+		],
+		"max_tokens": 400,
+		"provider": {
+			"only": [
+				"novita"
+			]
+		}
+	},
+	"response": {
+		"id": "gen-1792094037-9DQjFDFTZX45ocJKCowm",
+		"object": "chat.completion",
+		"created": 1792094037,
+		"model": "meta-llama/llama-3.1-8b-instruct",
+		"provider": "Novita",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "length",
+				"message": {
+					"role": "assistant",
+					"content": "Here's a code review for the provided code:\n\n### Overall Impression\n\nThe code is well-organized and clear in its intention. It uses a `map` to map byte values to their corresponding units (time.Duration values). The parsing function `Parse` iterates over the input string, parsing the numbers and units, adding them to the total duration.\n\n### Suggestions\n\n1.  **Use `strings` package**\n\n   Instead of `strconv.Atoi`, consider using the `strings` package's `ParseUint` function to be more robust. This can simplify the error handling for parsing `n`.\n2.  **Clear variable names**\n\n   The variable names could be more descriptive. For example, `s` could be `durationStr` and `rest` could be `remainder`.\n3.  ** dissimilar unit parsing logic**\n\n   There is a difference in the way 's' and 'm' are handled (both get immediately replaced with `time.Second`). Consider making the units value handling uniform for readability and functionality.\n4.  **Default values**\n\n   If the input string is empty, `s: empty` should be replaced with a more precise error, like `duration: empty input`. For example, `[]`\n\n   `func Parse(s string) (time.Duration, error) {\n    var total time.Duration\n    for rest := s; rest != \"\"; {\n        i := 0\n        for i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n            i++\n        }\n        if i == 0 || i == len(rest) {\n            return total, errors.New(\"duration: empty input\")\n        }\n        n, err := strconv.ParseUint(rest[:i], 10, 32)\n        if err != nil {\n            return 0, fmt.Errorf(\"duration: parse uint error: %w\", err)\n        }\n        unit, ok := units[rest[i]]\n        if !",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 350,
+			"completion_tokens": 400,
+			"total_tokens": 750,
+			"cost": 0.000027,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000027,
+				"upstream_inference_prompt_cost": 0.000007,
+				"upstream_inference_completions_cost": 0.00002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

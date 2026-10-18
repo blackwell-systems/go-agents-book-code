@@ -1,0 +1,67 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n"
+			}
+		],
+		"max_tokens": 400
+	},
+	"response": {
+		"id": "gen-1792094037-t022xr7BBOo5VPwaK7xP",
+		"object": "chat.completion",
+		"created": 1792094037,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "max_tokens",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 511,
+			"completion_tokens": 400,
+			"total_tokens": 911,
+			"cost": 0.0002511,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002511,
+				"upstream_inference_prompt_cost": 0.0000511,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 400,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

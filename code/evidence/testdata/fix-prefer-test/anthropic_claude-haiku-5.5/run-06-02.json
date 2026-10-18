@@ -1,0 +1,184 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"content": "I'll start by listing the project files and running the tests to see the failures.",
+				"tool_calls": [
+					{
+						"id": "toolu_01V181akJcv3nbSRKkrwsjqX",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "toolu_01DgspGRow6dzk6cqbhjt2q1",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQSswUKEAgSGAI4AUIIdGhpbmtpbmcSDKGz8NqDOnnckLy0KBoMDy5yOd82yk3z5n9xIjC+AOdvqzqMaaBavO7edjr7G755jdjfLAqVgZ+JRIp7tn+KhPYVuIeOiI3GOFFXXioq0AQTmlycboXXy9R80NXFly8xR1xAoiL7BybxXf+9nf1rizIrwBHoVBNt7F7/mWiTeC0D8Xs/peZhR5tDPJ88F8PbmnQc1CFVEL263vrZEzN4vlmpEzU0dTLwyVqMcTpEQcKk3eA66w8tMZl0bvcT+BNpqcPRXYLPN6jHa5p6tPGS6AaU013bTFaYAct2NJrGGcS3/ACe0QXdVpTzTcqzqmNJMXvak9xaGeJJGDbs4wjbaM5e218ZC4OsQnPIeNKRqbhZB6mMmmVYTy9CCu095lG9D5T3yF6E+OAUbowaXTYvV2eyXGTtqlcoFC3c1M1/aU4mipfknfs2G3lSW7pJbEAoHjW1o1HwQdApzxQrL2kYVM+JsbkAzmgy+TI6KYpyppnH12NvW/YKpr0gXyNX9uolC7vvEj3LpiohuBC/TzEagvq/q4S01eUoht/KPiJVXRkFurFzlhX3O4k9jDR2o+T4CTYfRDUE6NSoMIXm+M9TIW199HrqeLhJazj+2oJEnP3hzSrRvakVbDJdmjJV2Jvn5/RtZcY+/Npi+a9B0BUtNi6nE4ZlY8isn+nltWjrpnud3zzkx3tcv1TnVYLxGdVgIOgZQ75cEBR0ynjae91zl69PvdNFH+m8PEDnl0IhF49bZTTavBRCEvx3Caarjcdl+CX0AhPzp7czIAZ1zhYT2Ij5PGRkM2TyNxIBfP2BOZThr/OSpZqo1qDfmqHC9HeEY5ijrLTCwKAfc11guzCPRb0+OhpxxZj3xhhCcvDxp/OLShSixkdAFXuQoTRYHl/UGAE=.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "toolu_01V181akJcv3nbSRKkrwsjqX"
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "toolu_01DgspGRow6dzk6cqbhjt2q1"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file. Prefer reading the test file first.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093730-wmR2yQs6SEFGeSYIsvQ7",
+		"object": "chat.completion",
+		"created": 1792093730,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01PXoGRhpf1hNzm1TN4ikNzx",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"duration_test.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01TL21kWo76pryRvjFMbGr6m",
+							"function": {
+								"name": "read_file",
+								"arguments": "{\"path\": \"duration.go\"}"
+							}
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 845,
+			"completion_tokens": 99,
+			"total_tokens": 944,
+			"cost": 0.000134,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000134,
+				"upstream_inference_prompt_cost": 0.0000845,
+				"upstream_inference_completions_cost": 0.0000495
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

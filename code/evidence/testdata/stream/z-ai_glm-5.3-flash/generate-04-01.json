@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092430-zns3b5ofBt48LTlwRJNZ",
+		"object": "chat.completion",
+		"created": 1792092430,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "`context.Context` is a standard library type used to carry cancellation signals, deadlines, and request-scoped values across API boundaries and between goroutines. It's the idiomatic mechanism for coordinating the lifetime of concurrent work in Go.\n\nA Context forms a tree: calling `WithCancel`, `WithTimeout`, or `WithDeadline` on a parent produces a derived child. When the parent is cancelled or its deadline expires, cancellation propagates to all descendants. Functions receive a context (conventionally as their first parameter, named `ctx`) and monitor its `Done()` channel, stopping early and returning `ctx.Err()` when cancellation occurs. This prevents leaked goroutines and wasted computation—for example, abandoning a database query when the HTTP client that triggered it has disconnected.\n\nContexts also carry immutable key-value pairs via `WithValue`, typically for cross-cutting metadata like trace IDs or authentication credentials, though this is discouraged as a substitute for explicit function parameters.",
+					"refusal": null,
+					"reasoning": "The user wants an explanation of Go's context.Context package in about 150 words. This is a technical explanation request. Let me think about what to cover:\n\n1. What context.Context is - a type in the standard library used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\n2. Key purposes:\n   - Cancellation propagation: when a parent operation is cancelled, all children are cancelled\n   - Deadlines and timeouts: automatically cancel work that takes too long\n   - Request-scoped values: passing metadata like auth credentials, trace IDs\n\n3. How it works:\n   - Context values are immutable; derived contexts via WithCancel, WithTimeout, WithDeadline, WithValue\n   - Forms a tree: cancelling a parent cancels children\n   - Passed as first argument (conventionally named ctx) through call chains\n   - Functions check ctx.Done() channel, ctx.Err()\n\n4. Idioms/conventions:\n   - First parameter of functions\n   - Never store in structs (mostly)\n   - Should not be used for optional parameters\n\nLet me draft ~150 words:\n\nDraft:\n\"context.Context is a standard library type used to carry cancellation signals, deadlines, and request-scoped values across API boundaries and between goroutines. It's the idiomatic mechanism for coordinating the lifetime of concurrent work.\n\nA Context forms a tree: calling WithCancel, WithTimeout, or WithDeadline on a parent produces a derived child context. When the parent is cancelled or its deadline expires, the cancellation propagates to all descendants. Functions receive a context (conventionally as the first parameter, named ctx) and monitor its Done() channel, stopping work early and returning ctx.Err() when cancellation occurs. This prevents leaked goroutines and wasted computation—for example, abandoning a database query when the HTTP client that triggered it disconnects.\n\nContexts also carry immutable key-value pairs via WithValue, typically for cross-cutting metadata like trace IDs or authentication credentials, though this is discouraged for passing ordinary function parameters.\"\n\nLet me count roughly: that's around 140-150 words. Good.\n\nFormat considerations: The user asked for \"about 150 words\" - so a compact prose response. No need for headers or bullet points necessarily; flowing prose in 2-3 short paragraphs works well. Keep it tight. Should be around 150 words - I should aim for that.\n\nLet me count more carefully:\n\nParagraph 1: \"context.Context is a standard library type used to carry cancellation signals, deadlines, and request-scoped values across API boundaries and between goroutines. It's the idiomatic mechanism for coordinating the lifetime of concurrent work.\" ≈ 36 words\n\nParagraph 2: \"A Context forms a tree: calling WithCancel, WithTimeout, or WithDeadline on a parent produces a derived child. When the parent is cancelled or its deadline expires, cancellation propagates to all descendants. Functions receive a context (conventionally as their first parameter, named ctx) and monitor its Done() channel, stopping early and returning ctx.Err() when cancellation occurs. This prevents leaked goroutines and wasted work—for example, abandoning a database query when the HTTP client that triggered it disconnects.\" ≈ 74 words\n\nParagraph 3: \"Contexts also carry immutable key-value pairs via WithValue, typically for cross-cutting metadata like trace IDs or authentication credentials, though this is discouraged as a substitute for explicit function parameters.\" ≈ 30 words\n\nTotal ≈ 140 words. That's about 150. Good.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user wants an explanation of Go's context.Context package in about 150 words. This is a technical explanation request. Let me think about what to cover:\n\n1. What context.Context is - a type in the standard library used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines.\n\n2. Key purposes:\n   - Cancellation propagation: when a parent operation is cancelled, all children are cancelled\n   - Deadlines and timeouts: automatically cancel work that takes too long\n   - Request-scoped values: passing metadata like auth credentials, trace IDs\n\n3. How it works:\n   - Context values are immutable; derived contexts via WithCancel, WithTimeout, WithDeadline, WithValue\n   - Forms a tree: cancelling a parent cancels children\n   - Passed as first argument (conventionally named ctx) through call chains\n   - Functions check ctx.Done() channel, ctx.Err()\n\n4. Idioms/conventions:\n   - First parameter of functions\n   - Never store in structs (mostly)\n   - Should not be used for optional parameters\n\nLet me draft ~150 words:\n\nDraft:\n\"context.Context is a standard library type used to carry cancellation signals, deadlines, and request-scoped values across API boundaries and between goroutines. It's the idiomatic mechanism for coordinating the lifetime of concurrent work.\n\nA Context forms a tree: calling WithCancel, WithTimeout, or WithDeadline on a parent produces a derived child context. When the parent is cancelled or its deadline expires, the cancellation propagates to all descendants. Functions receive a context (conventionally as the first parameter, named ctx) and monitor its Done() channel, stopping work early and returning ctx.Err() when cancellation occurs. This prevents leaked goroutines and wasted computation—for example, abandoning a database query when the HTTP client that triggered it disconnects.\n\nContexts also carry immutable key-value pairs via WithValue, typically for cross-cutting metadata like trace IDs or authentication credentials, though this is discouraged for passing ordinary function parameters.\"\n\nLet me count roughly: that's around 140-150 words. Good.\n\nFormat considerations: The user asked for \"about 150 words\" - so a compact prose response. No need for headers or bullet points necessarily; flowing prose in 2-3 short paragraphs works well. Keep it tight. Should be around 150 words - I should aim for that.\n\nLet me count more carefully:\n\nParagraph 1: \"context.Context is a standard library type used to carry cancellation signals, deadlines, and request-scoped values across API boundaries and between goroutines. It's the idiomatic mechanism for coordinating the lifetime of concurrent work.\" ≈ 36 words\n\nParagraph 2: \"A Context forms a tree: calling WithCancel, WithTimeout, or WithDeadline on a parent produces a derived child. When the parent is cancelled or its deadline expires, cancellation propagates to all descendants. Functions receive a context (conventionally as their first parameter, named ctx) and monitor its Done() channel, stopping early and returning ctx.Err() when cancellation occurs. This prevents leaked goroutines and wasted work—for example, abandoning a database query when the HTTP client that triggered it disconnects.\" ≈ 74 words\n\nParagraph 3: \"Contexts also carry immutable key-value pairs via WithValue, typically for cross-cutting metadata like trace IDs or authentication credentials, though this is discouraged as a substitute for explicit function parameters.\" ≈ 30 words\n\nTotal ≈ 140 words. That's about 150. Good.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 27,
+			"completion_tokens": 911,
+			"total_tokens": 938,
+			"cost": 0.00045658,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00045658,
+				"upstream_inference_prompt_cost": 0.00000108,
+				"upstream_inference_completions_cost": 0.0004555
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 905,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

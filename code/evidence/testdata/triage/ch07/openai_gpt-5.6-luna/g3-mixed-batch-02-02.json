@@ -1,0 +1,644 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You triage crash reports for remind, a Go web service. Its source is in your workspace; paths are relative to its module root, such as store/store.go.\n\nFor each problem:\n1. Group the crash reports that share a cause.\n2. Find the root cause: the function whose code is wrong.\n3. Write a test that reproduces the crash: a new _test.go file whose test fails on the current code.\n4. Fix the code, then check that your test and the whole test suite pass.\n5. File one issue for the cause.\n\nHow to work: start with crash_list, then read reports with crash_read, crash_logs, and crash_goroutines. Investigate with code_search, code_list, and code_read. Change code and create test files with code_patch, and check your work with run_tests. Search the issue tracker with issue_search before filing with issue_file. Don't change or delete existing tests.\n\nWhen you are done, call submit_diagnosis once, with one entry for every group. If you can't find a cause, file an issue with what you found and give the group the status needs_human.\n"
+			},
+			{
+				"role": "user",
+				"content": "Triage the crash reports: group them by cause, then investigate, fix, and file each cause that isn't filed yet."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_mKGLb9Ye8nsh9xhxspJTPmVP",
+						"type": "function",
+						"function": {
+							"name": "crash_list",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0W9EgG0-OyrtDBQEXJFyRU9yvIjpYV7pMVnGhubWMjxtQGK44Dw6ezinV_9B5YAvbAJWKX7CFPPcvd9IRlOQyP9nDns3XxOaFnzTo7XEABtEUKiHeIzYOGidFI-5I6I7nqeqXlIzG8oL0Uzy-zCgmsIdAtgIlQtXRZJcWmIpYgENSg6WS5wmRNwd4LdiEW3zifXBXdshJJYesGjCOe3RFxJIy3z4VeR5kz7yiNaXYAJ82hvX6KEOFAYVEUJOBcD7DdGS4bPBm3yG9YBY3jtNrDDp6XaHjTGbIuuaM8RtOQW8NU3ZCr9Px7fNU7aClZm0ELlcEcTEn2ZULQl1pKZYlJ_FR5MkasgUFSzwQCqN2M9SdnyvmSCfrQaP_3nwU9AkZWGK1EmgBuZZWejbO0bJI6WJH8zbX8YxdXENNaDarUZHT64NdbyIRzXvonTpq0FUzxbKRm1zDN5XGeGZTRHI_Pd-1z5iBto-VbYzYOMSqk6AmpzFEAxKHoJ_sILo-gzHureng75NRV3h7fvmpnBAo2-Dlz9q2nel0lqv0iyyDzQ_ZFiP0IVBpX7TeUZYNfEYA7IamX4UPMfss-Eu-jtvJphQl8cjlcxi8GsHlo_jFxzNB_nWCMOOn0Rt_OXQ6l-djmUsomaNCZeaxF6qc8RJhL23Go2RiEk_BN5NtwRvXvWaUjThA00SX1T32MUMoRzzTueIofFKK1-8XEAh1LGTDzXWF6lR-oWAmDmsRuC0cgXUYTNCH4TVZSIcb3aD7_xufa4Zp68go3XBSwVi8peDoXf4B1RQBGmrW-SOrwtayKPwVZuc1pF3EWx_-RejDldb7ueAKB2Nm9mPWHfkO3s5VCNWAnSrgNvGLPMT6bccynhCdDaKxyXkC8AyYh8rKGF5nssVgL344TdPSm0NIiapE8dkog2MrZg9rtMghwAqY6ilmsifFa11O_zd2OFaM7xLl-UZss_Pobx9NvEMe6POUZBEhInI1bYJBTBu4-xqoxuSBgZBP2HDI-LLciekDGqrC_Gb8ANryx5_Pltp0_s5RQ6bMa5t7x-EBNEHZNfdfanzOdUGwK9TmIRBqsOmNuPvFfHb8S9rrlI5TKVO-dh95ff7VTX_7qmpj6DrfD6EsAgdYePRCCya0OJswW0eRHR8U1llVUgo1sw-SePN9OznZcIp9LbGPP6IgrDIbWk7Vgbl1qM14wqokV3MA8NBmSxzA6aKICQSGUBI47ziIdC7ZaVOQU44u1fDkGtnkNjiV0nq6Ak3bcr-W8B3akQFR2diBteccmOmsem9GOVQwHIrUU6wSHJexcqgfKHjobrh1pyssmnBOWplnwEN7POmNRBdYrfUzifzPoI1hiSnbMcPq_sJeV2JNdIU7gwQRb6TC873iN_j81r77xOHM54S8K0GDbuKZUSMa5H-Vo84zz_Y5FxSbXFQf1oudw51Brm87n1v31PmJn9tN6vgrT8u7H4uo8mlf0jUCZ5vk8MaM2SAQ-_guu28FUjqJ2sfiD_FLRVDgb8gCAt-GfQJI9goWp02o2DSIclV6fDwPjbgD2hPxNgkq9fvNBzBQV3HgvzSr5FCZAf0MmZtAmTAt_Rrj1XqEr9drOkGacLRXLygnArHFONU04cXfjUsG_4WE33BZGOhmIkBWjb70PT8deyN-KpXahLJnGKHCuELlOel10uvB2fVj9LwdyW9rtqjQfXy8ViWGcQ=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_04f0f1b15d19faa2016ad16f44855c87d197a6070332583b87",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "6 reports:\ncr_b73dbe fp_34f681 x2 panic v1.4.0 duration.Parse: runtime error: index out of range [-1]\ncr_6265c5 fp_4828a6 x1 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_76768c fp_6a569c x1 panic v1.4.0 store.(*Store).List: runtime error: slice bounds out of range [20:2]\ncr_ed4938 fp_6a569c x1 panic v1.4.0 store.(*Store).List: runtime error: slice bounds out of range [20:1]\ncr_d80efa fp_86f99d x1 panic v1.4.0 api.(*API).export: runtime error: invalid memory address or nil pointer dereference\ncr_03654d fp_9e9c4e x1 panic v1.4.0 api.(*API).stats: runtime error: invalid memory address or nil pointer dereference\n",
+				"tool_call_id": "call_mKGLb9Ye8nsh9xhxspJTPmVP"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_list",
+					"description": "List every crash report, one line each: its ID, fingerprint, how many times it happened, the version that crashed, the function inside remind where it happened, and the panic message, cut short. Reports with the same fingerprint usually share a cause, but check. Start here.",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": [],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_read",
+					"description": "Read one crash report: when and how often it happened, the panic, the request being served, and the stack. By default the stack shows only remind's own frames, with file and line; set full for every frame. Log lines are in crash_logs.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							},
+							"full": {
+								"type": "boolean",
+								"description": "show every stack frame, not just remind's"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_search",
+					"description": "Search every crash report for text, ignoring case: panic messages, request paths and bodies, stacks, and log lines. Lists each match with the report's ID and where it was found.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "text to look for, such as a function name, a path, or words from a panic"
+							}
+						},
+						"required": [
+							"query"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_logs",
+					"description": "Read the log lines remind wrote just before a crash.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_goroutines",
+					"description": "Summarize the goroutine dump of a stuck request: goroutines with identical stacks are grouped and counted, so a dump of thousands reads as a few groups. Use it for reports of kind stuck.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_list",
+					"description": "List the files under a directory of remind's source, with how many lines each has. Use it to find your way around; use code_search to find where something is defined.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"dir": {
+								"type": "string",
+								"description": "a directory such as \"store\"; empty lists everything"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_read",
+					"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "a file path, such as store/store.go"
+							},
+							"start": {
+								"type": "integer",
+								"description": "the first line to show; default 1"
+							},
+							"end": {
+								"type": "integer",
+								"description": "the last line to show; default 200 lines after start"
+							}
+						},
+						"required": [
+							"path"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_search",
+					"description": "Search remind's Go files for a regular expression and list the matching lines with file and line number. Use it to find where a function is defined or called.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"pattern": {
+								"type": "string",
+								"description": "a Go regular expression, such as func \\(s \\*Store\\) Get"
+							},
+							"dir": {
+								"type": "string",
+								"description": "limit the search to this directory"
+							}
+						},
+						"required": [
+							"pattern"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run go test on remind's code, as it is now, and report failed tests, build errors, and each package's result. Run one package while you work; run ./... before you finish.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"package": {
+								"type": "string",
+								"description": "a package pattern, such as ./store or ./..."
+							},
+							"run": {
+								"type": "string",
+								"description": "run only tests matching this regular expression, such as ^TestGetDeleted$"
+							},
+							"race": {
+								"type": "boolean",
+								"description": "run with the race detector"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_patch",
+					"description": "Change a file by replacing one piece of text, or create a new file, such as a test, by leaving old empty. Read a file with code_read before changing it, and copy old exactly from what you read. After a change, the package and its tests are compiled, and you see the result.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "the file to change, such as store/store.go"
+							},
+							"old": {
+								"type": "string",
+								"description": "text copied exactly from the file, appearing in it once; empty to create a new file"
+							},
+							"new": {
+								"type": "string",
+								"description": "the text to put in its place, or the new file's contents"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_search",
+					"description": "Search the open issues in the issue tracker, by words or by fingerprint; with neither, list them all. Issues that contain more of the words come first. Check here before filing, since a crash may already be filed, perhaps by a person, with no fingerprint and in other words.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "words to look for in titles and bodies, such as parseBearer index out of range"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "a fingerprint from crash_list"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_file",
+					"description": "File a new issue for a crash group, once you know its cause. Search the open issues first; don't file a problem that is already filed. File one issue per cause.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"title": {
+								"type": "string",
+								"description": "one line naming the problem, such as \"store.Get returns a deleted reminder\""
+							},
+							"body": {
+								"type": "string",
+								"description": "the cause, the evidence, the fix, and the reports it covers"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "the crash group's fingerprint, from crash_list"
+							}
+						},
+						"required": [
+							"title",
+							"body",
+							"fingerprint"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_comment",
+					"description": "Add a comment to an issue, such as new crash reports that match one already filed.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "integer",
+								"description": "the issue number, such as 101"
+							},
+							"body": {
+								"type": "string",
+								"description": "the comment, such as new reports of the same crash"
+							}
+						},
+						"required": [
+							"id",
+							"body"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "submit_diagnosis",
+					"description": "Finish the job: submit one diagnosis per crash group. Call it once, at the end, after filing an issue for each new cause. For status fixed, the reproducer test must fail on the original code and pass on yours; this is checked.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"groups": {
+								"type": "array",
+								"description": "one entry per crash group; every report belongs to exactly one",
+								"items": {
+									"type": "object",
+									"properties": {
+										"fingerprint": {
+											"type": "string",
+											"description": "the group's fingerprint, from crash_list"
+										},
+										"reports": {
+											"type": "array",
+											"description": "the IDs of every report in the group",
+											"items": {
+												"type": "string"
+											}
+										},
+										"category": {
+											"type": "string",
+											"enum": [
+												"nil_value",
+												"out_of_range",
+												"concurrency",
+												"bad_input",
+												"other"
+											]
+										},
+										"root_cause": {
+											"type": "object",
+											"description": "where the code is wrong, which may not be where it crashed",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "string",
+											"description": "why this is the cause: what you read and ran"
+										},
+										"reproducer": {
+											"type": "object",
+											"description": "the test you wrote that fails before the fix; leave out for already_fixed and duplicate",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"fix": {
+											"type": "string",
+											"description": "what you changed, for status fixed"
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"fixed",
+												"already_fixed",
+												"duplicate",
+												"not_a_bug",
+												"needs_human"
+											]
+										},
+										"issue": {
+											"type": "integer",
+											"description": "the issue you filed, for status fixed or needs_human"
+										},
+										"duplicate": {
+											"type": "integer",
+											"description": "for status duplicate: the open issue it duplicates"
+										}
+									},
+									"required": [
+										"fingerprint",
+										"reports",
+										"category",
+										"root_cause",
+										"evidence",
+										"status"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"groups"
+						],
+						"additionalProperties": false
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792110405-XWazKConnS7gKNrMfpDC",
+		"object": "chat.completion",
+		"created": 1792110405,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "**Considering log analysis**\n\nI need to read all the crash logs, maybe in parallel. By checking the crash logs, I can identify the issues that caused the crashes. It seems like a good approach to ensure I don’t miss any details. If I do it in parallel, I might speed up the process too, but I have to be careful to maintain accuracy. I wonder if there are specific filters I should apply to focus on the most relevant logs.",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "call_UtjXyY8YJtL6ZmVdZUxfN6fl",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\":\"cr_b73dbe\",\"full\":false}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "call_fIcPzjtuuiFcL4foGuEjPjhB",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\":\"cr_6265c5\",\"full\":false}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 2,
+							"id": "call_LUoWe7QpskcLnA5pxkSQ3511",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\":\"cr_76768c\",\"full\":false}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 3,
+							"id": "call_4j3pNza5V3TVbfFpFWlJmWFH",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\":\"cr_ed4938\",\"full\":false}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 4,
+							"id": "call_LXRmNySCCrTobXfWFdp5Lb70",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\":\"cr_d80efa\",\"full\":false}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 5,
+							"id": "call_TFgPkZYw7o26fwP8MVq9IDRI",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\":\"cr_03654d\",\"full\":false}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 6,
+							"id": "call_6qzNZ7JQHMegiNifxajesKuf",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_b73dbe\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 7,
+							"id": "call_KyuGruezJEn2TNzmbu2BVqhi",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_6265c5\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 8,
+							"id": "call_FQ7I8z5QIo8plKgEzpiY5VlN",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_76768c\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 9,
+							"id": "call_Ec5qXGrCtQj4Eh2pSqBdJ469",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_ed4938\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 10,
+							"id": "call_MCgB5kL2ZVBtiXFBPz8dT6qm",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_d80efa\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 11,
+							"id": "call_ZNBTsXVVUvcfJmvarSq0SptK",
+							"function": {
+								"name": "crash_logs",
+								"arguments": "{\"id\":\"cr_03654d\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.summary",
+							"summary": "**Considering log analysis**\n\nI need to read all the crash logs, maybe in parallel. By checking the crash logs, I can identify the issues that caused the crashes. It seems like a good approach to ensure I don’t miss any details. If I do it in parallel, I might speed up the process too, but I have to be careful to maintain accuracy. I wonder if there are specific filters I should apply to focus on the most relevant logs.",
+							"format": "openai-responses-v1",
+							"index": 0
+						},
+						{
+							"type": "reasoning.encrypted",
+							"data": "gAAAAABq0W9H9vC1tYP6IplFZf5ZsTsFLtWSYLHIpAmwosnoQF7iwe-1yU1LsEbTbnn_A7PFegodfZy6MYcTti1gtW0ad7gf62r8F6wx51f2K97FjHzvLX5yfiTbCHvHZmS3JvnHS_STdiuBalx53E18ekCcGv5crv7wDU7WT8FJ7YiQN9Bj8EBJrsUta2cUTIfv6gPSrVLC59JzVsejpYwtwhR7PopsT-84GAsihc5hweWNvRLkBzp2gS1xvlNpBrafyN4gSnb5ymIe_n_D5arB6JhQMmWCWG6P3EVXbDWoHEdSOAcn_XBNGfoNufJj473jCJEhXGbgGkgBKLwr0YOhLagRGcN1TJQyj9bwH5hForBc9MTapUya3wuoUCN3Vnz7ijcNIdDY_9lLD03JrD7GBeF3C8ZK8ri-LoJIn4R62jOTsVn4N_OlQCEwRWrCG-tXZbOs3XMcaBuanaSycNEqpKbfppdgXbfBoG7YB7Z4BIVqU38evEnpJh-cYM5TgBkfDbTKBugQjFYDT8CXL7dNbJUvBClcHvK_E2KNaa1NuoKUaWYDcblDumYnbbm1Mh9KhiFnQ6tUoOWR_f7vLk-o-m_ebbREfNZIM8h4iJXDsURVpVqzN9RghmL42elLIGajzZuUPC9ZzHPQKXAbLP0I4gajDIojcx7idEGuBgmPufx4U23kBZH2iuIviL5Be6UCopNNTLZToXkc_QskmwoeXlaU0s5WWxT7n9OlDHJcjoqMMvfPOcN82ZPAVLvHD3H5ei5JOq3wNPpt2WMQVnSuVz7HxI995vim_x-f_lTO0u84WH3yIPobq-tTDlIXBa3dx2kW6pqcw1AZxW4xblmGu1M7t7GoOpFFy9z5SIIF4Ify4fq1DFgkePKozgUofeurrkRUsvqikOdNcYsVrklMEymCDmE3tQ1rA-EU6c6jwtU1YDl80aqMiuUH1SImSZSb-Bs2io9UsoN1ZxVPblIf9VEVM3cUXt9UJIxWhNvTVlfl0Ul_ghOQnEW6d6RBzk8q9S5uOHLw6zhJ9c_AMHq-oHKK-UTIMjypj_oAnxHdurjApMa-OuhJOC15L2r_pTYDsr6eOMiPUTclnQ_jQVtGVr0BnSxp8O-nu3waN26mo5l1FyWOBjx-xJ68q44pFVk0F8oxM-JcCm14uzI2fhEWyY--RYYcqByibPVktw39qeVa2sDf7XtMOiB92gFuRwKuN_V4qiAniT3WedhJagS3hSOwuvsM6Ewd-Nm46uh5fMyF2OQ9DWjJpjM0VLnOH7JbWO9cprJVb_WWPzu6MaOSXysjA3NraKxQKt5_TcD14EHhEGmD6v0WT_kBldKoMDCHcGhT_FM-jPhuoD1HUgYH5rKNDpXv3uwdyrF-_nOCHqEO1qOOHYDxmoBoQsdlm1L7VbrlkmpPcHg6TSsSPvyxmY8Dm5S4lgrJyQ1srkDnKNjHhmUlaaQIBtzTsCz-u900NFy_K7Z_N34qeZR7Gsuy1CUnHVjbkxaiJVfYRPgiurov8kM0RRB1nehEtOoTdPcaEMZURpgqtf6uGBjRZBo6M1g6WXNQzx6wofG2_At9L6l-tVd3QoR-akcimpe62FLjEHZzbCYyqOcpisum_ZDfHL9jYfOVXO4BzxUdFcHtyrl8Nej-bAy23QNEZi_HezonkMrFzv_Pd23idU8aGR-4DE8_70n-QqDGCV2qjC3l3ryz9pctUhOM2Pywhvb6N7sehqTVhZGzWMIMvvVuE0yeP_fYBhAa7w==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+							"format": "openai-responses-v1",
+							"id": "rs_04f0f1b15d19faa2016ad16f45a99c87d1924bc22ff4c49111",
+							"index": 1
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1964,
+			"completion_tokens": 286,
+			"total_tokens": 2250,
+			"cost": 0.00038302,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 1961,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00038302,
+				"upstream_inference_prompt_cost": 0.00003982,
+				"upstream_inference_completions_cost": 0.0003432
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 14,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

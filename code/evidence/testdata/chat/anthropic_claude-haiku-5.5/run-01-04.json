@@ -1,0 +1,90 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "I want to write a small command-line tool in Go that keeps a list of books I'm reading. What should the first version do? Keep it short."
+			},
+			{
+				"role": "assistant",
+				"content": "Here's a sensible scope for a first version:\n\n**Core commands**\n- `add <title> <author>`: add a book with status \"to read\"\n- `list`: show all books, with their status\n- `start <id>`: mark a book as \"reading\"\n- `finish <id>`: mark a book as \"done\"\n- `remove <id>`: delete a book\n\n**Storage**\n- Save to a single JSON file (e.g., `~/.books.json`) so the list persists between runs\n- Load the file on startup; create it if it doesn't exist\n\n**Data per book**\n- ID (auto-incremented integer)\n- Title\n- Author\n- Status (to read / reading / done)\n\n**Skip for now**\n- Ratings, notes, dates, tags, search, sorting, editing, and multiple lists. These are easy to add once the basics work.\n\n**Go pieces you'll need**\n- `os.Args` or the `flag` package for parsing commands\n- `encoding/json` for reading and writing the file\n- A simple `struct` for the book and a slice to hold them"
+			},
+			{
+				"role": "user",
+				"content": "How should I store the list on disk?"
+			},
+			{
+				"role": "assistant",
+				"content": "Use a single JSON file. Load the whole list into memory at startup, modify it there, and write the whole thing back after each change. For a personal reading list with a few hundred entries, this is simpler and fast enough.\n\n**Location**\n\nPick a path with `os.UserHomeDir()` (for example `~/.books.json`), or use `os.UserConfigDir()` if you want it to follow platform conventions. Allow an environment variable override if you like, but it's not necessary for v1.\n\n**Format**\n\nWrap the list in an object so you can add fields later without breaking the file:\n\n```json\n{\n  \"next_id\": 4,\n  \"books\": [\n    {\"id\": 1, \"title\": \"Dune\", \"author\": \"Frank Herbert\", \"status\": \"done\"},\n    {\"id\": 2, \"title\": \"Piranesi\", \"author\": \"Susanna Clarke\", \"status\": \"reading\"}\n  ]\n}\n```\n\nStoring `next_id` ensures removed IDs aren't reused. If you'd rather not store it, compute `max(id)+1` on load instead.\n\n**Loading**\n\n- If the file doesn't exist, start with an empty list. Don't treat this as an error.\n- Otherwise, read the file and unmarshal it into your struct.\n\n**Saving**\n\nWrite atomically so a crash mid-write can't corrupt your list:\n\n1. Marshal with `json.MarshalIndent` so the file stays readable.\n2. Write to a temporary file in the same directory (`os.CreateTemp`).\n3. Call `os.Rename` to replace the real file.\n\nUse file mode `0600`, since this is personal data.\n\n**Sketch**\n\n```go\ntype Store struct {\n    NextID int    `json:\"next_id\"`\n    Books  []Book `json:\"books\"`\n}\n\nfunc load(path string) (*Store, error) {\n    data, err := os.ReadFile(path)\n    if errors.Is(err, fs.ErrNotExist) {\n        return &Store{NextID: 1}, nil\n    }\n    if err != nil {\n        return nil, err\n    }\n    var s Store\n    if err := json.Unmarshal(data, &s); err != nil {\n        return nil, err\n    }\n    return &s, nil\n}\n\nfunc save(path string, s *Store) error {\n    data, err := json.MarshalIndent(s, \"\", \"  \")\n    if err != nil {\n        return err\n    }\n    tmp, err := os.CreateTemp(filepath.Dir(path), \"books-*.json\")\n    if err != nil {\n        return err\n    }\n    defer os.Remove(tmp.Name()) // no-op after a successful rename\n    if _, err := tmp.Write(data); err != nil {\n        tmp.Close()\n        return err\n    }\n    if err := tmp.Close(); err != nil {\n        return err\n    }\n    if err := os.Chmod(tmp.Name(), 0600); err != nil {\n        return err\n    }\n    return os.Rename(tmp.Name(), path)\n}\n```\n\nEach command follows the same pattern: load, change the in-memory data, save. Once that's working, the storage layer is done."
+			},
+			{
+				"role": "user",
+				"content": "Show me the struct for one book."
+			},
+			{
+				"role": "assistant",
+				"content": "```go\ntype Status string\n\nconst (\n    StatusToRead  Status = \"to read\"\n    StatusReading Status = \"reading\"\n    StatusDone    Status = \"done\"\n)\n\ntype Book struct {\n    ID     int    `json:\"id\"`\n    Title  string `json:\"title\"`\n    Author string `json:\"author\"`\n    Status Status `json:\"status\"`\n}\n```\n\nA typed `Status` with constants keeps you from misspelling a status in the code. It still serializes as a plain string, so the JSON stays the same as the example from before."
+			},
+			{
+				"role": "user",
+				"content": "How do I add a book from the command line?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091665-nouGWmggahYYdcJOQdNT",
+		"object": "chat.completion",
+		"created": 1792091665,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "Read the arguments, load the store, append the book with the next ID, and save.\n\n```go\nfunc cmdAdd(path string, args []string) error {\n    if len(args) != 2 {\n        return fmt.Errorf(\"usage: add <title> <author>\")\n    }\n\n    s, err := load(path)\n    if err != nil {\n        return err\n    }\n\n    b := Book{\n        ID:     s.NextID,\n        Title:  args[0],\n        Author: args[1],\n        Status: StatusToRead,\n    }\n    s.NextID++\n    s.Books = append(s.Books, b)\n\n    if err := save(path, s); err != nil {\n        return err\n    }\n    fmt.Printf(\"added #%d: %s by %s\\n\", b.ID, b.Title, b.Author)\n    return nil\n}\n```\n\nThen `main` dispatches on the first argument:\n\n```go\nfunc main() {\n    home, err := os.UserHomeDir()\n    if err != nil {\n        fmt.Fprintln(os.Stderr, err)\n        os.Exit(1)\n    }\n    path := filepath.Join(home, \".books.json\")\n\n    if len(os.Args) < 2 {\n        fmt.Fprintln(os.Stderr, \"usage: books <command> [args]\")\n        os.Exit(1)\n    }\n\n    switch os.Args[1] {\n    case \"add\":\n        err = cmdAdd(path, os.Args[2:])\n    default:\n        err = fmt.Errorf(\"unknown command: %s\", os.Args[1])\n    }\n    if err != nil {\n        fmt.Fprintln(os.Stderr, err)\n        os.Exit(1)\n    }\n}\n```\n\nUsage:\n\n```\nbooks add \"Piranesi\" \"Susanna Clarke\"\n```\n\nThe shell splits arguments on spaces, so quote any title or author that contains spaces. Each new command you add (`list`, `start`, and so on) gets its own `case` and its own `cmdX` function that follows the same load, change, save pattern.",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1586,
+			"completion_tokens": 1438,
+			"total_tokens": 3024,
+			"cost": 0.0008776,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0008776,
+				"upstream_inference_prompt_cost": 0.0001586,
+				"upstream_inference_completions_cost": 0.000719
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 795,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

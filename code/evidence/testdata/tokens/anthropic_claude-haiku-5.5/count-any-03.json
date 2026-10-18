@@ -1,0 +1,67 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "This chapter answers one question: what is an agent, in terms a Go programmer can build?\nIt starts by watching one work, names the parts, and then builds the loop at the center of every agent in this book.\nThe loop you write here runs with no AI at all.\nThat is on purpose: the loop is ordinary Go, and you can see and test every part of it before a real model is involved.\nHere is a small Go project with a bug.\nIts duration package parses strings like 1h30m into a time.Duration, and its tests fail.\nAn agent is given one instruction: The tests in this project fail. Find out why and fix it.\nA large language model, usually just called a model, is a system trained to continue text.\nYou send it text over an API; it sends back the text it predicts should come next.\nChapter 2 calls a real one.\nThe agent is the one you will finish in chapter 4: a Go program working with a model.\nThe table shows one run of it, one row per round trip.\nLater in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key.\nread_file {path: duration_test.go}\nRead the middle column again.\nEvery entry is a request.\nThe model asked to list files, to read them, to run the tests, and to change one line.\nIt never touched a file, and it can't.\nThe model is a remote service, reached in this book over HTTP: your program sends it text and gets text back.\nAnything that happens on your machine, your program has to do.\nEach of these requests is a tool call.\nA tool is something your program can do on the model's behalf, such as reading a file or running the tests, described to the model by a name and the inputs it takes.\nA tool call is the model asking your program to run one tool with particular inputs, such as read_file with the path duration.go.\nThe right-hand column is the other half of the work, and it is all your program.\nYour code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.\n"
+			}
+		],
+		"max_tokens": 400
+	},
+	"response": {
+		"id": "gen-1792094042-oc50OXI8UhybvhMGf7Fd",
+		"object": "chat.completion",
+		"created": 1792094042,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "max_tokens",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 607,
+			"completion_tokens": 400,
+			"total_tokens": 1007,
+			"cost": 0.0002607,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002607,
+				"upstream_inference_prompt_cost": 0.0000607,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 400,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

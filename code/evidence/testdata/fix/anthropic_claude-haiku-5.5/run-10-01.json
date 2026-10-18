@@ -1,0 +1,152 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792091700-yICSiNlLdh7BidhDk6aH",
+		"object": "chat.completion",
+		"created": 1792091700,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01PFmiWdrsauz8iFWAUSAA3s",
+							"function": {
+								"name": "run_tests",
+								"arguments": "{}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01CtXs2n9Ga9L1cnUkwmnge6",
+							"function": {
+								"name": "list_files",
+								"arguments": "{}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSowUKEAgSGAI4AUIIdGhpbmtpbmcSDJ19TEvuZf210yJS5hoM9PrZkry5b7bNYveqIjBMJ9MSB11hAtcionYbilcrEx4inEzy8YTIJxfEVKHHcCtyLzNBk0oaaMehZ8nuaz4qwAQvrjq82jshzXUMB/dWcKblCBBnB3wPFQz7bheYb6dEzmPbRKCMopgduK8W0WCMVGqhWjWCd9EUSH0/PVK4wk+Pi6tx/xhq5diQd3zwe+l2l81dLQlCoRwDn13G1dqKUOjyzvQwMi1YMMmDoA058yEzyhmgSJu8Ga17q8X5Miz4iLvT/tvXnsv8C6lZ9rzFTd8eEXfwiyG8+skW/Xw24g7o57wBTaa3vfvCU9QsjgPp0dxUxkHgesx//oYW6V85Q+zwyv/NaR9KI32BrmCGVXV15tOQN7lqG6TsYyBOCrBTtCpwDxLy9jmKexSuRMjDNSrPwCuyGoj9ReXcUpTydSRwrCpxJXc2rXv2aECOjXm+WlqiE4TN9h8vUmy917pgB0xNzmiX81hhh9+dRPpTfUkRr8fno/G3+hcNFLAq6HvL4CU7o13+xWXDDkCe/v8fQSV6Jqhy55vvaHoZs9tTimS330ng1Z+hK5nynzWV0VtYMtmkNpP6FQhmrFEW/gsyIjBjFxPJ/c8DfwcslHccsZrKVBOknVp4Voy0L00gIkM6fronKtV3qAXvAlzU80EENBv1sVoTADq0CjnTHIzSMKBop00/RUcPvhenwq5PGIryZg3NQrDu8WWm5Uesu2746vMBacK+T9gbTG5WQN/fpP+5x+CeAIvrvjZMOY3jFvNTBa2uSXS5UL6rU1inQ+ZcKLGpFBZE/Tqw+kR04JCwblPr8SNeChd/Ko2WRP3Xg6NFAjlGfJW1H3YaHLh5tEZPgTAYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 583,
+			"completion_tokens": 71,
+			"total_tokens": 654,
+			"cost": 0.0000938,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0000938,
+				"upstream_inference_prompt_cost": 0.0000583,
+				"upstream_inference_completions_cost": 0.0000355
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 20,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

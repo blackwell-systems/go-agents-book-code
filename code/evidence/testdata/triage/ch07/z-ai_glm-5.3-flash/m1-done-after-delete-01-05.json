@@ -1,0 +1,705 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You triage crash reports for remind, a Go web service. Its source is in your workspace; paths are relative to its module root, such as store/store.go.\n\nFor each problem:\n1. Group the crash reports that share a cause.\n2. Find the root cause: the function whose code is wrong.\n3. Write a test that reproduces the crash: a new _test.go file whose test fails on the current code.\n4. Fix the code, then check that your test and the whole test suite pass.\n5. File one issue for the cause.\n\nHow to work: start with crash_list, then read reports with crash_read, crash_logs, and crash_goroutines. Investigate with code_search, code_list, and code_read. Change code and create test files with code_patch, and check your work with run_tests. Search the issue tracker with issue_search before filing with issue_file. Don't change or delete existing tests.\n\nWhen you are done, call submit_diagnosis once, with one entry for every group. If you can't find a cause, file an issue with what you found and give the group the status needs_human.\n"
+			},
+			{
+				"role": "user",
+				"content": "Triage the crash reports: group them by cause, then investigate, fix, and file each cause that isn't filed yet."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "9700976b-f56b-49d7-abe7-12dfb63c4d4b",
+						"type": "function",
+						"function": {
+							"name": "crash_list",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Let me start by listing all crash reports.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "4 reports:\ncr_fd4982 fp_2bcd17 x1 panic v1.4.0 notify.(*Dispatcher).Stop: close of closed channel\ncr_1e2ea0 fp_4828a6 x2 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_ee551c fp_4828a6 x1 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_f9ee9e fp_6b14b3 x3 panic v1.4.0 auth.parseBearer: runtime error: index out of range [1] with length 1\n",
+				"tool_call_id": "9700976b-f56b-49d7-abe7-12dfb63c4d4b"
+			},
+			{
+				"role": "assistant",
+				"content": "I'll start by reading each crash report to understand what happened.",
+				"tool_calls": [
+					{
+						"id": "3a02a813-55c3-4ec0-880d-bfae2c573541",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_fd4982\"}"
+						}
+					},
+					{
+						"id": "2a3cebb4-7059-4d28-b8b2-a8ae0a4765b6",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_1e2ea0\"}"
+						}
+					},
+					{
+						"id": "45976f95-c9ed-407c-941c-b65ada4c51f2",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_ee551c\"}"
+						}
+					},
+					{
+						"id": "caaf82e9-1ee3-4567-bbec-128e1afd4929",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\":\"cr_f9ee9e\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "We have 4 crash reports, 3 fingerprints:\n- fp_2bcd17: notify.(*Dispatcher).Stop: close of closed channel (1 report)\n- fp_4828a6: api.(*API).owned: nil pointer dereference (3 reports: cr_1e2ea0 x2, cr_ee551c x1)\n- fp_6b14b3: auth.parseBearer: index out of range [1] with length 1 (1 report, 3 occurrences)\n\nLet me read each report. I can do these in parallel.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "cr_fd4982: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:18 to 2026-10-05 14:18\nfingerprint: fp_2bcd17\npanic: close of closed channel\nrequest: POST /v1/admin/dispatcher/stop\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 0\n  User-Agent: curl/8.12.1\n  X-Request-Id: 6ac3ae14-0008\nstack, remind's frames, innermost first:\n  notify.(*Dispatcher).Stop  notify/notify.go:103\n  api.(*API).stopDispatcher  api/admin.go:69\n  auth.RequireAdmin  auth/auth.go:39\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 6; read them with crash_logs\n",
+				"tool_call_id": "3a02a813-55c3-4ec0-880d-bfae2c573541"
+			},
+			{
+				"role": "tool",
+				"content": "cr_1e2ea0: panic in v1.4.0 (commit 9c41e7a), 2 times, 2026-10-05 14:12 to 2026-10-05 14:13\nfingerprint: fp_4828a6\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: POST /v1/reminders/rem_0001/done\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 0\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0005\nstack, remind's frames, innermost first:\n  api.(*API).owned  api/reminders.go:144\n  api.(*API).markDone  api/reminders.go:171\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 4; read them with crash_logs\n",
+				"tool_call_id": "2a3cebb4-7059-4d28-b8b2-a8ae0a4765b6"
+			},
+			{
+				"role": "tool",
+				"content": "cr_ee551c: panic in v1.4.0 (commit 9c41e7a), 1 times, 2026-10-05 14:15 to 2026-10-05 14:15\nfingerprint: fp_4828a6\npanic: runtime error: invalid memory address or nil pointer dereference\nrequest: GET /v1/reminders/rem_0001\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\n  X-Request-Id: 6ac3ae14-0006\nstack, remind's frames, innermost first:\n  api.(*API).owned  api/reminders.go:144\n  api.(*API).getReminder  api/reminders.go:152\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 4; read them with crash_logs\n",
+				"tool_call_id": "45976f95-c9ed-407c-941c-b65ada4c51f2"
+			},
+			{
+				"role": "tool",
+				"content": "cr_f9ee9e: panic in v1.4.0 (commit 9c41e7a), 3 times, 2026-10-05 14:04 to 2026-10-05 14:07\nfingerprint: fp_6b14b3\npanic: runtime error: index out of range [1] with length 1\nrequest: POST /v1/reminders\n  Accept-Encoding: gzip\n  Authorization: Bearer\n  Content-Length: 15\n  Content-Type: application/json\n  User-Agent: okhttp/4.12.0\n  X-Request-Id: 6ac3ae14-0002\nstack, remind's frames, innermost first:\n  auth.parseBearer  auth/auth.go:66\n  auth.authenticate  auth/auth.go:50\n  auth.Require  auth/auth.go:18\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 1; read them with crash_logs\n",
+				"tool_call_id": "caaf82e9-1ee3-4567-bbec-128e1afd4929"
+			},
+			{
+				"role": "assistant",
+				"content": "Three distinct fingerprints — likely three causes. Let me look at the logs and the relevant source code.",
+				"tool_calls": [
+					{
+						"id": "89f32120-164f-496a-9e24-1b19371a8723",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\":\"cr_1e2ea0\"}"
+						}
+					},
+					{
+						"id": "c68716f1-d059-4c23-b1f9-048fd7abaf63",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\":\"cr_fd4982\"}"
+						}
+					},
+					{
+						"id": "48f41d9c-0e0f-433c-a53b-b797b769894e",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\":\"cr_f9ee9e\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Three groups:\n\n1. fp_2bcd17: notify.(*Dispatcher).Stop: close of closed channel — POST /v1/admin/dispatcher/stop. Concurrency issue (double-close).\n2. fp_4828a6: api.(*API).owned nil pointer dereference at api/reminders.go:144 — called from markDone and getReminder. 3 reports total.\n3. fp_6b14b3: auth.parseBearer index out of range [1] with length 1 — Authorization: Bearer (empty token).\n\nLet me read the logs for each and the source code. Let me start with code reads and logs.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\"\n2026-10-05T14:09:46Z INFO reminder created id=rem_0001 user=usr_ana\n2026-10-05T14:09:46Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"",
+				"tool_call_id": "89f32120-164f-496a-9e24-1b19371a8723"
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\"\n2026-10-05T14:09:46Z INFO reminder created id=rem_0001 user=usr_ana\n2026-10-05T14:09:46Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:16:53Z WARN dispatcher stopped by an administrator\n2026-10-05T14:16:53Z INFO request method=POST path=/v1/admin/dispatcher/stop status=204 dur=3.4ms ua=curl/8.12.1",
+				"tool_call_id": "c68716f1-d059-4c23-b1f9-048fd7abaf63"
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO request method=GET path=/v1/reminders status=200 dur=1.7ms ua=\"Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36\"",
+				"tool_call_id": "48f41d9c-0e0f-433c-a53b-b797b769894e"
+			},
+			{
+				"role": "assistant",
+				"content": "The logs hint that the nil-pointer crashes follow a DELETE of the same reminder. Let me explore the source.",
+				"tool_calls": [
+					{
+						"id": "80b9026f-9600-46f1-8dc4-9cc7234db650",
+						"type": "function",
+						"function": {
+							"name": "code_list",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "16a680cd-82ad-4a4a-946b-ac55442a03bc",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\":\"api/reminders.go\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"text": "Interesting: cr_1e2ea0 (nil pointer in owned, markDone POST /v1/reminders/rem_0001/done at 14:12-14:13) shows a DELETE of rem_0001 at 14:11:02. So the reminder was deleted, then GET/markDone on a deleted reminder → owned nil pointer. So likely store.Get returns nil for a deleted (or missing) reminder, and api.owned dereferences it without checking.\n\nWait — but is it deleted or missing? Log shows reminder created rem_0001 by usr_ana, then DELETE rem_0001 status 204. Then POST /v1/reminders/rem_0001/done at 14:12 → panic. So the store returns nil, and owned dereferences r.User or something without a nil check.\n\nLet me read the code now. Files: api/reminders.go, notify/notify.go, auth/auth.go. Let me look at the whole structure first.",
+						"format": "unknown",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "CHANGELOG.md (29 lines)\nREADME.md (77 lines)\nVERSION (1 lines)\napi/admin.go (91 lines)\napi/api.go (165 lines)\napi/api_test.go (228 lines)\napi/lists.go (147 lines)\napi/reminders.go (223 lines)\napi/search.go (68 lines)\napi/users.go (128 lines)\naudit/audit.go (124 lines)\naudit/audit_test.go (185 lines)\nauth/auth.go (67 lines)\nauth/auth_test.go (73 lines)\ncalendar/calendar.go (154 lines)\ncalendar/calendar_test.go (209 lines)\ncalendar/rrule.go (58 lines)\ncmd/remind/main.go (111 lines)\nconfig/config.go (195 lines)\nconfig/config_test.go (201 lines)\ncrash/crash.go (184 lines)\ncrash/crash_test.go (100 lines)\ncrash/logring.go (99 lines)\nduration/duration.go (73 lines)\nduration/duration_test.go (53 lines)\ngo.mod (3 lines)\ni18n/accept.go (120 lines)\ni18n/catalog.go (65 lines)\ni18n/i18n.go (95 lines)\ni18n/i18n_test.go (168 lines)\ninternal/must/must.go (11 lines)\nmetrics/instrument.go (57 lines)\nmetrics/metrics.go (344 lines)\nmetrics/metrics_test.go (218 lines)\nnotify/notify.go (182 lines)\nnotify/notify_test.go (84 lines)\nnotify/text.go (79 lines)\nquota/limit.go (111 lines)\nquota/quota.go (48 lines)\nquota/quota_test.go (214 lines)\nschedule/every.go (45 lines)\nschedule/schedule.go (35 lines)\nschedule/schedule_test.go (73 lines)\nschedule/weekly.go (120 lines)\nschedule/zone.go (33 lines)\nsearch/search.go (160 lines)\nsearch/search_test.go (212 lines)\nsearch/tokens.go (57 lines)\nserver/server.go (134 lines)\nshare/share.go (334 lines)\nshare/share_test.go (342 lines)\nstore/store.go (264 lines)\nstore/store_test.go (168 lines)\nstore/users.go (135 lines)\ntextutil/textutil.go (114 lines)\ntextutil/textutil_test.go (90 lines)\nwebhook/client.go (89 lines)\nwebhook/queue.go (173 lines)\nwebhook/webhook.go (99 lines)\nwebhook/webhook_test.go (248 lines)\n",
+				"tool_call_id": "80b9026f-9600-46f1-8dc4-9cc7234db650"
+			},
+			{
+				"role": "tool",
+				"content": "api/reminders.go, lines 1-200 of 223:\n    1\tpackage api\n    2\t\n    3\timport (\n    4\t\t\"cmp\"\n    5\t\t\"net/http\"\n    6\t\t\"strings\"\n    7\t\t\"time\"\n    8\t\n    9\t\t\"example.com/remind/auth\"\n   10\t\t\"example.com/remind/duration\"\n   11\t\t\"example.com/remind/notify\"\n   12\t\t\"example.com/remind/quota\"\n   13\t\t\"example.com/remind/schedule\"\n   14\t\t\"example.com/remind/store\"\n   15\t)\n   16\t\n   17\ttype createRequest struct {\n   18\t\tText  string `json:\"text\"`\n   19\t\tIn    string `json:\"in\"`    // from now, such as \"1h30m\"\n   20\t\tAt    string `json:\"at\"`    // an RFC 3339 time\n   21\t\tEvery string `json:\"every\"` // a schedule spec, such as \"on mon at 09:00\"\n   22\t\tTZ    string `json:\"tz\"`    // for weekly schedules; defaults to the user's\n   23\t\t// Priority is 1 (high), 2 (normal), or 3 (low); omitted means normal.\n   24\t\tPriority *int `json:\"priority\"`\n   25\t}\n   26\t\n   27\tfunc (a *API) createReminder(w http.ResponseWriter, r *http.Request) {\n   28\t\tu := auth.UserFrom(r.Context())\n   29\t\tvar req createRequest\n   30\t\tif !a.decode(w, r, &req) {\n   31\t\t\treturn\n   32\t\t}\n   33\t\tif strings.TrimSpace(req.Text) == \"\" {\n   34\t\t\ta.fail(w, http.StatusBadRequest, \"text is required\")\n   35\t\t\treturn\n   36\t\t}\n   37\t\tpriority := 2\n   38\t\tif req.Priority != nil {\n   39\t\t\tif *req.Priority > 3 {\n   40\t\t\t\ta.fail(w, http.StatusBadRequest, \"priority must be 1, 2, or 3\")\n   41\t\t\t\treturn\n   42\t\t\t}\n   43\t\t\tpriority = *req.Priority\n   44\t\t}\n   45\t\tvar (\n   46\t\t\tdue  time.Time\n   47\t\t\trule schedule.Rule\n   48\t\t\terr  error\n   49\t\t)\n   50\t\tswitch {\n   51\t\tcase req.Every != \"\":\n   52\t\t\tzone := schedule.LookupZone(cmp.Or(req.TZ, u.Prefs.TZ))\n   53\t\t\trule, err = schedule.Parse(req.Every, zone, a.Now())\n   54\t\tcase req.In != \"\":\n   55\t\t\tvar d time.Duration\n   56\t\t\td, err = duration.Parse(req.In)\n   57\t\t\tdue = a.Now().Add(d)\n   58\t\tcase req.At != \"\":\n   59\t\t\tdue, err = time.Parse(time.RFC3339, req.At)\n   60\t\tdefault:\n   61\t\t\ta.fail(w, http.StatusBadRequest, \"one of in, at, or every is required\")\n   62\t\t\treturn\n   63\t\t}\n   64\t\tif err != nil {\n   65\t\t\ta.fail(w, http.StatusBadRequest, err.Error())\n   66\t\t\treturn\n   67\t\t}\n   68\t\tif err := quota.CheckReminders(planOf(u), a.Store.Count(u.ID)); err != nil {\n   69\t\t\ta.fail(w, http.StatusForbidden, err.Error())\n   70\t\t\treturn\n   71\t\t}\n   72\t\trem := a.Store.Create(u.ID, req.Text, due, rule)\n   73\t\tif priority != 2 {\n   74\t\t\terr := a.Store.Update(rem.ID, func(r *store.Reminder) error {\n   75\t\t\t\tr.Priority = priority\n   76\t\t\t\treturn nil\n   77\t\t\t})\n   78\t\t\tif err != nil {\n   79\t\t\t\ta.writeError(w, err)\n   80\t\t\t\treturn\n   81\t\t\t}\n   82\t\t}\n   83\t\ta.Search.Add(rem.ID, u.ID, rem.Text)\n   84\t\ta.Log.Info(\"reminder created\", \"id\", rem.ID, \"user\", u.ID)\n   85\t\tw.Header().Set(\"Location\", \"/v1/reminders/\"+rem.ID)\n   86\t\ta.writeJSON(w, http.StatusCreated, map[string]string{\"id\": rem.ID})\n   87\t}\n   88\t\n   89\ttype reminderView struct {\n   90\t\tID       string        `json:\"id\"`\n   91\t\tText     string        `json:\"text\"`\n   92\t\tPreview  string        `json:\"preview\"`\n   93\t\tDue      time.Time     `json:\"due\"`\n   94\t\tSchedule schedule.Rule `json:\"schedule,omitempty\"`\n   95\t\tPriority string        `json:\"priority\"`\n   96\t\tDone     bool          `json:\"done\"`\n   97\t}\n   98\t\n   99\tvar priorityNames = [...]string{\"high\", \"normal\", \"low\"}\n  100\t\n  101\t// priorityName names a stored priority; 0 is normal.\n  102\tfunc priorityName(p int) string {\n  103\t\tif p == 0 {\n  104\t\t\treturn \"normal\"\n  105\t\t}\n  106\t\treturn priorityNames[p-1]\n  107\t}\n  108\t\n  109\tfunc viewOf(r *store.Reminder) reminderView {\n  110\t\treturn reminderView{\n  111\t\t\tID:       r.ID,\n  112\t\t\tText:     r.Text,\n  113\t\t\tPreview:  notify.Preview(r.Text),\n  114\t\t\tDue:      r.Due,\n  115\t\t\tSchedule: r.Rule,\n  116\t\t\tPriority: priorityName(r.Priority),\n  117\t\t\tDone:     r.Done,\n  118\t\t}\n  119\t}\n  120\t\n  121\tfunc (a *API) listReminders(w http.ResponseWriter, r *http.Request) {\n  122\t\tu := auth.UserFrom(r.Context())\n  123\t\toffset, limit, ok := a.page(w, r)\n  124\t\tif !ok {\n  125\t\t\treturn\n  126\t\t}\n  127\t\trems := a.Store.List(u.ID, offset, limit)\n  128\t\tviews := make([]reminderView, len(rems))\n  129\t\tfor i, rem := range rems {\n  130\t\t\tviews[i] = viewOf(rem)\n  131\t\t}\n  132\t\ta.writeJSON(w, http.StatusOK, map[string]any{\"reminders\": views})\n  133\t}\n  134\t\n  135\t// owned returns the caller's reminder with the request's ID, or answers\n  136\t// 404 and returns nil.\n  137\tfunc (a *API) owned(w http.ResponseWriter, r *http.Request) *store.Reminder {\n  138\t\tu := auth.UserFrom(r.Context())\n  139\t\trem, err := a.Store.Get(r.PathValue(\"id\"))\n  140\t\tif err != nil {\n  141\t\t\ta.writeError(w, err)\n  142\t\t\treturn nil\n  143\t\t}\n  144\t\tif rem.UserID != u.ID {\n  145\t\t\ta.fail(w, http.StatusNotFound, \"not found\")\n  146\t\t\treturn nil\n  147\t\t}\n  148\t\treturn rem\n  149\t}\n  150\t\n  151\tfunc (a *API) getReminder(w http.ResponseWriter, r *http.Request) {\n  152\t\tif rem := a.owned(w, r); rem != nil {\n  153\t\t\ta.writeJSON(w, http.StatusOK, viewOf(rem))\n  154\t\t}\n  155\t}\n  156\t\n  157\tfunc (a *API) deleteReminder(w http.ResponseWriter, r *http.Request) {\n  158\t\trem := a.owned(w, r)\n  159\t\tif rem == nil {\n  160\t\t\treturn\n  161\t\t}\n  162\t\tif err := a.Store.Delete(rem.ID); err != nil {\n  163\t\t\ta.writeError(w, err)\n  164\t\t\treturn\n  165\t\t}\n  166\t\ta.Search.Remove(rem.ID)\n  167\t\tw.WriteHeader(http.StatusNoContent)\n  168\t}\n  169\t\n  170\tfunc (a *API) markDone(w http.ResponseWriter, r *http.Request) {\n  171\t\trem := a.owned(w, r)\n  172\t\tif rem == nil {\n  173\t\t\treturn\n  174\t\t}\n  175\t\terr := a.Store.Update(rem.ID, func(r *store.Reminder) error {\n  176\t\t\tr.Done = true\n  177\t\t\treturn nil\n  178\t\t})\n  179\t\tif err != nil {\n  180\t\t\ta.writeError(w, err)\n  181\t\t\treturn\n  182\t\t}\n  183\t\tw.WriteHeader(http.StatusNoContent)\n  184\t}\n  185\t\n  186\tfunc (a *API) snooze(w http.ResponseWriter, r *http.Request) {\n  187\t\trem := a.owned(w, r)\n  188\t\tif rem == nil {\n  189\t\t\treturn\n  190\t\t}\n  191\t\tvar req struct {\n  192\t\t\tFor string `json:\"for\"` // such as \"10m\"\n  193\t\t}\n  194\t\tif !a.decode(w, r, &req) {\n  195\t\t\treturn\n  196\t\t}\n  197\t\td, err := duration.Parse(req.For)\n  198\t\tif err != nil {\n  199\t\t\ta.fail(w, http.StatusBadRequest, err.Error())\n  200\t\t\treturn\n... 23 more lines; read on with start=201\n",
+				"tool_call_id": "16a680cd-82ad-4a4a-946b-ac55442a03bc"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_list",
+					"description": "List every crash report, one line each: its ID, fingerprint, how many times it happened, the version that crashed, the function inside remind where it happened, and the panic message, cut short. Reports with the same fingerprint usually share a cause, but check. Start here.",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": [],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_read",
+					"description": "Read one crash report: when and how often it happened, the panic, the request being served, and the stack. By default the stack shows only remind's own frames, with file and line; set full for every frame. Log lines are in crash_logs.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							},
+							"full": {
+								"type": "boolean",
+								"description": "show every stack frame, not just remind's"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_search",
+					"description": "Search every crash report for text, ignoring case: panic messages, request paths and bodies, stacks, and log lines. Lists each match with the report's ID and where it was found.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "text to look for, such as a function name, a path, or words from a panic"
+							}
+						},
+						"required": [
+							"query"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_logs",
+					"description": "Read the log lines remind wrote just before a crash.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_goroutines",
+					"description": "Summarize the goroutine dump of a stuck request: goroutines with identical stacks are grouped and counted, so a dump of thousands reads as a few groups. Use it for reports of kind stuck.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_list",
+					"description": "List the files under a directory of remind's source, with how many lines each has. Use it to find your way around; use code_search to find where something is defined.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"dir": {
+								"type": "string",
+								"description": "a directory such as \"store\"; empty lists everything"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_read",
+					"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "a file path, such as store/store.go"
+							},
+							"start": {
+								"type": "integer",
+								"description": "the first line to show; default 1"
+							},
+							"end": {
+								"type": "integer",
+								"description": "the last line to show; default 200 lines after start"
+							}
+						},
+						"required": [
+							"path"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_search",
+					"description": "Search remind's Go files for a regular expression and list the matching lines with file and line number. Use it to find where a function is defined or called.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"pattern": {
+								"type": "string",
+								"description": "a Go regular expression, such as func \\(s \\*Store\\) Get"
+							},
+							"dir": {
+								"type": "string",
+								"description": "limit the search to this directory"
+							}
+						},
+						"required": [
+							"pattern"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run go test on remind's code, as it is now, and report failed tests, build errors, and each package's result. Run one package while you work; run ./... before you finish.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"package": {
+								"type": "string",
+								"description": "a package pattern, such as ./store or ./..."
+							},
+							"run": {
+								"type": "string",
+								"description": "run only tests matching this regular expression, such as ^TestGetDeleted$"
+							},
+							"race": {
+								"type": "boolean",
+								"description": "run with the race detector"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_patch",
+					"description": "Change a file by replacing one piece of text, or create a new file, such as a test, by leaving old empty. Read a file with code_read before changing it, and copy old exactly from what you read. After a change, the package and its tests are compiled, and you see the result.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "the file to change, such as store/store.go"
+							},
+							"old": {
+								"type": "string",
+								"description": "text copied exactly from the file, appearing in it once; empty to create a new file"
+							},
+							"new": {
+								"type": "string",
+								"description": "the text to put in its place, or the new file's contents"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_search",
+					"description": "Search the open issues in the issue tracker, by words or by fingerprint; with neither, list them all. Issues that contain more of the words come first. Check here before filing, since a crash may already be filed, perhaps by a person, with no fingerprint and in other words.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "words to look for in titles and bodies, such as parseBearer index out of range"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "a fingerprint from crash_list"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_file",
+					"description": "File a new issue for a crash group, once you know its cause. Search the open issues first; don't file a problem that is already filed. File one issue per cause.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"title": {
+								"type": "string",
+								"description": "one line naming the problem, such as \"store.Get returns a deleted reminder\""
+							},
+							"body": {
+								"type": "string",
+								"description": "the cause, the evidence, the fix, and the reports it covers"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "the crash group's fingerprint, from crash_list"
+							}
+						},
+						"required": [
+							"title",
+							"body",
+							"fingerprint"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_comment",
+					"description": "Add a comment to an issue, such as new crash reports that match one already filed.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "integer",
+								"description": "the issue number, such as 101"
+							},
+							"body": {
+								"type": "string",
+								"description": "the comment, such as new reports of the same crash"
+							}
+						},
+						"required": [
+							"id",
+							"body"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "submit_diagnosis",
+					"description": "Finish the job: submit one diagnosis per crash group. Call it once, at the end, after filing an issue for each new cause. For status fixed, the reproducer test must fail on the original code and pass on yours; this is checked.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"groups": {
+								"type": "array",
+								"description": "one entry per crash group; every report belongs to exactly one",
+								"items": {
+									"type": "object",
+									"properties": {
+										"fingerprint": {
+											"type": "string",
+											"description": "the group's fingerprint, from crash_list"
+										},
+										"reports": {
+											"type": "array",
+											"description": "the IDs of every report in the group",
+											"items": {
+												"type": "string"
+											}
+										},
+										"category": {
+											"type": "string",
+											"enum": [
+												"nil_value",
+												"out_of_range",
+												"concurrency",
+												"bad_input",
+												"other"
+											]
+										},
+										"root_cause": {
+											"type": "object",
+											"description": "where the code is wrong, which may not be where it crashed",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "string",
+											"description": "why this is the cause: what you read and ran"
+										},
+										"reproducer": {
+											"type": "object",
+											"description": "the test you wrote that fails before the fix; leave out for already_fixed and duplicate",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"fix": {
+											"type": "string",
+											"description": "what you changed, for status fixed"
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"fixed",
+												"already_fixed",
+												"duplicate",
+												"not_a_bug",
+												"needs_human"
+											]
+										},
+										"issue": {
+											"type": "integer",
+											"description": "the issue you filed, for status fixed or needs_human"
+										},
+										"duplicate": {
+											"type": "integer",
+											"description": "for status duplicate: the open issue it duplicates"
+										}
+									},
+									"required": [
+										"fingerprint",
+										"reports",
+										"category",
+										"root_cause",
+										"evidence",
+										"status"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"groups"
+						],
+						"additionalProperties": false
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792110641-6QzpOlVg9wHbeIRBYf6K",
+		"object": "chat.completion",
+		"created": 1792110641,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "CoreWeave",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_calls",
+				"message": {
+					"role": "assistant",
+					"content": "Line 144 is `rem.UserID != u.ID` — so `rem` is nil despite `err == nil`. Let me check `Store.Get` and the other two crash sites.",
+					"refusal": null,
+					"reasoning": "Line 144: `if rem.UserID != u.ID {` — the panic. So `rem` is nil while `err` is nil. That means Store.Get returns (nil, nil) in some case — likely when the reminder was deleted... Let me check store.Get. Actually, wait — maybe Get returns (nil, nil) for a deleted reminder. Let me look at store/store.go.\n\nAlso, does writeError handle store.ErrNotFound? Maybe Get returns nil, nil for a not-found... Let me read store.go.",
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "c0aebee1-2335-47ef-ab13-8ca3dd0358e6",
+							"function": {
+								"name": "code_read",
+								"arguments": "{\"path\":\"store/store.go\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "4c2fd501-d696-4713-a5ac-f650f4f23692",
+							"function": {
+								"name": "code_read",
+								"arguments": "{\"path\":\"auth/auth.go\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "Line 144: `if rem.UserID != u.ID {` — the panic. So `rem` is nil while `err` is nil. That means Store.Get returns (nil, nil) in some case — likely when the reminder was deleted... Let me check store.Get. Actually, wait — maybe Get returns (nil, nil) for a deleted reminder. Let me look at store/store.go.\n\nAlso, does writeError handle store.ErrNotFound? Maybe Get returns nil, nil for a not-found... Let me read store.go.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 7794,
+			"completion_tokens": 173,
+			"total_tokens": 7967,
+			"cost": 0.00062328,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 4864,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00062328,
+				"upstream_inference_prompt_cost": 0.00053678,
+				"upstream_inference_completions_cost": 0.0000865
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 110,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

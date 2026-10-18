@@ -1,0 +1,66 @@
+{
+	"status": 200,
+	"request": {
+		"model": "deepseek/deepseek-v4.1-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "In about 150 words, explain what context.Context is for in Go."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792092376-0xEoWQgzPoD0ndNhGsfv",
+		"object": "chat.completion",
+		"created": 1792092376,
+		"model": "deepseek/deepseek-v4.1-flash",
+		"provider": "Baidu",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "`context.Context` in Go carries deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. It lets one operation, such as an HTTP request or database call, be canceled or time-limited, and have that cancellation propagate to all downstream work. Contexts are immutable and derived from a parent using `context.WithCancel`, `WithTimeout`, `WithDeadline`, or `WithValue`. They are safe for concurrent use. You typically pass a `Context` as the first argument to functions that do I/O or long-running work. When a context is canceled or its deadline passes, its `Done` channel closes, and functions should return promptly. Always call the returned `CancelFunc` to release resources. Avoid storing optional parameters in context values; use them only for request-scoped data like trace IDs or auth info.",
+					"refusal": null,
+					"reasoning": "We need answer about 150 words. Explain context.Context in Go. Need concise. Should mention purpose: carry deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines. Not for storing optional params. Allows propagation of cancellation/deadline, timeout. Immutable, derived via WithCancel, WithTimeout, WithDeadline, WithValue. Used in servers, DB calls, HTTP requests. Must call cancel to release resources. Explain context.Context in about 150 words. Let's craft ~150 words. Ensure accurate. Maybe mention concurrency safety? Context is safe for simultaneous use by multiple goroutines. Value should be request-scoped data, not optional params. Let's write. Count roughly. We'll produce final.",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "We need answer about 150 words. Explain context.Context in Go. Need concise. Should mention purpose: carry deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines. Not for storing optional params. Allows propagation of cancellation/deadline, timeout. Immutable, derived via WithCancel, WithTimeout, WithDeadline, WithValue. Used in servers, DB calls, HTTP requests. Must call cancel to release resources. Explain context.Context in about 150 words. Let's craft ~150 words. Ensure accurate. Maybe mention concurrency safety? Context is safe for simultaneous use by multiple goroutines. Value should be request-scoped data, not optional params. Let's write. Count roughly. We'll produce final.",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 45,
+			"completion_tokens": 323,
+			"total_tokens": 368,
+			"cost": 0.0002001489,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002001489,
+				"upstream_inference_prompt_cost": 0.0000067365,
+				"upstream_inference_completions_cost": 0.0001934124
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 152,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

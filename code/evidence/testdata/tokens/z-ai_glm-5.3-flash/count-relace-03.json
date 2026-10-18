@@ -1,0 +1,72 @@
+{
+	"status": 200,
+	"request": {
+		"model": "z-ai/glm-5.3-flash",
+		"messages": [
+			{
+				"role": "user",
+				"content": "This chapter answers one question: what is an agent, in terms a Go programmer can build?\nIt starts by watching one work, names the parts, and then builds the loop at the center of every agent in this book.\nThe loop you write here runs with no AI at all.\nThat is on purpose: the loop is ordinary Go, and you can see and test every part of it before a real model is involved.\nHere is a small Go project with a bug.\nIts duration package parses strings like 1h30m into a time.Duration, and its tests fail.\nAn agent is given one instruction: The tests in this project fail. Find out why and fix it.\nA large language model, usually just called a model, is a system trained to continue text.\nYou send it text over an API; it sends back the text it predicts should come next.\nChapter 2 calls a real one.\nThe agent is the one you will finish in chapter 4: a Go program working with a model.\nThe table shows one run of it, one row per round trip.\nLater in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key.\nread_file {path: duration_test.go}\nRead the middle column again.\nEvery entry is a request.\nThe model asked to list files, to read them, to run the tests, and to change one line.\nIt never touched a file, and it can't.\nThe model is a remote service, reached in this book over HTTP: your program sends it text and gets text back.\nAnything that happens on your machine, your program has to do.\nEach of these requests is a tool call.\nA tool is something your program can do on the model's behalf, such as reading a file or running the tests, described to the model by a name and the inputs it takes.\nA tool call is the model asking your program to run one tool with particular inputs, such as read_file with the path duration.go.\nThe right-hand column is the other half of the work, and it is all your program.\nYour code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.\n"
+			}
+		],
+		"max_tokens": 400,
+		"provider": {
+			"only": [
+				"relace"
+			]
+		}
+	},
+	"response": {
+		"id": "gen-1792094053-iqXG7jfiIH6OkPEejq7U",
+		"object": "chat.completion",
+		"created": 1792094053,
+		"model": "z-ai/glm-5.3-flash",
+		"provider": "Relace",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "length",
+				"native_finish_reason": "length",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": "The user has posted what appears to be a chapter draft from a book about building AI agents in Go. The text is incomplete - it ends mid-explanation. The text says:\n\n\"This chapter answers one question: what is an agent, in terms a Go programmer can build?\"\n\nThen it describes:\n- Starting by watching one work\n- Naming the parts\n- Building the loop at the center of every agent\n- The loop runs with no AI at all (on purpose)\n- A small Go project with a bug (duration package)\n- An agent given one instruction: fix failing tests\n- Definitions of model, agent, tool, tool call\n\nThe text cuts off at: \"Your code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.\"\n\nWait - there's no explicit question or request from the user. They've just pasted this text. What is the expected behavior here?\n\nHmm. This looks like it could be:\n1. Someone sharing a chapter draft and expecting feedback/review\n2. Someone expecting me to continue the text\n3. Someone testing me\n4. The text might be a writing sample and they want continuation\n\nActually, looking at this more carefully - the text ends abruptly. The most natural interpretations:\n\n1. Continue writing the chapter (the text seems to be part of a book being drafted, and the user may want me to continue)\n2. Provide feedback on the draft\n\nGiven the ambiguity, but the strong pattern that people paste incomplete text like this expecting continuation, and the content itself says \"Later in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key\" - suggesting the chapter continues with building the loop...\n\nActually, wait. Let me reconsider. The text has a distinctive style: short declarative sentences, technical pedagogy, a specific voice. \"Read the middle column again.\" It reads like a book draft in",
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"text": "The user has posted what appears to be a chapter draft from a book about building AI agents in Go. The text is incomplete - it ends mid-explanation. The text says:\n\n\"This chapter answers one question: what is an agent, in terms a Go programmer can build?\"\n\nThen it describes:\n- Starting by watching one work\n- Naming the parts\n- Building the loop at the center of every agent\n- The loop runs with no AI at all (on purpose)\n- A small Go project with a bug (duration package)\n- An agent given one instruction: fix failing tests\n- Definitions of model, agent, tool, tool call\n\nThe text cuts off at: \"Your code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.\"\n\nWait - there's no explicit question or request from the user. They've just pasted this text. What is the expected behavior here?\n\nHmm. This looks like it could be:\n1. Someone sharing a chapter draft and expecting feedback/review\n2. Someone expecting me to continue the text\n3. Someone testing me\n4. The text might be a writing sample and they want continuation\n\nActually, looking at this more carefully - the text ends abruptly. The most natural interpretations:\n\n1. Continue writing the chapter (the text seems to be part of a book being drafted, and the user may want me to continue)\n2. Provide feedback on the draft\n\nGiven the ambiguity, but the strong pattern that people paste incomplete text like this expecting continuation, and the content itself says \"Later in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key\" - suggesting the chapter continues with building the loop...\n\nActually, wait. Let me reconsider. The text has a distinctive style: short declarative sentences, technical pedagogy, a specific voice. \"Read the middle column again.\" It reads like a book draft in",
+							"format": "unknown",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 465,
+			"completion_tokens": 400,
+			"total_tokens": 865,
+			"cost": 0.0002186,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002186,
+				"upstream_inference_prompt_cost": 0.0000186,
+				"upstream_inference_completions_cost": 0.0002
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 470,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

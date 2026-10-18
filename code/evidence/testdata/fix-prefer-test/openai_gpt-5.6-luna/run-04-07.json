@@ -1,0 +1,265 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_z0AC5vfSGVVRGMiuUyqnIUHv",
+						"type": "function",
+						"function": {
+							"name": "list_files",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0S4dxSRrxBcSfSe3Ccr_zLWrbsyPR-AyX1Oa1m1EUXIMqStO9OY82w1SgBmmhyqOlSCk02f8NTPRN6CiAh4UJ-7tv0Fvi9dt8XLAJvXBtQ55MqVrWlYY2rsuOqgymac5K99ApHOtkOS4O1GxJklw9sYyIC3sjhh2js1DCscDcgFEg2JMX58YsHSGFkwox8hUEXCavyyHwcBlMvafj28XzbGgijX3wZJvv3kBj4HVIzIFRgfeA2Vx6gPnxcsxwy0V8KwOjTN-ktT-l3w6zrfzCCerKGtishZ16qkRyMLKWVLzcKGW_eyL38x-laJea3eRgFAXuFkXny0lS1ikfBiQbuUv9zRPc-kXOOuPcbi52jEHQfONt02iE1bJFfSGNnzV4t9clE584ERWST-duKk0wnsys-DbraUXjpaxpOy8iZozpS30QSZlkOwcqSSZG8SPvnEwUWp-pDJh0SrwPE5PRlPmN1omMuzYD_xoDTa2st4cvwDcMTq_nByKas_f87HS6LhUX1nVlAedihGizF-QnvktniHX4qBa6VlUrAReug3IeblNHN13pVBY1LSbAVKtqQYT6ViCAPU4JkVoxSjq4qQNAf8N01FJ-YgWKIS3k98EfEKIGbNGh3RDLkbQevlEwKM4ZEZZzJ0K9BoNaKSztFdg9vxMsqlGxUxuIsdpDyra7Q0p9e0AuDGmHJktAOVy9o_p-XJTQu4UtKQQMK_e0j33mm-riiHnp1ZcGT7zADIUDcjOC6hWodF6j_Qb9JaSPiOYWCuUMdMVR0IW5uRnglUUuU0Al0zb6uzLjOXAN8BR8wtgpUgUPwLykxkav-Vob7ri-Fuq7seuiKY2ARd3dzN89CJl21KSIeVy4KUWiq8wmbICvkr-oj0oQZxuvOpZDyZo_CVLGWIpoWq4L-wDgZtbc_0aE84cwEqNgdBPIV2WAkpfnOx9iJx5ZjiuxD9dmYYgjl1bD0disn5E3iGGPU2S0lJV-nv2zyOXWaYVA8JIvhg_eoJI_VZqmeLe9-jofPiAcpZhANBfz30yUn57_uBaKNxxQqmwOGpG5TFxODC_4KaW2VYd2oH7zvZxSHcG2XuAiM7_SYLQlQRUsSXUKGqYzgkkTfvqshCQK1SUVYFyNQ0V5QWQ05EAGCNlE5_oF-of0zNycc1jxRu8bUvx5jlP6ZWLi6ONNeEDIQFeEuw_0n1lywYIaC2T4bBq7Hhcb5IKHU4GHfpbOjR82gTg3OZ7n7iSHh_hL-OoQArQBAVIhRFZawEEVxa2ra7Fxf1gOIPNQVhITsHzj7fz73aPg6UOPjQDBII-W710VwBOeVWPnA6RdKbRIW7rnNbUk_Q238h4cfE61stoyHdOAVCfSDTdHRKkwCXpqH3udFF4xh_rP-QX-fJyQ_ck9i6XoFMsLCnOQP_Izmt0CK4S5KPdDD37GyHiY-zbWWhjIo5RwfOtwMiNAw-Ck5XFgv1VHl4Tga3sklgiooPi7dFAPEZBrFK1DcvxTeURz6yM6o_W_Y8CYdixBwaKYUa6SOv0DTcoi53VpVXTckTxCAzZ_pX0xg4Xqc0cFjwaILGwfNzQ7FWYop7cwdFmasKPJt4OOVfPbhfc_Zwa7NUTs0PLgiEbQ_TCEFShtdnO42Xwi2a3lzImYT_jFTIilHqS3aq1m1R-QZT3PqmjoKGacLCt_uM3dcB_kA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_03bbf3e9639078b3016ad12e1d96bc87d1a70017e76ec56c0b",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration.go\nduration_test.go",
+				"tool_call_id": "call_z0AC5vfSGVVRGMiuUyqnIUHv"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_oCpiyw6pgDqXxc957j5UGqwP",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration_test.go\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "package duration\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestParse(t *testing.T) {\n\ttests := []struct {\n\t\tin   string\n\t\twant time.Duration\n\t}{\n\t\t{\"90s\", 90 * time.Second},\n\t\t{\"45m\", 45 * time.Minute},\n\t\t{\"1h30m\", 90 * time.Minute},\n\t\t{\"2d\", 48 * time.Hour},\n\t}\n\tfor _, tt := range tests {\n\t\tgot, err := Parse(tt.in)\n\t\tif err != nil {\n\t\t\tt.Errorf(\"Parse(%q): %v\", tt.in, err)\n\t\t\tcontinue\n\t\t}\n\t\tif got != tt.want {\n\t\t\tt.Errorf(\"Parse(%q) = %v, want %v\", tt.in, got, tt.want)\n\t\t}\n\t}\n}\n\nfunc TestParseErrors(t *testing.T) {\n\tfor _, in := range []string{\"\", \"1h30\", \"h\", \"10y\"} {\n\t\tif _, err := Parse(in); err == nil {\n\t\t\tt.Errorf(\"Parse(%q) succeeded, want an error\", in)\n\t\t}\n\t}\n}\n",
+				"tool_call_id": "call_oCpiyw6pgDqXxc957j5UGqwP"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_uAMO5HqlMJcyjSY6EQya1mVw",
+						"type": "function",
+						"function": {
+							"name": "read_file",
+							"arguments": "{\"path\":\"duration.go\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "// Package duration parses durations such as \"90s\", \"1h30m\", and \"2d\".\npackage duration\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n)\n\nvar units = map[byte]time.Duration{\n\t's': time.Second,\n\t'm': time.Second,\n\t'h': time.Hour,\n\t'd': 24 * time.Hour,\n}\n\n// Parse parses a sequence of whole numbers, each followed by a unit:\n// s, m, h, or d. \"1h30m\" is ninety minutes.\nfunc Parse(s string) (time.Duration, error) {\n\tvar total time.Duration\n\tfor rest := s; rest != \"\"; {\n\t\ti := 0\n\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n\t\t\ti++\n\t\t}\n\t\tif i == 0 || i == len(rest) {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: want a number and a unit\", s)\n\t\t}\n\t\tn, err := strconv.Atoi(rest[:i])\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n\t\t}\n\t\tunit, ok := units[rest[i]]\n\t\tif !ok {\n\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n\t\t}\n\t\ttotal += time.Duration(n) * unit\n\t\trest = rest[i+1:]\n\t}\n\tif total == 0 {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\treturn total, nil\n}\n",
+				"tool_call_id": "call_uAMO5HqlMJcyjSY6EQya1mVw"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_WHkuKKv4WoseRUkcc2TFb3tt",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.summary",
+						"summary": "**Considering test robustness**\n\nI noticed there's an obvious typo, which is a bit embarrassing. It got me thinking: do we need hidden tests for robustness? The user is asking about test failures, and it sounds like fixing unit tests is the way to go. I’ll run some tests to establish where things might be going wrong. It’s important to ensure everything is functioning as it should be!",
+						"format": "openai-responses-v1",
+						"index": 0
+					},
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0S4ioy85gMB7st67Yg0yN-LxTnndpFFi5KtHmIIr7RGVowiNrcAEcmeKWosQVe1A5m-l1gGr85QaXwmUDslyA9A2TMjcXuT4Zz9Xx4nTcJowZmV11NOUPGt4eSksCCIcKBSRVrpgwbm9hzzbpOEVf9IYeTw4-QJLAaw7wY35bC468buzi8pWI1jPQrpY6xBYflBBrmv0UYwif432BiXO6O3OdSyD3LFQjcfLRgAWoo3X5WI6ku5nVE3w2ZofHB4ywiM0ClgWPi16rb3gYeTIsxSE5AKcAEpa1mIRKfodF1doDeoKXSFxy3B34kskXLo1VD9Bv9g3Hu3jaJqeTScnf9ApL2SL8BbUB9wwiKEtvn1ZQPRQbcnCfSaQBvHNlxlP4XfkYGRf_bwu7uI7lIvLZg6QaoIt8EDJ2BGd0L7Ql-upBSVqsPiPGljuetFOaYK7PX2H6jpXN8t4goLUfMnLVQIZovTAh-1NM3B3xAZ27gtzjoczo5q21t501L54_JSAf1jCzaSOkbRIUS5830zcAPrF0Dtmd10B3P8oKc5OvX36aZcbfZIshq5vPNoBXuGkLyD-XTQwVAzpph2eFv7Rl_Z1wykg7bAjLjwZ94VbofzfwqnpkRMqWcoO9xcgOiPLOuVZC7TziOL6PK97KJIor0HDlINbJWSpXA1Z430v3Gc0pv21mfk2eiyDY1dwa1Y3Nbajh0gCW6AI7R_9k_I3RLTIU25V6_aODLYgv8c5XcczAzqC-kk_CP3qR0mRSU1frtzjq-IhYyy1SjKefSWGc2V8oApFhx8LkC2ZDrmVVmhJUkM0I3oU0yAIJQfhKPrBb1wJwXRpqBzhZpnjwI84IrRZMPxDFKqCsnTAuR3B0NIigGDnefepql8zaXwA1WfU6cJnVgCw0NMeVxeGiOqfgqRRJ_JY93iOE59dGQhMVYb882rlZ3yDtOUiGCi0RKFjHWDAxgrTHW4Kt_xyYaGwgWNLyCyuTwBQyzZIzYZjk-c4fcznrf4tU4tJL1n7f7UhOWYwd7c_2Of2V7j9p7jnxS76w-ViNNxIWrsJ4SYiuhOM9sGNu8evvWTT6PCcf4SVP-E43xxSI0QiE2y_vRBJLTzTtV6a1y8XBLbOi1GIVp1PWD13hBfnloGwdn8O1xetR1kbYGwdy2in9anjFKts2gE-1n7w5ByvgktqCAompwew0oatANzApQu7pQkF3YQ2d9ICP1nE4rnuOkWYrCM5MZpmvHmkfP3bMpyqknk2baCZu51kb_TUEaxL2ZIERWZr2_gpkmWzo5OkskbDJCgo73hJNd3BSmLei0pj9Akmy3DqvmuhoqXbGzVDbjz5DVuE_Vn2SPSKjHcKgkfT3_Yjc4pDyBAkE0Rs9fx3FCbWnc_e0wEUhTT8ni6FnInepK4eDCSsM2em9Vj8ggKeQTY-mW1-poWFkSi_TYZ1wQYhxyP54yMPF4Ahcx9iqzmSJoHFOtaEkDANkNxgNxGyyKyuvysyZRE35DzeAbSXmKfyzVfgXF9uMZprf_BHZs2PrIUlqljJiYj9pzoP963zce7dndfllEN_SMSXeX7uluZx9g8O-S6E1SFKseHvJZw9MgUIcb-5hPZGslHs5UPIRs9iUAqA6GxTNmIly_ZfLtTsXLNxgMngDq3IrFFn61dhavg3Qrc23AsDrgucn5MLWEGYSczD9l6GSDB28ZCAMwoHEhhgDglSZnUO82COcIEDm9437Y_mXxAblo6XM47zT1hDaJ9YJjTsocgR2uBjr1-98SMcVMxku5WEMalWsOdl0s3sOjLTDvlKs9CyQaB9AZ-qx_asDrN7kYkHGwsokau7UVTObMRcrSJrb2zSAfC5yQgGfiOiLvspuWvIjHR2KMR4lJa_Ml_1U5eVs3TcBbMOiObiPnZEUuhDZNlH-biHDJdrWuSQoIuAE4wx8pmUO4d4LpTf-TJZVyzhT8MvRvutQUqJmHSTPIU6sREGDQ5v3AY1SHG2.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_03bbf3e9639078b3016ad12e21098887d189b74961dd7d086e",
+						"index": 1
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "    duration_test.go:25: Parse(\"45m\") = 45s, want 45m0s\n    duration_test.go:25: Parse(\"1h30m\") = 1h0m30s, want 1h30m0s\n--- FAIL: TestParse\nFAIL\nFAIL\tproject",
+				"tool_call_id": "call_WHkuKKv4WoseRUkcc2TFb3tt"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_ZJnN7rD6xtuoJcQDCkWC2pO1",
+						"type": "function",
+						"function": {
+							"name": "edit_file",
+							"arguments": "{\"path\":\"duration.go\",\"old\":\"\\t'm': time.Second,\",\"new\":\"\\t'm': time.Minute,\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.encrypted",
+						"data": "gAAAAABq0S4kUckQOriquwC-lPdX6s6PO-axkhJRNIk37UyuS9NNzhkUcfkMTiEhsGxqgT6Pi3ts8z3VmhqGffYkQFk7aKenFPkhtTOy9WVUnsTzkIg1eVwGynDlGpvZDkgcpxe7SRXPRNgTAYNSs9bpZMoaHRv3OS8dduBI0vMWDyYjg2ZApS6B5_9SMIiTkTGuLap-JGmnETmM3q2SZqQdxTIPV0WYdlOFC6tX31tFbY_cx7pLDMF5KZOr5aniICaYBXEsdvRLxy4IL1Pe5-_tJHhIkhvSMZ-p070_wixiVcIrynJ-J5IqcXVYsTObYc1dTBFdcTJ3hWjpuxFIhPHNIgk_XBKBnzw4hF9PgN6xcd-HIRi3vDZRpw0nJ-tx-5SnWNDkxyn8ptsvmJKESE9aaV9ksU1nHHBrNusHSGwQj5mh4CD1rEYCfkKroVj4LhDU4_yzriGDVhHMnyT44FXUHl3CWSD8B47Yon-q-kMsCE3b6TcDv8NpQbvnrW8Y3ewNFSas_Zlskh0xPy-ggfzlhT6N6t--Pz8bu0R0jVpUCn8-rrSD8ki36cd20DUHVzZfaMa1T8HBgOUXJ71OYhf30WzR4AYFqqymNz8ReRdcfG2FwJC88YVNC0wLFyoJSB2Us-WxEOMJDvGesPOmt89uoCcf3A8YJSqJoh4EBJ1asv8NAW5NX5Esuq1_U0gOOCX3q3Q_mI6F2xIcg0uA3jtRaEYsQ_Ssl9tHVSKtGDw14o2GhIlW86qFk_EwxaQMvHxVQsnlX7ZZwmvY8vwQnllyMCZhPdk_Glgs9pUM7KzNavcHV8HisNfIc8M3XlkwuF0y87V3vr_O0JwqvUOwvpaMeqaGRzyujjNG2LrujN-tEnyT3uEVXtfX7DxfXZZaE6cwq06JVQeRe7bhYW1l24-MCmbLRPqVypwEWnLFsig3h_DkCntjZ6CVxCfFZhsvRVupxOrXiaJMFEOc4-hlyINRpLGI2QPAUcYEEv1h6myzVuKVHLPSuHQBHQ_ITvpwYLnfeWh_hUeOlyhiX0cHzgRQtH-KFr3OxqsiOgV8XstNa2-ImWc4YZzedbhXB7UDkiw4qtzPbgJXTercN8uSmC1uN1-LD4onNsq0KUmLvpil7VDzsuoCYMophycURuY6h32_ECHWz2j-YOawtUJvsBaKbkX4CRQJ21MCldkfnxuej0B6jNcjDnNoKPWV0QIERXsvnZNBO_ZQGu12YqfzbVmYuCGEUxyONB5m8i53JHINE3WUV7YgPI9RuyXZNW00zyDih_uUPDBBgQvnjHnofnl_MzIvMaixmKJs9r2u6P3fnONPFIPTmFFX4e6L_LHuAkYwzU2hG09Z2Ikpp-6OUCoofI7hKF01LnkMrD1WAuGZmfzMQx7NHAMESApVVljRsT86XxiFBL90kY81Y4lYkuL8O-_3L8KmtE7ZK1jP2otPVI-e98ltQTBe6fZKxeKGUReIjgMGSLJOxZlwvhZ3F46iE-8yfun3ZlzCP9csB_VQv3SPBdCz3ExocFpBvpaoOc31qXitYjGNVYH1dWNlyGAv57QfXuyop0xvIqd5-JgtIi0gWOGgIvodYSJj2NW0b0634fn8CGWMsvU8F5ZdAzqGSnb3oODnvLSGNnKDjGm3Ypf0Qh4zCn0=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ",
+						"format": "openai-responses-v1",
+						"id": "rs_03bbf3e9639078b3016ad12e23c66c87d1b802c0a391390813",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "edited duration.go",
+				"tool_call_id": "call_ZJnN7rD6xtuoJcQDCkWC2pO1"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_ctfvZdNugYiWMnGswDlXDTcX",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "PASS\nok  \tproject",
+				"tool_call_id": "call_ctfvZdNugYiWMnGswDlXDTcX"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file. Prefer reading the test file first.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792093733-yywdAiVQm7gmPyzxFKBN",
+		"object": "chat.completion",
+		"created": 1792093733,
+		"model": "openai/gpt-5.6-luna",
+		"provider": "OpenAI",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "completed",
+				"message": {
+					"role": "assistant",
+					"content": "Fixed the duration unit mapping in `duration.go`: minutes were incorrectly mapped to `time.Second` instead of `time.Minute`.\n\nAll tests now pass.",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1020,
+			"completion_tokens": 34,
+			"total_tokens": 1054,
+			"cost": 0.0002448,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002448,
+				"upstream_inference_prompt_cost": 0.000204,
+				"upstream_inference_completions_cost": 0.0000408
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

@@ -1,0 +1,57 @@
+{
+  "id": "m5-admin-user-copy",
+  "category": "misleading",
+  "title": "Deleting a user as an administrator",
+  "notes": "RequireAdmin stores a store.User value in the context; UserFrom expects *store.User and returns nil, so audit dereferences nil. The route does have its middleware.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ops",
+      "method": "POST",
+      "path": "/v1/admin/snapshot",
+      "status": 500
+    },
+    {
+      "as": "usr_ops",
+      "method": "DELETE",
+      "path": "/v1/admin/users/usr_bo",
+      "group": "A"
+    },
+    {
+      "as": "usr_ops",
+      "method": "DELETE",
+      "path": "/v1/admin/users/usr_ana",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "auth/auth.go:RequireAdmin"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "auth/auth.go",
+      "old": "\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, *u)))",
+      "new": "\t\tnext.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userKey{}, u)))"
+    }
+  ],
+  "noise": [
+    "d5-bearer-no-token",
+    "d6-dispatcher-stop-twice"
+  ],
+  "decoys": [
+    [
+      {
+        "file": "api/admin.go",
+        "old": "\tadmin := auth.UserFrom(r.Context())\n\ta.Log.Info(",
+        "new": "\tadmin := auth.UserFrom(r.Context())\n\tif admin == nil {\n\t\treturn\n\t}\n\ta.Log.Info("
+      }
+    ]
+  ]
+}

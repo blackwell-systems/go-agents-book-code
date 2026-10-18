@@ -1,0 +1,89 @@
+{
+  "id": "m7-priority-range",
+  "category": "misleading",
+  "tier": "hard",
+  "title": "Listing after saving a negative priority",
+  "notes": "createReminder checks only the upper bound of priority, so -1 is stored; viewOf later indexes priorityNames[p-1]. The report is the later GET; a bounds check in priorityName is the wrong fix.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-09T10:15:00Z",
+  "noise": [
+    "d5-bearer-no-token",
+    "d6-dispatcher-stop-twice"
+  ],
+  "steps": [
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "renew car insurance",
+        "in": "3d",
+        "priority": 1
+      }
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "call the plumber",
+        "in": "5h"
+      }
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "water the ferns",
+        "in": "1d",
+        "priority": -1
+      },
+      "save": "id"
+    },
+    {
+      "as": "usr_bo",
+      "method": "GET",
+      "path": "/v1/reminders?limit=2"
+    },
+    {
+      "as": "usr_bo",
+      "method": "GET",
+      "path": "/v1/reminders",
+      "group": "A",
+      "repeat": 2,
+      "advance": "40m"
+    },
+    {
+      "as": "usr_bo",
+      "method": "GET",
+      "path": "/v1/reminders/{id}",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "api/reminders.go:(*API).createReminder"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "api/reminders.go",
+      "old": "\t\tif *req.Priority > 3 {",
+      "new": "\t\tif *req.Priority < 1 || *req.Priority > 3 {"
+    }
+  ],
+  "decoys": [
+    [
+      {
+        "file": "api/reminders.go",
+        "old": "\tif p == 0 {\n\t\treturn \"normal\"\n\t}\n\treturn priorityNames[p-1]",
+        "new": "\tif p < 1 || p > len(priorityNames) {\n\t\treturn \"normal\"\n\t}\n\treturn priorityNames[p-1]"
+      }
+    ]
+  ]
+}

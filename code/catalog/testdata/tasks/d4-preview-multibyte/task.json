@@ -1,0 +1,60 @@
+{
+  "id": "d4-preview-multibyte",
+  "category": "direct",
+  "title": "Previews of short non-ASCII reminders",
+  "notes": "Preview checks the length in bytes and then slices runes, so text over 60 bytes but under 60 runes panics.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "call the landlord about the heating",
+        "in": "4h"
+      }
+    },
+    {
+      "as": "usr_bo",
+      "method": "GET",
+      "path": "/v1/reminders"
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "歯医者の予約を確認して保険証と診察券を持っていく",
+        "in": "1d"
+      }
+    },
+    {
+      "as": "usr_bo",
+      "method": "GET",
+      "path": "/v1/reminders",
+      "group": "A",
+      "repeat": 3
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "notify/text.go:Preview"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "notify/text.go",
+      "old": "\tif len(text) <= previewLen {\n\t\treturn text\n\t}\n\treturn string([]rune(text)[:previewLen]) + \"…\"",
+      "new": "\tr := []rune(text)\n\tif len(r) <= previewLen {\n\t\treturn text\n\t}\n\treturn string(r[:previewLen]) + \"…\""
+    }
+  ],
+  "noise": [
+    "d2-clock-no-minutes",
+    "d5-bearer-no-token"
+  ]
+}

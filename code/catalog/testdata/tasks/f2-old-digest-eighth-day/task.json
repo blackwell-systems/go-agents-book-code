@@ -1,0 +1,42 @@
+{
+  "id": "f2-old-digest-eighth-day",
+  "category": "already_fixed",
+  "title": "A digest reaching an eighth calendar day, in an older version",
+  "notes": "v1.3.2 indexed day 7 of a 7-day digest when a reminder fell on the morning of the eighth calendar day. v1.4.0 skips it.",
+  "version": "v1.3.2",
+  "commit": "5be08d1",
+  "start": "2026-08-25T14:00:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "book club",
+        "at": "2026-09-01T09:00:00Z"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/digest",
+      "group": "A",
+      "repeat": 2
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "notify/text.go:BuildDigest"
+      ],
+      "status": "already_fixed"
+    }
+  },
+  "pre_edits": [
+    {
+      "file": "notify/text.go",
+      "old": "\t\tif i >= days {\n\t\t\tcontinue\n\t\t}\n",
+      "new": ""
+    }
+  ]
+}

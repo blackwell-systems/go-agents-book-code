@@ -1,0 +1,67 @@
+{
+  "id": "m1-done-after-delete",
+  "category": "misleading",
+  "title": "Acting on a deleted reminder",
+  "notes": "store.Get returns nil and no error for a tombstone, so handlers dereference nil. The panic is in api.owned; the bug is in store.Get.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "send invoice",
+        "in": "1d"
+      },
+      "save": "id"
+    },
+    {
+      "as": "usr_ana",
+      "method": "DELETE",
+      "path": "/v1/reminders/{id}"
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders/{id}/done",
+      "group": "A",
+      "repeat": 2
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders/{id}",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "store/store.go:(*Store).Get"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "store/store.go",
+      "old": "\t\tr = nil",
+      "new": "\t\tr, err = nil, ErrNotFound"
+    }
+  ],
+  "noise": [
+    "d5-bearer-no-token",
+    "d6-dispatcher-stop-twice"
+  ],
+  "decoys": [
+    [
+      {
+        "file": "api/reminders.go",
+        "old": "\tif rem.UserID != u.ID {\n\t\ta.fail(w, http.StatusNotFound, \"not found\")\n\t\treturn nil\n\t}",
+        "new": "\tif rem == nil || rem.UserID != u.ID {\n\t\ta.fail(w, http.StatusNotFound, \"not found\")\n\t\treturn nil\n\t}"
+      }
+    ]
+  ]
+}

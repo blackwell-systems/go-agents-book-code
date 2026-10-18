@@ -1,0 +1,23 @@
+POST /issues HTTP/1.1
+Host: tracker.example
+Accept-Encoding: gzip
+Content-Length: 70
+Content-Type: application/json
+Idempotency-Key: "b54a615f739d7277d1deb99818f0818f"
+User-Agent: Go-http-client/1.1
+
+{"title":"Get panics","body":"nil reminder","fingerprint":"fp_4828a6"}
+
+HTTP/1.1 201 Created
+{
+	"id": 1,
+	"title": "Get panics",
+	"body": "nil reminder",
+	"fingerprint": "fp_4828a6",
+	"status": "open",
+	"created": "2026-10-17T02:21:42Z",
+	"key": "b54a615f739d7277d1deb99818f0818f"
+}
+
+HTTP/1.1 200 OK
+(the same body as the first answer)

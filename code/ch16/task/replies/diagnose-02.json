@@ -1,0 +1,35 @@
+{
+  "status": 200,
+  "request": null,
+  "response": {
+    "id": "gen-diagnose-02",
+    "object": "chat.completion",
+    "created": 1760572800,
+    "model": "anthropic/claude-haiku-5.5",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_2",
+              "type": "function",
+              "function": {
+                "name": "issue_file",
+                "arguments": "{\"title\":\"store: Tag panics on a reminder restored from the trash\",\"body\":\"Restore leaves the reminder's tag map nil, and (*Store).Tag writes to it at store/tags.go:41. TestTagRestored in ./store fails with the same panic. Reports: the 4 in crash group 7f3a.\"}"
+              }
+            }
+          ]
+        },
+        "finish_reason": "tool_calls"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    }
+  }
+}

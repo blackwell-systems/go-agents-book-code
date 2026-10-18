@@ -1,0 +1,59 @@
+{
+  "id": "d2-clock-no-minutes",
+  "category": "direct",
+  "title": "A weekly time without minutes",
+  "notes": "parseClock indexes parts[1] without checking that the time had a colon.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "team stand-up",
+        "every": "on mon,tue,wed,thu,fri at 09:30"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "gym",
+        "every": "on tue,thu at 7"
+      },
+      "group": "A"
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "take out recycling",
+        "every": "on wed at 20"
+      },
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "schedule/weekly.go:parseClock"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "schedule/weekly.go",
+      "old": "\tparts := strings.Split(s, \":\")\n\th, err := strconv.Atoi(parts[0])",
+      "new": "\tparts := strings.Split(s, \":\")\n\tif len(parts) != 2 {\n\t\treturn Clock{}, fmt.Errorf(\"schedule: want hh:mm, got %q\", s)\n\t}\n\th, err := strconv.Atoi(parts[0])"
+    }
+  ],
+  "noise": [
+    "d5-bearer-no-token",
+    "d6-dispatcher-stop-twice"
+  ]
+}

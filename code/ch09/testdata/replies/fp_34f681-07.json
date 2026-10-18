@@ -1,0 +1,713 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You triage one group of crash reports for remind, a Go web service: reports that crashed in the same place. Its source is in your workspace; paths are relative to its module root, such as store/store.go.\n\n1. Before investigating, search the open issues with issue_search, and read a likely one with issue_read. If one already describes the same crash, give the group the status duplicate with that issue's number, and don't fix or file it again: an open issue means someone already owns the fix.\n2. Otherwise find the root cause: the function whose code is wrong. The function that crashed is often not the one with the bug. Compare each report's version with the code in your workspace: if a crash can't happen in the current code, give it the status already_fixed and don't change the code, and say in the evidence which version crashed and what fixed it.\n3. Write a test that reproduces the crash: a new _test.go file whose test fails on the current code. Other agents are adding tests to the same packages for other groups, and their files are merged with yours, so name your file after this group's fingerprint, such as store/fp_4828a6_test.go, put the fingerprint in each test's name, such as TestFP4828a6GetDeleted, and declare nothing else outside your test functions, so no name of yours can clash with theirs.\n4. Fix the code, then check that your test and the package's tests pass.\n\nHow to work: read the reports with crash_list, crash_read, crash_logs, and crash_goroutines. Investigate with code_search, code_list, and code_read. Change code and create test files with code_patch, and check your work with run_tests. Don't change or delete existing tests. Record findings with notes_write as you go. Other agents are working on other groups at the same time, each in its own copy of the code, so change only what this group's fix needs.\n\nYou don't file issues: the harness files one for each cause you report. When you are done, call submit_diagnosis once. If the reports have more than one cause, give one entry per cause. If you can't find a cause, give the group the status needs_human.\n"
+			},
+			{
+				"role": "user",
+				"content": [
+					{
+						"type": "text",
+						"text": "Triage the crash reports of group fp_34f681.",
+						"cache_control": {
+							"type": "ephemeral"
+						}
+					}
+				]
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01Cq9f6mLkTHRqEnxZLonNVN",
+						"type": "function",
+						"function": {
+							"name": "crash_list",
+							"arguments": "{}"
+						}
+					},
+					{
+						"id": "toolu_011w1t4LxusMnuEhtZRs1cG7",
+						"type": "function",
+						"function": {
+							"name": "issue_search",
+							"arguments": "{\"fingerprint\": \"fp_34f681\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQS2gUKEAgSGAI4AUIIdGhpbmtpbmcSDHCZ2nf6HabRIcdAixoMFZqGZJSg3Uf/bB1PIjAqCnABjG9LDDL5r63E4Wx5RghhmkEDjrgyRdlF4f/kVxr3eacxmlWqH6LdLNJ/Z70q9wS2jlpmn3Ic6DTdRI8biMCOmGyLgDX4nMWEzY1NWJT1V6XmAOp5JraBYSXernq/ym7V/tn/EGAu1qCs84trlOPMZoZrbsk3Yemh95Eq4i2VvYhb8HkBliNVdowDyk9gQfhonEFnk7xM3dGR2FUhzgwn/8TauE9VexjQAqTGGeafjl+a82ykt0lGBY10y4xqwfw3NZ6HBQ50r2tQ4iaTcb6VefnP9hdXLtsE0h6ZX3Xfcnxh2fU4JUcLpS1BmggWm9cpNNlyTB6jpshoZKMih6wvkEZkyIMrMUNI5Os2X9SqN0FzbVMl9RNJDlhosxwhYjOSd4/gsCMvUQnvpFTqBX+NauUK6XgZwFZmrmFgoZrw64Z1ETxw9FWtC6kwv9cMwOQ7DF76kGmxjNqqno2vcl3gBnw93JCul+qeHMuTpmyafnSZN7cyBIyKdXuMd1eO1D/H5IW1LCembW7J9cEAE3inxHNnTQCOnyYL8LbUwllqTbDJkA/sNJo4Ebf1UYyA3kKtLCkMq9UOWFUuZJ5XuYBkFl/NbfiXQObvOx7HI1jBSG3Bu2irv1Q4KL5ZRdAz0VLiz73qOCnt9VbKVypBHomXH4a4urS+sr1zP8ewL9vVbLEN2Pxuxjjsp4HuXZb5t/HAq7o/BUcYyCoWPIl572kM9Xtou8ZQ/vRfIH9xNfzW74AWEbAR7f8MsZAHbz5OQg7meiN+QblQ86JkbBGQkusDiufs+hNsQe2PfAsKGG3qV38v5GmcSIaFTTl2MN+QIf4toKM0tmbL62Dsj8YhFQR2EI2ol4CLqTqr0wAnerl+VOWEUrKvT+245WSw+oLuWg5N/j84IAq1GAE=.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "1 reports:\ncr_b73dbe fp_34f681 x2 panic v1.4.0 duration.Parse: runtime error: index out of range [-1]\n",
+				"tool_call_id": "toolu_01Cq9f6mLkTHRqEnxZLonNVN"
+			},
+			{
+				"role": "tool",
+				"content": "no open issues match",
+				"tool_call_id": "toolu_011w1t4LxusMnuEhtZRs1cG7"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01K6na2NxFRM695X23Vi38Rx",
+						"type": "function",
+						"function": {
+							"name": "crash_read",
+							"arguments": "{\"id\": \"cr_b73dbe\"}"
+						}
+					},
+					{
+						"id": "toolu_01L72g2NLDcUCrkbYX2p6s8C",
+						"type": "function",
+						"function": {
+							"name": "code_search",
+							"arguments": "{\"pattern\": \"func Parse\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "cr_b73dbe: panic in v1.4.0 (commit 9c41e7a), 2 times, 2026-10-05 14:09 to 2026-10-05 14:18\nfingerprint: fp_34f681\npanic: runtime error: index out of range [-1]\nrequest: POST /v1/reminders/rem_0001/snooze\n  Accept-Encoding: gzip\n  Authorization: Bearer [REDACTED]\n  Content-Length: 10\n  Content-Type: application/json\n  User-Agent: remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\n  X-Request-Id: 6ac3ae14-0008\n  body: {\"for\":\"\"}\nstack, remind's frames, innermost first:\n  duration.Parse  duration/duration.go:29\n  api.(*API).snooze  api/reminders.go:197\n  auth.Require  auth/auth.go:23\n  server.accessLog  server/server.go:130\n  metrics.Instrument  metrics/instrument.go:24\nlog lines: 7; read them with crash_logs\n",
+				"tool_call_id": "toolu_01K6na2NxFRM695X23Vi38Rx"
+			},
+			{
+				"role": "tool",
+				"content": "duration/duration.go:28: func Parse(s string) (time.Duration, error) {\nschedule/schedule.go:26: func Parse(spec string, zone *Zone, start time.Time) (Rule, error) {\nshare/share.go:51: func ParseRole(s string) (Role, error) {",
+				"tool_call_id": "toolu_01L72g2NLDcUCrkbYX2p6s8C"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_019Lvv2nNSFXDqCuheA13A5q",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"duration/duration.go\"}"
+						}
+					},
+					{
+						"id": "toolu_01SgTUfSHntxqjc8Hye9NwYH",
+						"type": "function",
+						"function": {
+							"name": "code_read",
+							"arguments": "{\"path\": \"api/reminders.go\", \"start\": 180, \"end\": 215}"
+						}
+					},
+					{
+						"id": "toolu_01WTSNLPmapMzuJWa2hJyHFm",
+						"type": "function",
+						"function": {
+							"name": "crash_logs",
+							"arguments": "{\"id\": \"cr_b73dbe\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "duration/duration.go, lines 1-73 of 73:\n    1\t// Package duration parses the human-friendly durations remind accepts,\n    2\t// such as \"90s\", \"1h30m\", \"2d\", and \"1w2d\".\n    3\tpackage duration\n    4\t\n    5\timport (\n    6\t\t\"fmt\"\n    7\t\t\"strconv\"\n    8\t\t\"strings\"\n    9\t\t\"time\"\n   10\t)\n   11\t\n   12\t// Day and Week are the units Parse adds to the standard library's.\n   13\tconst (\n   14\t\tDay  = 24 * time.Hour\n   15\t\tWeek = 7 * Day\n   16\t)\n   17\t\n   18\tvar units = map[byte]time.Duration{\n   19\t\t's': time.Second,\n   20\t\t'm': time.Minute,\n   21\t\t'h': time.Hour,\n   22\t\t'd': Day,\n   23\t\t'w': Week,\n   24\t}\n   25\t\n   26\t// Parse parses a sequence of whole numbers, each followed by a unit:\n   27\t// s, m, h, d (24 hours), or w (7 days). \"1h30m\" is ninety minutes.\n   28\tfunc Parse(s string) (time.Duration, error) {\n   29\t\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\n   30\t\t\treturn 0, fmt.Errorf(\"duration %q: missing unit\", s)\n   31\t\t}\n   32\t\tvar total time.Duration\n   33\t\tfor rest := s; rest != \"\"; {\n   34\t\t\ti := 0\n   35\t\t\tfor i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {\n   36\t\t\t\ti++\n   37\t\t\t}\n   38\t\t\tif i == 0 {\n   39\t\t\t\treturn 0, fmt.Errorf(\"duration %q: expected a number at %q\", s, rest)\n   40\t\t\t}\n   41\t\t\tn, err := strconv.Atoi(rest[:i])\n   42\t\t\tif err != nil {\n   43\t\t\t\treturn 0, fmt.Errorf(\"duration %q: %w\", s, err)\n   44\t\t\t}\n   45\t\t\tunit, ok := units[rest[i]]\n   46\t\t\tif !ok {\n   47\t\t\t\treturn 0, fmt.Errorf(\"duration %q: unknown unit %q\", s, rest[i])\n   48\t\t\t}\n   49\t\t\ttotal += time.Duration(n) * unit\n   50\t\t\trest = rest[i+1:]\n   51\t\t}\n   52\t\treturn total, nil\n   53\t}\n   54\t\n   55\t// Format formats d the way Parse reads it, largest units first.\n   56\t// Parts smaller than a second are dropped.\n   57\tfunc Format(d time.Duration) string {\n   58\t\tif d < time.Second {\n   59\t\t\treturn \"0s\"\n   60\t\t}\n   61\t\tvar b strings.Builder\n   62\t\tfor _, u := range []struct {\n   63\t\t\tsize time.Duration\n   64\t\t\tname byte\n   65\t\t}{{Week, 'w'}, {Day, 'd'}, {time.Hour, 'h'}, {time.Minute, 'm'}, {time.Second, 's'}} {\n   66\t\t\tif n := d / u.size; n > 0 {\n   67\t\t\t\tb.WriteString(strconv.FormatInt(int64(n), 10))\n   68\t\t\t\tb.WriteByte(u.name)\n   69\t\t\t\td -= n * u.size\n   70\t\t\t}\n   71\t\t}\n   72\t\treturn b.String()\n   73\t}\n",
+				"tool_call_id": "toolu_019Lvv2nNSFXDqCuheA13A5q"
+			},
+			{
+				"role": "tool",
+				"content": "api/reminders.go, lines 180-215 of 223:\n  180\t\t\ta.writeError(w, err)\n  181\t\t\treturn\n  182\t\t}\n  183\t\tw.WriteHeader(http.StatusNoContent)\n  184\t}\n  185\t\n  186\tfunc (a *API) snooze(w http.ResponseWriter, r *http.Request) {\n  187\t\trem := a.owned(w, r)\n  188\t\tif rem == nil {\n  189\t\t\treturn\n  190\t\t}\n  191\t\tvar req struct {\n  192\t\t\tFor string `json:\"for\"` // such as \"10m\"\n  193\t\t}\n  194\t\tif !a.decode(w, r, &req) {\n  195\t\t\treturn\n  196\t\t}\n  197\t\td, err := duration.Parse(req.For)\n  198\t\tif err != nil {\n  199\t\t\ta.fail(w, http.StatusBadRequest, err.Error())\n  200\t\t\treturn\n  201\t\t}\n  202\t\terr = a.Store.Update(rem.ID, func(r *store.Reminder) error {\n  203\t\t\tr.Due = a.Now().Add(d)\n  204\t\t\treturn nil\n  205\t\t})\n  206\t\tif err != nil {\n  207\t\t\ta.writeError(w, err)\n  208\t\t\treturn\n  209\t\t}\n  210\t\tw.WriteHeader(http.StatusNoContent)\n  211\t}\n  212\t\n  213\tfunc (a *API) testNotify(w http.ResponseWriter, r *http.Request) {\n  214\t\trem := a.owned(w, r)\n  215\t\tif rem == nil {\n... 8 more lines; read on with start=216\n",
+				"tool_call_id": "toolu_01SgTUfSHntxqjc8Hye9NwYH"
+			},
+			{
+				"role": "tool",
+				"content": "2026-10-05T14:03:41Z INFO reminder created id=rem_0001 user=usr_bo\n2026-10-05T14:03:41Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"remind-ios/3.4.1 (iPhone16,2; iOS 19.0.1)\"\n2026-10-05T14:04:59Z INFO reminder created id=rem_0002 user=usr_ana\n2026-10-05T14:04:59Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:06:54Z INFO reminder created id=rem_0003 user=usr_ana\n2026-10-05T14:06:54Z INFO request method=POST path=/v1/reminders status=201 dur=6.8ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"\n2026-10-05T14:12:35Z INFO request method=DELETE path=/v1/reminders/rem_0003 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\"",
+				"tool_call_id": "toolu_01WTSNLPmapMzuJWa2hJyHFm"
+			},
+			{
+				"role": "assistant",
+				"content": "The crash is an empty `for` field: `duration.Parse(\"\")` reads `s[len(s)-1]` and indexes -1. The current code still has no empty-string check. I'll write a reproducer first.",
+				"tool_calls": [
+					{
+						"id": "toolu_01RFgz8CfyGTC623SrTVstp9",
+						"type": "function",
+						"function": {
+							"name": "code_patch",
+							"arguments": "{\"path\": \"duration/fp_34f681_test.go\", \"old\": \"\", \"new\": \"package duration\\n\\nimport \\\"testing\\\"\\n\\nfunc TestFP34f681ParseEmpty(t *testing.T) {\\n\\td, err := Parse(\\\"\\\")\\n\\tif err == nil {\\n\\t\\tt.Fatalf(\\\"Parse(\\\\\\\"\\\\\\\") = %v, nil; want an error\\\", d)\\n\\t}\\n}\\n\"}"
+						}
+					},
+					{
+						"id": "toolu_01JTPdgq87cRiXyCXC7244SN",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{\"package\": \"./duration\", \"run\": \"TestFP34f681\"}"
+						}
+					}
+				],
+				"reasoning_details": [
+					{
+						"type": "reasoning.text",
+						"signature": "CAQS5QkKEAgSGAI4AUIIdGhpbmtpbmcSDHC03YxH+ozscE2OQhoMNrFR4wNuWBAFrgqAIjDYxdjpAvvuF0yAAgRYLhPT+lxaBzeN5QkTpyp4iG7/SWYehO8Py9zIN6HxcTCK1MEqgglgxeSsKXefy7fIj8P3TvaY9IHb9CQjeqHxHOFQ4la0KB2ck0iBY8kV2Qfz6/DZ0RNNiQ1M5w0kO2EeSWJ+OBL1rEWEKWDX/UVflYyU6tZhks/orrbMrrin0QdAL9l9GWLBqqF4jxO1KqPbHwYKaEun0v6BxhhQp421veAoqhOKbZJICNNouuyTOzU4NU+GK0d6aY1VjwUNUwRLQDy4z7t9a4qvGx7443ksPYr/Umy7j+ZKaLFX3guhwKK2lKqQnMBg+jIW9zFi+8PBiXq8sIhiqIWTiDIQkwhebRfBxdznT+tGyhepPxPhZT1jyMBwrzTrJ8P99ZMj55nYSOm55TcYH9lhuBUMaa1XrNEhUWECSvvnI5fhrg2k47e2Z9H8o2vJjUvXCXzOnCm6ZMFJ7vsywC8KE3QKBvWTyjKHOML6owgfPOkvEVvj98H4X7mnL3u5JYhmkNmo52jTExm+jtQHkgAG2JsYoz7bIzEMf0p5isG0rtlws8/33ElVQR9ZQORhKPxa6YkoEsJCuNzO6moXRktSLMnz91fMsf6+4NITsAGi+//4FiukGmS+FmYbdKHMA8ForVuXJyalPSqjNIBz2Q6QM/KrfZs1LcIFvC+GJoaEw4NrTz7XcCDibd0Z1+Jd8KnTGlMZFrX0FtGPMHt0/I1guUS/sDc7+iOqYgYfOGOaPN6S4T5zZrsCHGTntXo6/MWaPc9rPWRU3oyzgbP8b0iPzkpRAnrgtQOoIlYVfQ6jg46Gc6c+Jf5+y1YxO6cWuP+WaIzLenO6YqucKPL/A94IQBfG+TboR0rotATZA6ndOa53FVhbcCe3RzuQAK0s9ve9j+DUSgWCFy6HyoVTco0613m6lYjHk0nvHOJRIOuhZ6FI6+PiwOvt2I7rDTn73HUPsKt6pzjeWebuMBIfSbjmjf7TBhZ2WODbAVPuD0PIVTYxTgZbtMUCIwnZbWG679fNuni55ZHnhfrApHiMF/KrB/6yKcMosPB48j+KEcVCefJMmtp3i77AMu7KzC7Ct+1M65HcOqibdtOl4fShIuQttsly3VsH2NuvLWOD8e+pUYiaJGTlJjj0aiNXSKSFuCKbTWETZCMlN/M4Wd6n6L50c1AyYibZslAiZpj9jB/wzi422VxtPLxAERhRa5kV1B7sKa/hXBfgTXi3PhYhTDIh2mQDRbwq9AqnwkEL8Jbw/xpEK5X5qCIN3u91Hc0z3weH8gAgjphKORWiceYwkhjGV5z8zoBBjOmMvgNrxBK2t3bO8n1SpPNHufuhRMzIEHPjuADGFhjXlARaCDsIVCYi5QzSe6NUso7p0VNpuEn2f0omOq9kJAKRNWIMP9wjXkFzIeH5GY8zJO5wW/GXijKegswYAqbzxVr7D29eXsPOIHEtYuGmYKx5ROJOJyJSDc1u0F3HKUQHBweEYM51KM4ey6qfngmLZ1zwBB7H/9OrhAXbE5qF9NGfjVYvispg6PH+trRTunkNo1djJ3MiT/6jThn8LDWEz1DsaDq78PZuxxo87+lYRpOxLeya8eN9RxgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+						"format": "anthropic-claude-v1",
+						"index": 0
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "changed duration/fp_34f681_test.go; it now reads:\n    1\tpackage duration\n    2\t\n    3\timport \"testing\"\n    4\t\n    5\tfunc TestFP34f681ParseEmpty(t *testing.T) {\n    6\t\td, err := Parse(\"\")\n    7\t\tif err == nil {\n    8\t\t\tt.Fatalf(\"Parse(\\\"\\\") = %v, nil; want an error\", d)\n    9\t\t}\n   10\t}\n   11\t\ncompiling duration and its tests:\ntesting: warning: no tests to run\nPASS\nok  \texample.com/remind/duration\t0.264s [no tests to run]",
+				"tool_call_id": "toolu_01RFgz8CfyGTC623SrTVstp9"
+			},
+			{
+				"role": "tool",
+				"content": "--- FAIL: TestFP34f681ParseEmpty\npanic: runtime error: index out of range [-1] [recovered, repanicked]\n\ngoroutine 5 [running]:\ntesting.tRunner.func1.2({0x104f24260, 0xb13e459e048})\n\t/home/reader/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.0.darwin-arm64/src/testing/testing.go:2123 +0x1a0\ntesting.tRunner.func1()\n\t/home/reader/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.0.darwin-arm64/src/testing/testing.go:2126 +0x2c8\npanic({0x104f24260?, 0xb13e459e048?})\n\t/home/reader/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.0.darwin-arm64/src/runtime/panic.go:859 +0x120\nexample.com/remind/duration.Parse({0x0?, 0x1077a8530?})\n\tduration/duration.go:29 +0x3ec\nexample.com/remind/duration.TestFP34f681ParseEmpty(0xb13e46c0248)\n\tduration/fp_34f681_test.go:6 +0x28\ntesting.tRunner(0xb13e46c0248, 0x104f2f6d0)\n\t/home/reader/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.0.darwin-arm64/src/testing/testing.go:2193 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/home/reader/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.0.darwin-arm64/src/testing/testing.go:2258 +0x3b8\nFAIL\texample.com/remind/duration",
+				"tool_call_id": "toolu_01JTPdgq87cRiXyCXC7244SN"
+			},
+			{
+				"role": "assistant",
+				"content": "The reproducer fails with the same panic. Now the fix: reject the empty string in `Parse` before indexing.",
+				"tool_calls": [
+					{
+						"id": "toolu_019mSKxJPqPVy6VC45mwygvC",
+						"type": "function",
+						"function": {
+							"name": "code_patch",
+							"arguments": "{\"path\": \"duration/duration.go\", \"old\": \"\\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\", \"new\": \"\\tif s == \\\"\\\" {\\n\\t\\treturn 0, fmt.Errorf(\\\"duration: empty string\\\")\\n\\t}\\n\\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\"}"
+						}
+					},
+					{
+						"id": "toolu_01EhAbHmnURWDfjbWiw6mHyS",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{\"package\": \"./...\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "changed duration/duration.go; it now reads:\n   27\t// s, m, h, d (24 hours), or w (7 days). \"1h30m\" is ninety minutes.\n   28\tfunc Parse(s string) (time.Duration, error) {\n   29\t\tif s == \"\" {\n   30\t\t\treturn 0, fmt.Errorf(\"duration: empty string\")\n   31\t\t}\n   32\t\tif last := s[len(s)-1]; last >= '0' && last <= '9' {\n   33\t\t\treturn 0, fmt.Errorf(\"duration %q: missing unit\", s)\n   34\t\t}\ncompiling duration and its tests:\ntesting: warning: no tests to run\nPASS\nok  \texample.com/remind/duration\t0.268s [no tests to run]",
+				"tool_call_id": "toolu_019mSKxJPqPVy6VC45mwygvC"
+			},
+			{
+				"role": "tool",
+				"content": "?   \texample.com/remind/cmd/remind\t[no test files]\n?   \texample.com/remind/internal/must\t[no test files]\n?   \texample.com/remind/server\t[no test files]\nPASS\nok  \texample.com/remind/calendar\nPASS\nok  \texample.com/remind/duration\nPASS\nok  \texample.com/remind/api\nPASS\nok  \texample.com/remind/auth\nPASS\nok  \texample.com/remind/config\nPASS\nok  \texample.com/remind/audit\nPASS\nok  \texample.com/remind/notify\nPASS\nok  \texample.com/remind/crash\nPASS\nok  \texample.com/remind/metrics\nPASS\nok  \texample.com/remind/i18n\nPASS\nok  \texample.com/remind/quota\nPASS\nok  \texample.com/remind/schedule\nPASS\nok  \texample.com/remind/search\nPASS\nok  \texample.com/remind/share\nPASS\nok  \texample.com/remind/store\nPASS\nok  \texample.com/remind/textutil\nPASS\nok  \texample.com/remind/webhook",
+				"tool_call_id": "toolu_01EhAbHmnURWDfjbWiw6mHyS"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "toolu_01QMSgBxPWp17cRLpRN6NNUY",
+						"type": "function",
+						"function": {
+							"name": "notes_write",
+							"arguments": "{\"group\": \"fp_34f681\", \"note\": \"cr_b73dbe (v1.4.0, 2 hits): POST /v1/reminders/rem_0001/snooze with body {\\\"for\\\":\\\"\\\"}. api/reminders.go:197 passes empty req.For to duration.Parse; duration/duration.go:29 reads s[len(s)-1] with len 0 -> index -1. Current code had no empty check, so not already fixed. Fix: empty-string guard in duration/duration.go Parse. Reproducer: duration/fp_34f681_test.go TestFP34f681ParseEmpty (failed with the panic before fix). All package tests pass.\"}"
+						}
+					},
+					{
+						"id": "toolu_014kJY7YN95vnFCNZM5nWPn2",
+						"type": "function",
+						"function": {
+							"name": "issue_search",
+							"arguments": "{\"query\": \"duration Parse index out of range snooze\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "noted; fp_34f681 has 1 notes",
+				"tool_call_id": "toolu_01QMSgBxPWp17cRLpRN6NNUY"
+			},
+			{
+				"role": "tool",
+				"content": [
+					{
+						"type": "text",
+						"text": "no open issues match",
+						"cache_control": {
+							"type": "ephemeral"
+						}
+					}
+				],
+				"tool_call_id": "toolu_014kJY7YN95vnFCNZM5nWPn2"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_list",
+					"description": "List every crash report, one line each: its ID, fingerprint, how many times it happened, the version that crashed, the function inside remind where it happened, and the panic message, cut short. Reports with the same fingerprint usually share a cause, but check. Start here.",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": [],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_read",
+					"description": "Read one crash report: when and how often it happened, the panic, the request being served, and the stack. By default the stack shows only remind's own frames, with file and line; set full for every frame. Log lines are in crash_logs.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							},
+							"full": {
+								"type": "boolean",
+								"description": "show every stack frame, not just remind's"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_search",
+					"description": "Search every crash report for text, ignoring case: panic messages, request paths and bodies, stacks, and log lines. Lists each match with the report's ID and where it was found.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "text to look for, such as a function name, a path, or words from a panic"
+							}
+						},
+						"required": [
+							"query"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_logs",
+					"description": "Read the log lines remind wrote just before a crash.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_goroutines",
+					"description": "Summarize the goroutine dump of a stuck request: goroutines with identical stacks are grouped and counted, so a dump of thousands reads as a few groups. Use it for reports of kind stuck.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list, such as cr_1e2ea0"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "crash_similar",
+					"description": "List the reports whose stacks share the most with one report, with a score from 0 to 1, including reports with other fingerprints. A high score suggests a shared cause worth checking, not proof of one.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string",
+								"description": "a report ID from crash_list"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_list",
+					"description": "List the files under a directory of remind's source, with how many lines each has. Use it to find your way around; use code_search to find where something is defined.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"dir": {
+								"type": "string",
+								"description": "a directory such as \"store\"; empty lists everything"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_read",
+					"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "a file path, such as store/store.go"
+							},
+							"start": {
+								"type": "integer",
+								"description": "the first line to show; default 1"
+							},
+							"end": {
+								"type": "integer",
+								"description": "the last line to show; default 200 lines after start"
+							}
+						},
+						"required": [
+							"path"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_search",
+					"description": "Search remind's Go files for a regular expression and list the matching lines with file and line number. Use it to find where a function is defined or called.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"pattern": {
+								"type": "string",
+								"description": "a Go regular expression, such as func \\(s \\*Store\\) Get"
+							},
+							"dir": {
+								"type": "string",
+								"description": "limit the search to this directory"
+							}
+						},
+						"required": [
+							"pattern"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run go test on remind's code, as it is now, and report failed tests, build errors, and each package's result. Run one package while you work; run ./... before you finish.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"package": {
+								"type": "string",
+								"description": "package patterns, such as ./store or ./store ./api or ./..."
+							},
+							"run": {
+								"type": "string",
+								"description": "run only tests matching this regular expression"
+							},
+							"race": {
+								"type": "boolean",
+								"description": "run with the race detector"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "code_patch",
+					"description": "Change a file by replacing one piece of text, or create a new file, such as a test, by leaving old empty. Read a file with code_read before changing it, and copy old exactly from what you read. After a change, the package and its tests are compiled, and you see the result.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string",
+								"description": "the file to change, such as store/store.go"
+							},
+							"old": {
+								"type": "string",
+								"description": "text copied exactly from the file, appearing in it once; empty to create a new file"
+							},
+							"new": {
+								"type": "string",
+								"description": "the text to put in its place, or the new file's contents"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_search",
+					"description": "Search the open issues in the issue tracker, by words or by fingerprint; with neither, list them all. Issues that contain more of the words come first. Check here before filing, since a crash may already be filed, perhaps by a person, with no fingerprint and in other words.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "words to look for in titles and bodies, such as parseBearer index out of range"
+							},
+							"fingerprint": {
+								"type": "string",
+								"description": "a fingerprint from crash_list"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_read",
+					"description": "Read one issue in full by its number: title, status, fingerprint, body, and comments. Use issue_search to find issues; use this to read one before commenting on it or marking a crash as its duplicate.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "integer",
+								"description": "the issue number, such as 101"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "notes_write",
+					"description": "Add a note to a crash group's notes: what you found, what you ruled out, or what is left to do, with the report IDs, file paths, and line numbers it concerns. Notes are kept for the whole run, even when older turns are left out of what you see, so write down anything you'll need later.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"group": {
+								"type": "string",
+								"description": "the crash group the note is about: its fingerprint, such as fp_3ac19e"
+							},
+							"note": {
+								"type": "string",
+								"description": "one finding, decision, or next step, with the IDs and paths it concerns"
+							}
+						},
+						"required": [
+							"group",
+							"note"
+						],
+						"additionalProperties": false
+					},
+					"strict": true
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "notes_read",
+					"description": "Read your notes on one crash group, or on all of them.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"group": {
+								"type": "string",
+								"description": "a fingerprint; leave out to read every group's notes"
+							}
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "submit_diagnosis",
+					"description": "Finish the job: submit one diagnosis per crash group. Call it once, at the end, after filing an issue for each new cause. For status fixed, the reproducer test must fail on the original code and pass on yours; this is checked.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"groups": {
+								"type": "array",
+								"description": "one entry per crash group; every report belongs to exactly one",
+								"items": {
+									"type": "object",
+									"properties": {
+										"fingerprint": {
+											"type": "string",
+											"description": "the group's fingerprint, from crash_list"
+										},
+										"reports": {
+											"type": "array",
+											"description": "the IDs of every report in the group",
+											"items": {
+												"type": "string"
+											}
+										},
+										"category": {
+											"type": "string",
+											"enum": [
+												"nil_value",
+												"out_of_range",
+												"concurrency",
+												"bad_input",
+												"other"
+											]
+										},
+										"root_cause": {
+											"type": "object",
+											"description": "where the code is wrong, which may not be where it crashed",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "string",
+											"description": "why this is the cause: what you read and ran"
+										},
+										"reproducer": {
+											"type": "object",
+											"description": "the test you wrote that fails before the fix; leave out for already_fixed and duplicate",
+											"properties": {
+												"file": {
+													"type": "string",
+													"description": "a file path, such as store/store.go"
+												},
+												"function": {
+													"type": "string",
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"additionalProperties": false
+										},
+										"fix": {
+											"type": "string",
+											"description": "what you changed, for status fixed"
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"fixed",
+												"already_fixed",
+												"duplicate",
+												"not_a_bug",
+												"needs_human"
+											]
+										},
+										"issue": {
+											"type": "integer",
+											"description": "the issue you filed, for status fixed or needs_human"
+										},
+										"duplicate": {
+											"type": "integer",
+											"description": "for status duplicate: the open issue it duplicates"
+										}
+									},
+									"required": [
+										"fingerprint",
+										"reports",
+										"category",
+										"root_cause",
+										"evidence",
+										"status"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"groups"
+						],
+						"additionalProperties": false
+					}
+				}
+			}
+		],
+		"stream": true,
+		"stream_options": {
+			"include_usage": true
+		}
+	},
+	"response_text": "data: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"id\":\"toolu_01W1e3YeEnDFUr9C6dWVqJrY\",\"type\":\"function\",\"function\":{\"name\":\"submit_diagnosis\",\"arguments\":\"\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"{\\\"groups\\\": [{\\\"fingerpr\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"int\\\":\\\"fp_34f\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"681\\\",\\\"reports\\\":[\\\"cr\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"_b73dbe\\\"],\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"category\\\":\\\"out\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"_of_range\\\",\\\"root_c\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ause\\\":{\\\"file\\\":\\\"du\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ration/duration.go\\\",\\\"function\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\":\\\"Parse\\\"},\\\"\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ev\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"idence\\\":\\\"c\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"r_b73dbe (\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"v1.4.0, \"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"2 occ\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"urrences)\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" pan\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ics with\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" index out of range [-1]\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" at\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" duration/\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"duration.go:29.\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" The request was POST /v1\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"/reminders/rem_\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"0001/snooze with body\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" {\\\\\\\"for\\\\\\\":\\\\\\\"\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\\\\\"}. api/remin\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ders.go:197 (\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"snooze) passes the emp\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ty req\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\".For stra\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ight to duration.Parse\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\", and\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" Parse reads s[len\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"(s)-1] without chec\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"king for\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" an\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" empty string. The current code still\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" has no\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" empty check, so this\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" is not already fixed. The\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" reproducer T\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"estFP34f681Par\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"seEmpty pan\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ics with the same error\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" on the original\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" code.\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" No open\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" issue matched.\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\",\\\"status\\\":\\\"fixed\\\",\\\"\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"fix\\\":\\\"Added an emp\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ty-string guard at\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" the top of duration.Par\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"se that\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" returns an error (\\\\\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"duration: empty string\\\\\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\") instead of ind\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"exing.\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" Callers such\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" as snooze now\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" get a 400 response\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" rather than a pan\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"ic.\\\",\\\"issue\\\":0\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\",\\\"reproducer\\\":{\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"file\\\":\\\"duration/f\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"p_34f681_test.\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"go\\\",\\\"function\\\":\\\"TestF\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"P34f681ParseE\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"mpty\\\"}}]\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"}\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\",\"role\":\"assistant\"},\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_use\"}]}\n\ndata: {\"id\":\"gen-1792130120-3WAYJz6u0hHyh1hfWHhe\",\"object\":\"chat.completion.chunk\",\"created\":1792130120,\"model\":\"anthropic/claude-haiku-5.5\",\"provider\":\"Claude Platform on AWS\",\"service_tier\":\"default\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\",\"role\":\"assistant\"},\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"tool_use\"}],\"usage\":{\"prompt_tokens\":10304,\"completion_tokens\":448,\"total_tokens\":10752,\"cost\":0.00037368,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":9898,\"cache_write_tokens\":404,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.00037368,\"upstream_inference_prompt_cost\":0.00014968,\"upstream_inference_completions_cost\":0.000224},\"completion_tokens_details\":{\"reasoning_tokens\":0,\"image_tokens\":0,\"audio_tokens\":0}}}\n\ndata: [DONE]\n\n"
+}

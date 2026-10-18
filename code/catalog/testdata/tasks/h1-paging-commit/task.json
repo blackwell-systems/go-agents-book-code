@@ -1,0 +1,139 @@
+{
+  "id": "h1-paging-commit",
+  "category": "introduced",
+  "title": "Which change broke paging?",
+  "notes": "The workspace has the git history of the v1.4.0 cycle. \"store: simplify paging with min\" dropped the clamp on offset.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-08T16:20:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "renew passport",
+        "in": "3w"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "book flights",
+        "in": "1w"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "water plants",
+        "every": "every 2d"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?limit=2"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?limit=2&offset=2"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?limit=2&offset=4",
+      "group": "A"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?offset=50",
+      "group": "A",
+      "repeat": 2
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "store/store.go:(*Store).List"
+      ],
+      "status": "fixed",
+      "introduced_by": "store: simplify paging with min"
+    }
+  },
+  "fix": [
+    {
+      "file": "store/store.go",
+      "old": "\tend := min(offset+limit, len(out))",
+      "new": "\toffset = min(offset, len(out))\n\tend := min(offset+limit, len(out))"
+    }
+  ],
+  "history": [
+    {
+      "message": "notify: shorten previews to 60 characters",
+      "date": "2026-08-11T15:20:00Z",
+      "edits": [
+        {
+          "file": "notify/text.go",
+          "old": "const previewLen = 80",
+          "new": "const previewLen = 60"
+        }
+      ]
+    },
+    {
+      "message": "store: simplify paging with min",
+      "date": "2026-08-19T10:05:00Z",
+      "edits": [
+        {
+          "file": "store/store.go",
+          "old": "\tif offset > len(out) {\n\t\toffset = len(out)\n\t}\n\tend := offset + limit\n\tif end > len(out) {\n\t\tend = len(out)\n\t}\n\treturn out[offset:end]",
+          "new": "\tend := min(offset+limit, len(out))\n\treturn out[offset:end]"
+        }
+      ]
+    },
+    {
+      "message": "api: cap page size at 100",
+      "date": "2026-08-27T09:40:00Z",
+      "edits": [
+        {
+          "file": "api/api.go",
+          "old": "limit < 1 || limit > 200 {\n\t\t\ta.fail(w, http.StatusBadRequest, \"limit must be between 1 and 200\")",
+          "new": "limit < 1 || limit > 100 {\n\t\t\ta.fail(w, http.StatusBadRequest, \"limit must be between 1 and 100\")"
+        }
+      ]
+    },
+    {
+      "message": "crash: keep 12 log lines in reports",
+      "date": "2026-09-03T14:12:00Z",
+      "edits": [
+        {
+          "file": "server/server.go",
+          "old": "slog.NewTextHandler(cfg.Log, nil), 8, cfg.Now)",
+          "new": "slog.NewTextHandler(cfg.Log, nil), 12, cfg.Now)"
+        }
+      ]
+    },
+    {
+      "message": "Release v1.4.0",
+      "date": "2026-09-15T11:00:00Z",
+      "edits": [
+        {
+          "file": "VERSION",
+          "old": "v1.3.2\n",
+          "new": "v1.4.0\n"
+        },
+        {
+          "file": "CHANGELOG.md",
+          "old": "# Changelog\n\n",
+          "new": "# Changelog\n\n## v1.4.0 (2026-09-15)\n\n- Weekly schedules take a time zone (`tz`), defaulting to the user's.\n- Import users from the old reminders system, keeping their API tokens.\n- duration: reject a number without a unit, such as \"1h30\", instead of\n  crashing.\n- Digests: skip reminders past the last day instead of crashing.\n- Requests stuck for 30 seconds now produce a crash report with every\n  goroutine's stack.\n- Export and stats endpoints.\n- Shared lists: invite people to see or edit a list of reminders.\n- Search over your reminders, and a calendar feed (`/v1/me/calendar.ics`).\n- Webhook deliveries are signed (`X-Remind-Signature`).\n- Plans with reminder quotas and per-user rate limits.\n- Notifications in Portuguese, German, and Japanese.\n- Prometheus metrics at `/metrics`, an audit log for administrators, and a\n  configuration file (`-config`).\n\n"
+        }
+      ]
+    }
+  ]
+}

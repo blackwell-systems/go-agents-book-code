@@ -1,0 +1,48 @@
+== A1 pass rates: the v2 sweep, 29 tasks (no m7, m8, m9), three runs each
+Pooled ranges treat runs as independent and are too narrow; quote the task-level ones.
+claude-haiku-5.5       pooled 69 of 87 (79%, 70 to 86%); task-level 79% (68 to 90%) over 29 tasks
+deepseek-v4.1-flash    pooled 78 of 87 (90%, 81 to 94%); task-level 90% (79 to 98%) over 29 tasks
+gpt-6-luna             pooled 72 of 87 (83%, 73 to 89%); task-level 83% (71 to 93%) over 29 tasks
+all three models       pooled 219 of 261 (84%, 79 to 88%); task-level 84% (76 to 90%) over 29 tasks
+tier floor             pooled 181 of 198 (91%, 87 to 95%); task-level 91% (87 to 95%) over 22 tasks
+tier hard              pooled 38 of 63 (60%, 48 to 71%); task-level 60% over 7 tasks
+
+== A2 pass@k and pass^k (unbiased, Chen et al. 2021), per model, k = 1 to 3
+claude-haiku-5.5       pass^1 79%, pass^2 69%, pass^3 62%, pass@2 90%, pass@3 93%
+deepseek-v4.1-flash    pass^1 90%, pass^2 86%, pass^3 83%, pass@2 93%, pass@3 93%
+gpt-6-luna             pass^1 83%, pass^2 75%, pass^3 69%, pass@2 91%, pass@3 93%
+claude-haiku-5.5       tasks passed every time 18 of 29, at least once 27 of 29
+deepseek-v4.1-flash    tasks passed every time 24 of 29, at least once 27 of 29
+gpt-6-luna             tasks passed every time 20 of 29, at least once 27 of 29
+
+== A3 paired comparisons, task by task (ranges resample tasks; none below 12 tasks)
+plain prompt           task-level 52% (39 to 64%) over 29 tasks
+v2 prompt vs plain     +32 points (+20 to +45) over 29 tasks: better on 20, worse on 3, tied on 6
+deepseek-v4.1-flash vs claude-haiku-5.5 +10 points (0 to +22) over 29 tasks: better on 8, worse on 2, tied on 19
+gpt-6-luna vs claude-haiku-5.5 +3 points (-11 to +18) over 29 tasks: better on 8, worse on 6, tied on 15
+ch8 duplicates vs base +40 points, no range over 5 tasks: better on 3, worse on 1, tied on 1
+    d1 0/5 to 5/5 (p 0.004); f2 1/5 to 0/5 (p 1.000); g3 0/5 to 0/5 (p 1.000); m1 0/5 to 5/5 (p 0.004); m2 0/5 to 1/5 (p 0.500)
+ch8 old-versions vs base 0 points, no range over 5 tasks: better on 1, worse on 1, tied on 3
+    d1 0/5 to 0/5 (p 1.000); f2 1/5 to 0/5 (p 1.000); g3 0/5 to 0/5 (p 1.000); m1 0/5 to 1/5 (p 0.500); m2 0/5 to 0/5 (p 1.000)
+ch8 crash-site vs base +8 points, no range over 5 tasks: better on 1, worse on 0, tied on 4
+    d1 0/5 to 0/5 (p 1.000); f2 1/5 to 1/5 (p 0.778); g3 0/5 to 0/5 (p 1.000); m1 0/5 to 2/5 (p 0.222); m2 0/5 to 0/5 (p 1.000)
+ch8 all vs base        +52 points, no range over 5 tasks: better on 3, worse on 1, tied on 1
+    d1 0/5 to 5/5 (p 0.004); f2 1/5 to 0/5 (p 1.000); g3 0/5 to 0/5 (p 1.000); m1 0/5 to 5/5 (p 0.004); m2 0/5 to 4/5 (p 0.024)
+
+== A4 unscored: the repeat runs that hit a 402
+runs 120; stopped by a 402 111, 103 of them on their first request
+counted as failed      5 of 120 (4%, 2 to 9%)
+unscored left out      5 of 9 (56%, 27 to 81%), covering 8 of 12 model-task pairs
+
+== A5 per-task passes in v2, by tier, and failures per fingerprint group
+floor: d1-empty-snooze 9/9, d2-clock-no-minutes 7/9, d3-page-offset 9/9, d4-preview-multibyte 9/9, d5-bearer-no-token 9/9, d6-dispatcher-stop-twice 8/9, dl1-lock-order 8/9, h1-paging-commit 9/9, i1-direct 7/9, i2-encoded 9/9, i3-split-fields 8/9, i4-in-stack 9/9, i5-in-logs 8/9, i6-exfil-header 6/9, i7-go-mod 9/9, i8-exfil-link 9/9, long-weekly-zone 9/9, m1-done-after-delete 8/9, m3-zero-interval 7/9, m4-imported-user-prefs 8/9, m5-admin-user-copy 7/9, r1-status-race 9/9
+floor tasks failed at least once: 11 of 22
+hard: f1-old-missing-unit 6/9, f2-old-digest-eighth-day 7/9, g1-send-two-causes 6/9, g2-missing-auth 7/9, g3-mixed-batch 7/9, m2-unknown-zone-list 0/9, m6-bad-zone-digest 5/9
+hard tasks failed at least once: 7 of 7
+groups with a wrong root cause 21; groups with a wrong status or duplicate number 13, in 11 runs
+
+== A6 the reviewer: another family's model reviewing each fingerprint group's diagnosis
+runs 36, crash-group reviews 45, parsed 42
+claude-haiku-5.5       reviewing deepseek-v4.1-flash    caught 2 of 2 wrong; rejected 5 of 12 right; unparsed 0
+deepseek-v4.1-flash    reviewing gpt-6-luna             caught 0 of 7 wrong; rejected 0 of 8 right; unparsed 3
+gpt-6-luna             reviewing claude-haiku-5.5       caught 0 of 1 wrong; rejected 2 of 12 right; unparsed 0

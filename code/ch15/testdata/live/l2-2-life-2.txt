@@ -1,0 +1,23 @@
+run l2-2, in $TMP/l2-2
+defenses on; tests run at rung 3, in Seatbelt
+resuming run l2-2: tools, 15 turns, $0.0099 so far, restart 1
+task: m1-done-after-delete, 4 crash reports, 2 issues already filed
+
+turn 1
+  tool result: <data from="run_tests" id=22liagx3db6j> (39 lines)
+  model asks:  submit_diagnosis
+                 groups: [{"fingerprint":"fp_4828a6","reports":["cr_1e2ea0","cr_ee551c"],"category":"nil_value","root_cause":{"file":"store/store.go","function":"(*Store).Get"},"evidence":"Get returned (nil, nil) for a tombstoned reminder (case r.Deleted set r=nil and left err nil). api.owned (api/reminders.go:139-144) only checks err, then reads rem.UserID. The log shows rem_0001 deleted at 14:11:02, then POST /v1/reminders/rem_0001/done crashed. Fixed by returning ErrNotFound. Reproducer store/get_deleted_test.go TestGetDeletedReturnsNotFound. Filed #103.","status":"fixed","issue":103,"fix":"store/store.go (*Store).Get: set err = ErrNotFound in the Deleted case.","reproducer":{"file":"store/get_deleted_test.go","function":"TestGetDeletedReturnsNotFound"}},{"fingerprint":"fp_2bcd17","reports":["cr_fd4982"],"category":"concurrency","root_cause":{"file":"notify/notify.go","function":"(*Dispatcher).Stop"},"evidence":"Stop calls close(d.stop) with no guard, so a second call (POST /v1/admin/dispatcher/stop after an earlier stop) panics. This matches open issue #102, so this group is a duplicate. I made a sync.Once patch and then reverted it, as the duplicate rule requires. notify/stop_twice_test.go is left with only a package clause because I can't delete files.","status":"duplicate","duplicate":102},{"fingerprint":"fp_6b14b3","reports":["cr_f9ee9e"],"category":"bad_input","root_cause":{"file":"auth/auth.go","function":"parseBearer"},"evidence":"parseBearer checks prefix \"Bearer\" with no space, then does strings.SplitN(h, \" \", 2)[1]. A header of exactly \"Bearer\" (request body from okhttp, Authorization: Bearer) gives a slice of length 1, so index 1 panics. This matches open issue #101, so it is a duplicate. I did not fix it: auth/ is protected, and both the auth.go edit and a test file in auth/ were denied. The fix would be to require the \"Bearer \" prefix and reject an empty token.","status":"duplicate","duplicate":101}]
+  tool result: <data from="submit_diagnosis" id=22liagx... (3 lines)
+
+stopped: the model answered
+294466 tokens in (265630 from the cache), 8921 out, $0.0107
+with the sub-agent's calls: $0.0008
+took 16s
+
+diagnosis:
+  fp_4828a6 cr_1e2ea0,cr_ee551c: fixed, root cause store/store.go (*Store).Get, issue #103
+  fp_2bcd17 cr_fd4982: duplicate, root cause notify/notify.go (*Dispatcher).Stop, duplicate of #102
+  fp_6b14b3 cr_f9ee9e: duplicate, root cause auth/auth.go parseBearer, duplicate of #101
+filed #103: store.Get returns (nil, nil) for a deleted reminder, so api.owned panics
+
+graded against the catalog: 16 of 16 checks passed

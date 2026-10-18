@@ -1,0 +1,70 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You are a helpful assistant for Go programmers. Answer in a few sentences."
+			},
+			{
+				"role": "user",
+				"content": "What is a goroutine?"
+			},
+			{
+				"role": "assistant",
+				"content": "A goroutine is a lightweight thread of execution managed by the Go runtime rather than the operating system. You start one by placing the `go` keyword before a function call, such as `go doSomething()`, and it runs concurrently with the rest of your program. Goroutines are cheap to create (they start with a small, growable stack), so a Go program can run thousands or even millions of them at once."
+			},
+			{
+				"role": "user",
+				"content": "And how do I stop one?"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792089534-4t2xRDfFAhbicctBmixa",
+		"object": "chat.completion",
+		"created": 1792089534,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "There's no direct way to kill a goroutine from outside it. The idiomatic approach is to signal it to stop and let it exit on its own, usually by passing a `context.Context` and checking `ctx.Done()` in a `select` statement, or by listening on a done channel. For example:\n\n```go\nctx, cancel := context.WithCancel(context.Background())\ngo func() {\n    for {\n        select {\n        case <-ctx.Done():\n            return\n        default:\n            // do work\n        }\n    }\n}()\ncancel() // signals the goroutine to stop\n```\n\nCalling `cancel()` closes the context's Done channel, and the goroutine returns the next time it checks. If the goroutine is blocked on something else, include `ctx.Done()` in that `select` as well so it can wake up.",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 175,
+			"completion_tokens": 253,
+			"total_tokens": 428,
+			"cost": 0.000144,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000144,
+				"upstream_inference_prompt_cost": 0.0000175,
+				"upstream_inference_completions_cost": 0.0001265
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

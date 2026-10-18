@@ -1,0 +1,20 @@
+No OPENROUTER_API_KEY: replaying a saved run. The tools run for real.
+task: The tests in this project fail. Find out why and fix it.
+
+turn 1
+  model says:  I'll run the tests and list the project files to see what's
+               failing.
+  model asks:  run_tests {}
+  model asks:  list_files {}
+  tool result: duration_test.go:25: Parse("45m") = 45s,... (5 lines)
+  tool result: duration.go, duration_test.go
+
+turn 2
+  model asks:  read_file {"path": "duration.go"}
+  model asks:  read_file {"path": "duration_test.go"}
+  tool result: // Package duration parses durations suc... (44 lines)
+  tool result: package duration (36 lines)
+
+stopped: the cost budget
+error: run agent: agent: budget exhausted: cost budget reached: spent $0.000238 of $0.000200
+1417 tokens in, 193 out, $0.0002

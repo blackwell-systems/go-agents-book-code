@@ -1,0 +1,171 @@
+{
+	"status": 200,
+	"request": {
+		"messages": [
+			{
+				"content": "You triage one crash group in the remind service. Run the tests of the package that crashed to confirm the bug, file one issue that describes the cause (a person approves it first), then call submit_diagnosis with your answer.",
+				"role": "system"
+			},
+			{
+				"content": [
+					{
+						"text": "Crash group 7f3a, 4 reports: panic: assignment to entry in nil map, at store.(*Store).Tag (store/tags.go:41), called from api.(*Server).tagReminder. All four came after a reminder was restored from the trash.",
+						"type": "text"
+					}
+				],
+				"role": "user"
+			}
+		],
+		"model": "anthropic/claude-haiku-5.5",
+		"tools": [
+			{
+				"function": {
+					"name": "run_tests",
+					"strict": false,
+					"description": "Run one package's tests and return their output.",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"package": {
+								"description": "a package directory, such as ./store",
+								"type": "string"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"name": "issue_file",
+					"strict": false,
+					"description": "File an issue in the tracker. A person approves each issue before it is filed.",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"body": {
+								"description": "the cause, the evidence, and the reports",
+								"type": "string"
+							},
+							"title": {
+								"description": "one line naming the bug",
+								"type": "string"
+							}
+						},
+						"required": [
+							"title",
+							"body"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"name": "submit_diagnosis",
+					"strict": false,
+					"description": "Finish the job: submit the diagnosis. Call it once, at the end.",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"file": {
+								"description": "the file where the code is wrong",
+								"type": "string"
+							},
+							"fingerprint": {
+								"description": "the crash group's fingerprint",
+								"type": "string"
+							},
+							"function": {
+								"description": "the function where the code is wrong",
+								"type": "string"
+							},
+							"issue": {
+								"description": "the issue you filed",
+								"type": "integer"
+							}
+						},
+						"required": [
+							"fingerprint",
+							"file",
+							"function",
+							"issue"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792185324-a1ifwzdiFcRKzyn1t92a",
+		"object": "chat.completion",
+		"created": 1792185324,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01Ks1wfYiBwCzJCvRzZcqB1V",
+							"function": {
+								"name": "run_tests",
+								"arguments": "{\"package\": \"./store\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSuQYKEAgSGAI4AUIIdGhpbmtpbmcSDPg/yWNBFUiLgn/NOxoMR3HyU21Us9mWr4S2IjDhc16eHrCymzYZBobjpzxiUypiFSkyXy+a25PqHPUQYG0a6CcrfW0DDyUZUE4sIJEq1gUfwxLefWc200DMVxXBBAsjz6U8dZjOQQ83dIwtMwv7s3Gexi0RP3WNea8g35wg1QbGAxsnbgmo5lNhdwvo8Ev6HWoRWbbmiMN0xVdmSudUTFuj/YDyAR37Z0lJ0PTZWLI8LVDGuVWfeV2HtS5a1+6fR81RFIXdsb6PNmV98TBzUPXHR4YuBi5EBQOKud0/ma8rsPtwW06NCKALZ8GHJvra9lrF7oJa7gdGY9mz8/bZoZq0gCNDYdfUP+HB296ltsPZQhcSOu3NfoBg34qUxpLaOUGpMW8DpYVtMuL+bH9577w/UMjdmmmTTRMbEjk8Ouk75ZzoWwXuy64zK/RYjsiRWRECFD1Mb247RYBzD1gsjGSSz54h4+UNw+65TSCiH/4aMjEdKyvtjQtWwV1FAEvHXje0CGMbptUqIjgGAyuOxfWxTzj7DSfLATvB/zZ6aXxYU8+t378/JlXZx0Ov4E7VzoYPv9Tcf+m5PPkPsNd/rtbfBya21RG+P/51Hvhu6U9CTG7Jdtr2dn89+VLvQH5Wcdlp26VU7x33BNYOvRbK/Cmqem/QW8BBsETxB0qyUjj77umdtsoHYNKRD4GF+nbWfbb7VzEyw9G3615MOYNYtv/XLLvi+zIhR2DIxGjkgzRKxT4HEyCgRqD6WTw1ceqgGp9deJS51TOce0MSdOc83Hd2hmJMJxJQl5xRe7PvbrU6SSbfGntmlE/J42EKYS+cfYiam6PEqp/1hFTg6nFKJFsS7zoIjTaSNa8T7e4NUn1i3416WxGChbz6PtYpfway9k69gZJpKsNdk2u4DuVzfE5qGGiNpZPA+C+tOTxOKS+SRwNCyTClGktoCe4WPsqQzsWutqtiM+bExJTTyJZfENgZe3rrrCuzBFyaEJXmHYoEQeyN43JTZv3bi8rcYDVHIOtOLdlUvltCHBTI1lr6pnTYRbqq/XacD/5RNozmO1ok415NA/IYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 892,
+			"completion_tokens": 124,
+			"total_tokens": 1016,
+			"cost": 0.0001512,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0001512,
+				"upstream_inference_prompt_cost": 0.0000892,
+				"upstream_inference_completions_cost": 0.000062
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 74,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

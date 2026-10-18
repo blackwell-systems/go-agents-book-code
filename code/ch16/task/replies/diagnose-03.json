@@ -1,0 +1,35 @@
+{
+  "status": 200,
+  "request": null,
+  "response": {
+    "id": "gen-diagnose-03",
+    "object": "chat.completion",
+    "created": 1760572800,
+    "model": "anthropic/claude-haiku-5.5",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_3",
+              "type": "function",
+              "function": {
+                "name": "submit_diagnosis",
+                "arguments": "{\"fingerprint\":\"7f3a\",\"file\":\"store/trash.go\",\"function\":\"(*Store).Restore\",\"issue\":1}"
+              }
+            }
+          ]
+        },
+        "finish_reason": "tool_calls"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0
+    }
+  }
+}

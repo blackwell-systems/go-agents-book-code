@@ -1,0 +1,83 @@
+{
+	"status": 200,
+	"request": {
+		"model": "openai/gpt-5.6-luna",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		],
+		"stream": true,
+		"stream_options": {
+			"include_usage": true
+		}
+	},
+	"response_text": ": OPENROUTER PROCESSING\n\ndata: {\"id\":\"gen-1792090039-GByHewS9KDM1NJeegdch\",\"object\":\"chat.completion.chunk\",\"created\":1792090039,\"model\":\"openai/gpt-5.6-luna\",\"provider\":\"OpenAI\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\",\"role\":\"assistant\",\"reasoning\":null,\"reasoning_details\":[{\"type\":\"reasoning.encrypted\",\"data\":\"gAAAAABq0R-4QHA8RIhoFr1Ob1m5KEiUffRsJLywRk2TDhBQpAlcbsLpS-1LSxMDUSd9IC3B6zCk83w0WwUnLei7i_ItfmhxidJIRbpKsbsH96UOnbSPsu9e3gUDuCi1JQvjjvGh0xXRnqfssq-wDzy1jf0crKWkh66zSbqaUjUlTr7EF6rr9mZLPxPUsXbnlprM0AH-LsEVMSmuVxBWUUD-C85rg5YoDyFo4_vX-9VGB-qpzqauXfq1xMhu0h3DhZVNWANLcQF6FaA46qSTUtmNECeHEW0OvB73TCNUiw-UxyTBmjEpQK6HqKJJqj2p-NmIgRc1x_VKGQMNSXkmVLjNW-Rzkn9k14o5ZVm4ypl9japmAayRNPnoDFAl72E6557Kej9pg5GF7yM008j1IGk00vu-DpEQXTgCdP5nHRWN5AT6DNJXtXoxGrvRzFWYRkBGo7Cgcv11WRfAa9lvn0Imikyuaa0Tbf4vvHSAiVNLkX74ljBpQebRfEwWlWA6z8j85BOJFeXuAlsJsXDgLTqAL0d-4uoPKVS1PIhiVE3GNc7utZpkgJtWZYrODPjfVfGdPQmYduIRpZIrPiqmO0_1UDCFu2dCknHs0CW-23Pi4OwGqE1lIdDPafxTX8IEXT6ZJ0R_y2LaIYShmN1k7QxYNAVePxW450mPNP-sHPylNneL9CjJeSfgjRdQ6qF0NNYRbQpKNV2UGYuDbg9wXwhuRRRcXHqmsBe9sI_4ImeuZILh4swu8W7kM1dxSZn9hHsWEnDt6QVNsguju-oaZITgM89E81vLheIMDoSG0shAg0Yl9KdmIAyFdDNWXNe_5ye-36a9BDprRIi1p_bRHlya1BMc0WewJc-lXyk3u91ul2KME-s9d4eKYkRVx6fYDCwNQAWtgOl0inGtuA3HGcsiOZbrCJ7U-TocmrF1DGdGKdfqDWyRbHDHwRpgjqcYobbv3K5abiaToocur2td5iviSyiHjGQXXuUEGeLP-6v_D1r-0ujUHQdDOJ0ESc-d-sRtCRTDcz7UGFPbKfRcVo15ulpVdVtfgC8w_Qbh_aS7V2D-IHsGtXSO3dpvzPvfeDj_bZ3OedIW0OICEqxYY89JexhOPfnWBWh3NXf1J4hENiB8j0pA7r-uzvcvPk9rgBA6u1EBlV7EHpdNpGrJ6RSNKbwIOrdCf94ZhBEqB_f8nlBlDT8VMTJ3Tr7IbxK-BQuq6A3NhfKViYbqagrNCdQobA8tWRJvN1fWrGCXxE6WzRv1yEpsTUm_usr3Xp_11BgzmnVIy4pQTCoeowYvHVj6XgQoBrCqlKHq-TZTTbBX2NtIuhkyPMaxTKuuccVwoviLzev_VOIF7qocdwABseA1dVCnjDOKrI7TCQu7-EsQT6ahIQpK5E-8mge10R36h24ED7SMofCloOAKsFZL8uvdyPQKG_XgJz7uHHuXisGkByE6etPkRRXqX8aOhEyiO3CFvH3bUpQoYnGnJmyv9xweloldlbqMFw44W1IB1Dz2HK6ZGv0PwKCDzmrFhc4l3bsJqRoyYpg_haMgAq1VI9wYyRljkttGejU3h2Z17z6UxucEK08Lg1V_FT_aqbFe27lLjgB1s9J-Ei-79IKgfztQTh7rnqTvPgIDZRYY4s4KrIWlpPNc2QjV2drVnG4v18oeuhJy66vPhbvkpAarCKd81J34Q7vivA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtbHVuYS0yMDI2MDcwOXxvcGVuYWkifQ\",\"format\":\"openai-responses-v1\",\"id\":\"rs_0ac94462f83d72a4016ad11fb86d7087d1bc1100ae7350f63e\",\"index\":0}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792090039-GByHewS9KDM1NJeegdch\",\"object\":\"chat.completion.chunk\",\"created\":1792090039,\"model\":\"openai/gpt-5.6-luna\",\"provider\":\"OpenAI\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"id\":\"call_ciBGqCvAptcDKwXFrKD5JqA1\",\"type\":\"function\",\"function\":{\"name\":\"list_files\",\"arguments\":\"\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792090039-GByHewS9KDM1NJeegdch\",\"object\":\"chat.completion.chunk\",\"created\":1792090039,\"model\":\"openai/gpt-5.6-luna\",\"provider\":\"OpenAI\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792090039-GByHewS9KDM1NJeegdch\",\"object\":\"chat.completion.chunk\",\"created\":1792090039,\"model\":\"openai/gpt-5.6-luna\",\"provider\":\"OpenAI\",\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"{}\"}}]},\"finish_reason\":null,\"native_finish_reason\":null}]}\n\ndata: {\"id\":\"gen-1792090039-GByHewS9KDM1NJeegdch\",\"object\":\"chat.completion.chunk\",\"created\":1792090039,\"model\":\"openai/gpt-5.6-luna\",\"provider\":\"OpenAI\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\",\"role\":\"assistant\",\"reasoning\":null},\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"completed\"}]}\n\ndata: {\"id\":\"gen-1792090039-GByHewS9KDM1NJeegdch\",\"object\":\"chat.completion.chunk\",\"created\":1792090039,\"model\":\"openai/gpt-5.6-luna\",\"provider\":\"OpenAI\",\"service_tier\":\"default\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\",\"role\":\"assistant\"},\"finish_reason\":\"tool_calls\",\"native_finish_reason\":\"completed\"}],\"usage\":{\"prompt_tokens\":126,\"completion_tokens\":24,\"total_tokens\":150,\"cost\":0.000054,\"is_byok\":false,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0,\"audio_tokens\":0,\"video_tokens\":0},\"cost_details\":{\"upstream_inference_cost\":0.000054,\"upstream_inference_prompt_cost\":0.0000252,\"upstream_inference_completions_cost\":0.0000288},\"completion_tokens_details\":{\"reasoning_tokens\":8,\"image_tokens\":0,\"audio_tokens\":0}}}\n\ndata: [DONE]\n\n"
+}

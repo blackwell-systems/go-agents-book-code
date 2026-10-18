@@ -1,0 +1,14 @@
+[
+  {
+    "id": 101,
+    "title": "Crash in schedule.parseClock: runtime error: index out of range [1] with length 1",
+    "body": "Seen in production since 2026-10-11.\n\nPanic: runtime error: index out of range [1] with length 1\n\nTop of the stack:\n    example.com/remind/schedule.parseClock\n    example.com/remind/schedule.parseWeekly\n    example.com/remind/schedule.Parse\n    example.com/remind/api.(*API).createReminder\n    example.com/remind/auth.Require.func1\n\nRequest: POST /v1/reminders\n\nFiled by the on-call engineer; not investigated yet.",
+    "group": "N1A"
+  },
+  {
+    "id": 102,
+    "title": "Crash in auth.parseBearer: runtime error: index out of range [1] with length 1",
+    "body": "Seen in production since 2026-10-11.\n\nPanic: runtime error: index out of range [1] with length 1\n\nTop of the stack:\n    example.com/remind/auth.parseBearer\n    example.com/remind/auth.authenticate\n    example.com/remind/auth.Require.func1\n    example.com/remind/server.accessLog.func1\n    example.com/remind/metrics.Instrument.func1\n\nRequest: POST /v1/reminders\n\nFiled by the on-call engineer; not investigated yet.",
+    "group": "N2A"
+  }
+]

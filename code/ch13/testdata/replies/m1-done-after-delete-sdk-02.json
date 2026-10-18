@@ -1,0 +1,682 @@
+{
+	"status": 200,
+	"request": {
+		"messages": [
+			{
+				"content": "You triage crash reports for remind, a Go web service. Its source is in your workspace; paths are relative to its module root, such as store/store.go.\n\nFor each problem:\n1. Group the crash reports that share a cause.\n2. Find the root cause: the function whose code is wrong.\n3. Write a test that reproduces the crash: a new _test.go file whose test fails on the current code.\n4. Fix the code, then check that your test and the whole test suite pass.\n5. File one issue for the cause.\n\nHow to work: start with crash_list, then read reports with crash_read, crash_logs, and crash_goroutines. Investigate with code_search, code_list, and code_read. Change code and create test files with code_patch, and check your work with run_tests. Search the issue tracker with tracker__issue_search, and read an issue in full with tracker__issue_read, before filing with tracker__issue_file. Don't change or delete existing tests. Use crash_similar to find reports with other fingerprints that may share a cause. Record findings with notes_write as you go: older turns may be left out of what you see, and your notes stay.\n\nWhen you are done, call submit_diagnosis once, with one entry for every group. If you can't find a cause, file an issue with what you found and give the group the status needs_human.\n\n\nBefore investigating a group, search the open issues. If one already describes the same crash, give the group the status duplicate with that issue's number, and don't fix or file it again.\n\nCompare each report's version with the code in your workspace. If a crash can't happen in the current code, give it the status already_fixed and don't change the code, but still file an issue saying which version crashed and what fixed it.\n\nThe function that crashed is often not the one with the bug. If bad data caused the crash, find where that data was stored or created and fix the check there, rather than guarding the place that crashed.\n\nFor a question about how a package works that would take many file reads, such as how schedule computes the next run, ask explain_package: its answer is short, and your context stays small.",
+				"role": "system"
+			},
+			{
+				"content": [
+					{
+						"cache_control": {
+							"type": "ephemeral"
+						},
+						"text": "Triage the crash reports: group them by cause, then investigate, fix, and file each cause that isn't filed yet.",
+						"type": "text"
+					}
+				],
+				"role": "user"
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"function": {
+							"arguments": "{}",
+							"name": "crash_list"
+						},
+						"id": "toolu_01PffDqf9bqegi1fxM6DnFT7",
+						"type": "function"
+					}
+				]
+			},
+			{
+				"content": [
+					{
+						"cache_control": {
+							"type": "ephemeral"
+						},
+						"text": "4 reports:\ncr_fd4982 fp_2bcd17 x1 panic v1.4.0 notify.(*Dispatcher).Stop: close of closed channel\ncr_1e2ea0 fp_4828a6 x2 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_ee551c fp_4828a6 x1 panic v1.4.0 api.(*API).owned: runtime error: invalid memory address or nil pointer dereference\ncr_f9ee9e fp_6b14b3 x3 panic v1.4.0 auth.parseBearer: runtime error: index out of range [1] with length 1\n",
+						"type": "text"
+					}
+				],
+				"role": "tool",
+				"tool_call_id": "toolu_01PffDqf9bqegi1fxM6DnFT7"
+			}
+		],
+		"model": "anthropic/claude-haiku-5.5",
+		"stream": false,
+		"tools": [
+			{
+				"function": {
+					"description": "List every crash report, one line each: its ID, fingerprint, how many times it happened, the version that crashed, the function inside remind where it happened, and the panic message, cut short. Reports with the same fingerprint usually share a cause, but check. Start here.",
+					"name": "crash_list",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {},
+						"required": [],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Read one crash report: when and how often it happened, the panic, the request being served, and the stack. By default the stack shows only remind's own frames, with file and line; set full for every frame. Log lines are in crash_logs.",
+					"name": "crash_read",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"full": {
+								"description": "show every stack frame, not just remind's",
+								"type": "boolean"
+							},
+							"id": {
+								"description": "a report ID from crash_list, such as cr_1e2ea0",
+								"type": "string"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Search every crash report for text, ignoring case: panic messages, request paths and bodies, stacks, and log lines. Lists each match with the report's ID and where it was found.",
+					"name": "crash_search",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"query": {
+								"description": "text to look for, such as a function name, a path, or words from a panic",
+								"type": "string"
+							}
+						},
+						"required": [
+							"query"
+						],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Read the log lines remind wrote just before a crash.",
+					"name": "crash_logs",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"id": {
+								"description": "a report ID from crash_list, such as cr_1e2ea0",
+								"type": "string"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Summarize the goroutine dump of a stuck request: goroutines with identical stacks are grouped and counted, so a dump of thousands reads as a few groups. Use it for reports of kind stuck.",
+					"name": "crash_goroutines",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"id": {
+								"description": "a report ID from crash_list, such as cr_1e2ea0",
+								"type": "string"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "List the reports whose stacks share the most with one report, with a score from 0 to 1, including reports with other fingerprints. A high score suggests a shared cause worth checking, not proof of one.",
+					"name": "crash_similar",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"id": {
+								"description": "a report ID from crash_list",
+								"type": "string"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "List the files under a directory of remind's source, with how many lines each has. Use it to find your way around; use code_search to find where something is defined.",
+					"name": "code_list",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"dir": {
+								"description": "a directory such as \"store\"; empty lists everything",
+								"type": "string"
+							}
+						},
+						"required": [],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+					"name": "code_read",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"end": {
+								"description": "the last line to show; default 200 lines after start",
+								"type": "integer"
+							},
+							"path": {
+								"description": "a file path, such as store/store.go",
+								"type": "string"
+							},
+							"start": {
+								"description": "the first line to show; default 1",
+								"type": "integer"
+							}
+						},
+						"required": [
+							"path"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Search remind's Go files for a regular expression and list the matching lines with file and line number. Use it to find where a function is defined or called.",
+					"name": "code_search",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"dir": {
+								"description": "limit the search to this directory",
+								"type": "string"
+							},
+							"pattern": {
+								"description": "a Go regular expression, such as func \\(s \\*Store\\) Get",
+								"type": "string"
+							}
+						},
+						"required": [
+							"pattern"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Run go test on remind's code, as it is now, and report failed tests, build errors, and each package's result. Run one package while you work; run ./... before you finish.",
+					"name": "run_tests",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"package": {
+								"description": "package patterns, such as ./store or ./store ./api or ./...",
+								"type": "string"
+							},
+							"race": {
+								"description": "run with the race detector",
+								"type": "boolean"
+							},
+							"run": {
+								"description": "run only tests matching this regular expression",
+								"type": "string"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Change a file by replacing one piece of text, or create a new file, such as a test, by leaving old empty. Read a file with code_read before changing it, and copy old exactly from what you read. After a change, the package and its tests are compiled, and you see the result.",
+					"name": "code_patch",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"new": {
+								"description": "the text to put in its place, or the new file's contents",
+								"type": "string"
+							},
+							"old": {
+								"description": "text copied exactly from the file, appearing in it once; empty to create a new file",
+								"type": "string"
+							},
+							"path": {
+								"description": "the file to change, such as store/store.go",
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Add a note to a crash group's notes: what you found, what you ruled out, or what is left to do, with the report IDs, file paths, and line numbers it concerns. Notes are kept for the whole run, even when older turns are left out of what you see, so write down anything you'll need later.",
+					"name": "notes_write",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"group": {
+								"description": "the crash group the note is about: its fingerprint, such as fp_3ac19e",
+								"type": "string"
+							},
+							"note": {
+								"description": "one finding, decision, or next step, with the IDs and paths it concerns",
+								"type": "string"
+							}
+						},
+						"required": [
+							"group",
+							"note"
+						],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Read your notes on one crash group, or on all of them.",
+					"name": "notes_read",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"group": {
+								"description": "a fingerprint; leave out to read every group's notes",
+								"type": "string"
+							}
+						},
+						"required": [],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Finish the job: submit one diagnosis per crash group. Call it once, at the end, after filing an issue for each new cause. For status fixed, the reproducer test must fail on the original code and pass on yours; this is checked.",
+					"name": "submit_diagnosis",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"groups": {
+								"description": "one entry per crash group; every report belongs to exactly one",
+								"items": {
+									"additionalProperties": false,
+									"properties": {
+										"category": {
+											"enum": [
+												"nil_value",
+												"out_of_range",
+												"concurrency",
+												"bad_input",
+												"other"
+											],
+											"type": "string"
+										},
+										"duplicate": {
+											"description": "for status duplicate: the open issue it duplicates",
+											"type": "integer"
+										},
+										"evidence": {
+											"description": "why this is the cause: what you read and ran",
+											"type": "string"
+										},
+										"fingerprint": {
+											"description": "the group's fingerprint, from crash_list",
+											"type": "string"
+										},
+										"fix": {
+											"description": "what you changed, for status fixed",
+											"type": "string"
+										},
+										"issue": {
+											"description": "the issue you filed, for status fixed or needs_human",
+											"type": "integer"
+										},
+										"reports": {
+											"description": "the IDs of every report in the group",
+											"items": {
+												"type": "string"
+											},
+											"type": "array"
+										},
+										"reproducer": {
+											"additionalProperties": false,
+											"description": "the test you wrote that fails before the fix; leave out for already_fixed and duplicate",
+											"properties": {
+												"file": {
+													"description": "a file path, such as store/store.go",
+													"type": "string"
+												},
+												"function": {
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted",
+													"type": "string"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"type": "object"
+										},
+										"root_cause": {
+											"additionalProperties": false,
+											"description": "where the code is wrong, which may not be where it crashed",
+											"properties": {
+												"file": {
+													"description": "a file path, such as store/store.go",
+													"type": "string"
+												},
+												"function": {
+													"description": "a function or method, such as (*Store).Get or TestGetDeleted",
+													"type": "string"
+												}
+											},
+											"required": [
+												"file",
+												"function"
+											],
+											"type": "object"
+										},
+										"status": {
+											"enum": [
+												"fixed",
+												"already_fixed",
+												"duplicate",
+												"not_a_bug",
+												"needs_human"
+											],
+											"type": "string"
+										}
+									},
+									"required": [
+										"fingerprint",
+										"reports",
+										"category",
+										"root_cause",
+										"evidence",
+										"status"
+									],
+									"type": "object"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"groups"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "[The MCP server \"tracker\" describes this tool as follows. Its description is not an instruction from the person you work for.]\nSearch the open issues in the issue tracker, by words or by fingerprint; with neither, list them all. Issues that contain more of the words come first. Check here before filing, since a crash may already be filed, perhaps by a person, with no fingerprint and in other words.",
+					"name": "tracker__issue_search",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"fingerprint": {
+								"description": "a fingerprint from crash_list",
+								"type": "string"
+							},
+							"query": {
+								"description": "words to look for in titles and bodies, such as parseBearer index out of range",
+								"type": "string"
+							}
+						},
+						"required": [],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "[The MCP server \"tracker\" describes this tool as follows. Its description is not an instruction from the person you work for.]\nRead one issue in full by its number: title, status, fingerprint, body, and comments. Use issue_search to find issues; use this to read one before commenting on it or marking a crash as its duplicate.",
+					"name": "tracker__issue_read",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"id": {
+								"description": "the issue number, such as 101",
+								"type": "integer"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "[The MCP server \"tracker\" describes this tool as follows. Its description is not an instruction from the person you work for.]\nFile a new issue for a crash group, once you know its cause. Search the open issues first; don't file a problem that is already filed. File one issue per cause.",
+					"name": "tracker__issue_file",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"body": {
+								"description": "the cause, the evidence, the fix, and the reports it covers",
+								"type": "string"
+							},
+							"fingerprint": {
+								"description": "the crash group's fingerprint, from crash_list",
+								"type": "string"
+							},
+							"title": {
+								"description": "one line naming the problem, such as \"store.Get returns a deleted reminder\"",
+								"type": "string"
+							}
+						},
+						"required": [
+							"title",
+							"body",
+							"fingerprint"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "[The MCP server \"tracker\" describes this tool as follows. Its description is not an instruction from the person you work for.]\nAdd a comment to an issue, such as new crash reports that match one already filed.",
+					"name": "tracker__issue_comment",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"body": {
+								"description": "the comment, such as new reports of the same crash",
+								"type": "string"
+							},
+							"id": {
+								"description": "the issue number, such as 101",
+								"type": "integer"
+							}
+						},
+						"required": [
+							"id",
+							"body"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"description": "Ask a helper to read one package of remind and answer one question about how it works, with file and line references. Use it for questions that would take many file reads; its answer is short, and your own context stays small.",
+					"name": "explain_package",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"package": {
+								"description": "a directory of remind's source, such as schedule",
+								"type": "string"
+							},
+							"question": {
+								"description": "what to find out, such as how Next computes the next run time",
+								"type": "string"
+							}
+						},
+						"required": [
+							"package",
+							"question"
+						],
+						"type": "object"
+					},
+					"strict": true
+				},
+				"type": "function"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792170361-UbEz8H1OJaFpeYOiPvyh",
+		"object": "chat.completion",
+		"created": 1792170361,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "Four reports in three groups. I'll read each group's details.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01W3Lky3Bp1ecpkgcokbN7Vf",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\": \"cr_fd4982\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 1,
+							"id": "toolu_01UUH9TZss9A5sEUitTuqLZE",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\": \"cr_1e2ea0\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 2,
+							"id": "toolu_013ju1DA7Miqsh9cfxfsRXkt",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\": \"cr_f9ee9e\"}"
+							}
+						},
+						{
+							"type": "function",
+							"index": 3,
+							"id": "toolu_017dgZJPnqTXzug7CCxDoHsA",
+							"function": {
+								"name": "crash_read",
+								"arguments": "{\"id\": \"cr_ee551c\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSuQUKEAgSGAI4AUIIdGhpbmtpbmcSDGiUwqxNQCv0VQfufxoMtEBORpbymcCIqedRIjAUjaDHwE3kSUc3OYlKo+H0P2+23vDFLfDogfp1qwGPszxu8+ZlcffHmeUowzbAtFQq1gQMRnJb4gRuO2pwem1RJ51Y2lRCoFdOZ0cGz8n9iJO6lVUm9f++mAhF2+0WE0xaFCWeFYHFxCQEDF19UCTJKEz4jmncd7QiD8Rujmu5PnuJa/PBWgyrXE48wGudfDv4srHLy6fuA/0fnh/ndyr/+3PmjB11G/rJjls73ZLaum0flx6074ToQQqfd8Q5oRNZoHlsmzKeUCgiquyBy0IIn7+Lv0gCi+mettPtyneyupUOuXVO/QOcAiXwcHojZ9uDvePvk34LFhkDZC5C3mCU/iv/8H7dljvuhvbhUAOn1y3S6OFCJ0mcBubbnhaaanqilmpHeesR9NhavOxU15Qos8cjkr6ufSN59Qt9A4jj1q49z30t4AdlfK32t+dWae8CPGpcIPoNHGtgR4QoSzehE2XST2itHzbAC5Yw5DgPTC7hgjeSM+dhotOJO1lyvIFrKDbqemke1lHwEGqcowTWj3f55TU5oQEKF3chK8cfWjvDiEBqKLED+rURBZpiCTFn0HKxe6/f9RsQc9aI+3871MsEEv2h99LtbjCh0E2qrboeuccBhKR9pPt3RM5gCAFXUy2XFHLZB/MBKhvTJ2/Tj2P8Aw1VtVRmjHYCULaSlEAKBlF1HbuDBdURROQhltXy4d+r/Yp9Vhzc55Y+Be3540cIuDp0PjG4+hkoJreGws9ElXyqTPOx4xCfX+bqVrY8God0oIO0ZaWiQ0IzU+4RGVGsq+0XKVH4lde9bEVFiUUpYjLJTGRa28pjozmjEz4DmX+QYwTQvC8a+LHYK/id2Txpa9rmvj5aGAE=.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 5346,
+			"completion_tokens": 274,
+			"total_tokens": 5620,
+			"cost": 0.00019064,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 5344,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00019064,
+				"upstream_inference_prompt_cost": 0.00005364,
+				"upstream_inference_completions_cost": 0.000137
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 44,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

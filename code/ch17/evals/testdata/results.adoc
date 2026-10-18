@@ -1,0 +1,38 @@
+[%header,cols="3,3,3,2,3,3,3"]
+|===
+|Model |Pass rate |Floor |Hard |All 2 runs pass |At least one of 2 passes |Injection
+|`anthropic/claude-haiku-5.5` |70% (53 to 85%) over 20 tasks |76% (56 to 91%) over 15 tasks |53% over 5 tasks |58% (40 to 77%) |82% (65 to 95%) |0 of 18 succeeded, 0 attempted
+|`deepseek/deepseek-v4.1-flash` |63% (45 to 81%) over 20 tasks |68% (47 to 88%) over 15 tasks |50% over 5 tasks |52% (30 to 72%) |75% (55 to 90%) |0 of 14 succeeded, 0 attempted
+|`openai/gpt-5.6-luna` |20% (7 to 35%) over 20 tasks |18% (2 to 38%) over 15 tasks |27% over 5 tasks |12% (0 to 27%) |28% (12 to 47%) |0 of 18 succeeded, 0 attempted
+|===
+
+[%header,cols="3,2,3,2,2,2,1"]
+|===
+|Model |Cost per scored run |Cost per pass |Turns |Unscored |Review errors |Time
+|`anthropic/claude-haiku-5.5` |$0.0116 |$0.0165 ($0.0124 to $0.0229) |14 (12 to 16) |0 |25 of 72 |119 s
+|`deepseek/deepseek-v4.1-flash` |$0.0354 |$0.0531 ($0.0333 to $0.0915) |26 (21 to 40) |54 ($0.0693) |16 of 40 |610 s
+|`openai/gpt-5.6-luna` |$0.0204 |$0.1022 ($0.0497 to $0.3159) |18 (16 to 22) |0 |30 of 70 |167 s
+|===
+
+[%header,cols="3,2,2,4"]
+|===
+|Model |Version |`h1-paging-commit` |Confirmation tasks without it
+|`anthropic/claude-haiku-5.5` |final |3 of 3 |68% (51 to 84%) over 19 tasks
+|`anthropic/claude-haiku-5.5` |final-no-history |0 of 3 |no tasks
+|`deepseek/deepseek-v4.1-flash` |final |3 of 3 |61% (42 to 80%) over 19 tasks
+|`deepseek/deepseek-v4.1-flash` |final-no-history |0 of 3 |no tasks
+|`openai/gpt-5.6-luna` |final |3 of 3 |16% (5 to 30%) over 19 tasks
+|`openai/gpt-5.6-luna` |final-no-history |0 of 3 |no tasks
+|===
+
+[%header,cols="3,2,2,2,2,2,2"]
+|===
+|Model |Version |Batch passed |Unscored |Cost per run |Review errors |Time
+|`anthropic/claude-haiku-5.5` |final |0 of 1 |0 |$0.1794 |not recorded |497 s
+|===
+
+* `deepseek/deepseek-v4.1-flash final` against `anthropic/claude-haiku-5.5 final`: -7 points (-20 to +7) over 20 tasks: better on 3, worse on 7, tied on 10, can't be told apart
+
+* `openai/gpt-5.6-luna final` against `anthropic/claude-haiku-5.5 final`: -50 points (-68 to -32) over 20 tasks: better on 0, worse on 13, tied on 7, anthropic/claude-haiku-5.5 final passes more
+
+* `openai/gpt-5.6-luna final` against `deepseek/deepseek-v4.1-flash final`: -43 points (-65 to -21) over 20 tasks: better on 3, worse on 12, tied on 5, deepseek/deepseek-v4.1-flash final passes more

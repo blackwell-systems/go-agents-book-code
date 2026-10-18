@@ -1,0 +1,141 @@
+{
+  "id": "g3-mixed-batch",
+  "category": "grouping",
+  "title": "A mixed batch",
+  "notes": "Reports from four causes arrive together, one of them on two lines.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "pick up dry cleaning",
+        "in": "2h"
+      },
+      "save": "bo1"
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "renew passport",
+        "in": "3w"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "send invoice",
+        "in": "1d"
+      },
+      "save": "ana1"
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders/{bo1}/snooze",
+      "body": {
+        "for": ""
+      },
+      "group": "A"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?offset=20",
+      "group": "B"
+    },
+    {
+      "as": "usr_ana",
+      "method": "DELETE",
+      "path": "/v1/reminders/{ana1}"
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders/{ana1}/done",
+      "group": "C"
+    },
+    {
+      "as": "usr_bo",
+      "method": "GET",
+      "path": "/v1/me/stats",
+      "group": "D"
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders/{bo1}/snooze",
+      "body": {
+        "for": ""
+      },
+      "group": "A"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/export",
+      "group": "D"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?offset=20",
+      "group": "B"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "duration/duration.go:Parse"
+      ],
+      "status": "fixed"
+    },
+    "B": {
+      "root_cause": [
+        "store/store.go:(*Store).List"
+      ],
+      "status": "fixed"
+    },
+    "C": {
+      "root_cause": [
+        "store/store.go:(*Store).Get"
+      ],
+      "status": "fixed"
+    },
+    "D": {
+      "root_cause": [
+        "api/api.go:(*API).Routes"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "duration/duration.go",
+      "old": "func Parse(s string) (time.Duration, error) {\n\tif last",
+      "new": "func Parse(s string) (time.Duration, error) {\n\tif s == \"\" {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\tif last"
+    },
+    {
+      "file": "store/store.go",
+      "old": "\tend := min(offset+limit, len(out))",
+      "new": "\toffset = min(offset, len(out))\n\tend := min(offset+limit, len(out))"
+    },
+    {
+      "file": "store/store.go",
+      "old": "\t\tr = nil",
+      "new": "\t\tr, err = nil, ErrNotFound"
+    },
+    {
+      "file": "api/api.go",
+      "old": "\tmux.HandleFunc(\"GET /v1/me/export\", a.export)\n\tmux.HandleFunc(\"GET /v1/me/stats\", a.stats)",
+      "new": "\tmux.Handle(\"GET /v1/me/export\", user(a.export))\n\tmux.Handle(\"GET /v1/me/stats\", user(a.stats))"
+    }
+  ]
+}

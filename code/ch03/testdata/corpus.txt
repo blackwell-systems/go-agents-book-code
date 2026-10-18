@@ -1,0 +1,439 @@
+This chapter answers one question: what is an agent, in terms a Go programmer can build?
+It starts by watching one work, names the parts, and then builds the loop at the center of every agent in this book.
+The loop you write here runs with no AI at all.
+That is on purpose: the loop is ordinary Go, and you can see and test every part of it before a real model is involved.
+Here is a small Go project with a bug.
+Its duration package parses strings like 1h30m into a time.Duration, and its tests fail.
+An agent is given one instruction: The tests in this project fail. Find out why and fix it.
+A large language model, usually just called a model, is a system trained to continue text.
+You send it text over an API; it sends back the text it predicts should come next.
+Chapter 2 calls a real one.
+The agent is the one you will finish in chapter 4: a Go program working with a model.
+The table shows one run of it, one row per round trip.
+Later in this chapter you'll replay this run from a script, so you can reproduce it without a model or an API key.
+read_file {path: duration_test.go}
+Read the middle column again.
+Every entry is a request.
+The model asked to list files, to read them, to run the tests, and to change one line.
+It never touched a file, and it can't.
+The model is a remote service, reached in this book over HTTP: your program sends it text and gets text back.
+Anything that happens on your machine, your program has to do.
+Each of these requests is a tool call.
+A tool is something your program can do on the model's behalf, such as reading a file or running the tests, described to the model by a name and the inputs it takes.
+A tool call is the model asking your program to run one tool with particular inputs, such as read_file with the path duration.go.
+The right-hand column is the other half of the work, and it is all your program.
+Your code decided what read_file means, read the file, ran the tests, applied the edit, and sent each result back.
+Your code also decided when to stop.
+Each row is a turn: one round trip in which the program sends the model everything so far, the model replies, and the program acts on the reply.
+Six turns took the project from failing to passing.
+Some providers also run tools on their own servers, such as web search, and return the results with the reply.
+This book doesn't use them: every tool here is code you write and control.
+The program and the model talk in messages.
+One entry in an exchange with a model, with a role that says who it is from: system (instructions to the model), user (the person or program asking), assistant (the model), or tool (the result of a tool call).
+The messages so far, in order, make up the conversation.
+Programs use models in three broad ways.
+What separates them is who decides what happens next.
+A workflow is often the right choice, and the distinction comes from Anthropic's Building effective agents (see Further reading).
+In the bug fix, though, no code fixed the order of steps in advance.
+The model chose to read the test file because of what it saw in the listing, and chose the edit because of what the tests reported.
+Real systems sit on a spectrum between the two.
+A support system, for example, might route every ticket with a workflow and hand only the unusual ones to an agent.
+A program in which a model decides, on each turn, which tool to use next, based on what the previous tools returned, until the task is done or a limit is reached.
+A common one-line definition, from Simon Willison, is that an LLM agent runs tools in a loop to achieve a goal.
+It leaves out who runs the tools.
+The model only asks; something has to run the tools, keep the conversation, and decide when to stop.
+This book calls that program the harness.
+The program around the model.
+It runs the tools the model asks for, decides what the model sees on each call, and decides when the work is done.
+The harness has two jobs.
+The first is the obvious one: run the tools the model asks for.
+The second matters as much: decide what the model sees on every call, because the model sees nothing else.
+HumanLayer's 12-Factor Agents puts it as own your context window (see Further reading).
+Most of this book is about doing both jobs well.
+For now, treat the model as a black box with one operation.
+You send it the conversation and a list of tools, each with a name, a description, and a description of its inputs (a JSON Schema, explained in chapter 4).
+It sends back one message, holding text, tool calls, or both.
+Here is one exchange from the bug fix, simplified; chapter 2 shows the API's real JSON:
+When the harness runs a tool, it sends the output back as a new message with the role tool, marked with the ID of the call it answers.
+This is the tool result.
+Then it sends the whole conversation again: the task, every reply, every tool result.
+It has to, because the model keeps nothing between calls.
+Each call starts from nothing but the messages in that request.
+So each turn sends more tokens than the one before, and you pay for every one; chapter 2 measures it.
+Put together, a harness runs the same four stages on every turn, the agentic loop in it:
+*Build the request.* Decide what the model sees: the instructions, the conversation so far, and the tools it may use.
+*Call the model.* Send the request and wait for the reply.
+*Run the tools.* Do what the reply asks, and add each result to the conversation.
+*Decide.* If the reply was an answer, stop.
+If not, and the run is still within its limits, go around again.
+Walk the bug fix through the loop.
+In turn 3, the harness built a request holding the task and the two files it had read, called the model, ran run_tests when the reply asked for it, added the failing output to the conversation, and decided to continue, since the reply had asked for a tool rather than answering.
+In turn 6, the reply held an answer and no tool calls, so the Decide stage stopped the loop.
+The Decide stage checks after each turn: did the model answer, and how many turns have run?
+Two more things can end a run: a deadline passing, or a person pressing Ctrl-C.
+In Go, both arrive through a context.Context, and the loop you build checks it before every turn; chapter 5 also stops a run partway through a turn.
+Every chapter in the book improves one of these four stages, and its first page shows which.
+When something goes wrong in an agent, it helps to ask which stage it went wrong in.
+An agent that never stops has a Decide problem.
+An agent that forgets what it read twenty turns ago has a Build-the-request problem.
+A loop with no turn limit, the most turns a run may take before the harness stops it, can run forever.
+With a real model, it can also keep costing money the whole time.
+Every loop in this book has one, and the first loop you write has it before it has anything else.
+You'll build the loop before connecting a real model, for two reasons.
+The loop is ordinary Go: a for loop, a slice of messages, and some function calls.
+And the model is, from the loop's point of view, just something that returns the next reply.
+Put a scripted stand-in in its place, and you can run and test the loop with no API key, no network, and no cost.
+Keep one limit in mind.
+A scripted model tests the plumbing, but it can't tell you how a real model will choose tools, and a real model may choose differently on every run.
+Chapter 4 shows two real runs of this task taking different paths to the same fix.
+The code for this chapter is in the ch01 directory of the companion repository.
+The agent is a package, agent, and a small main package runs it.
+Run it now to see where the chapter is going:
+You'll build it in five steps: the types, a scripted model, the tools, the loop, and the program that ties them together.
+Start with the model itself.
+To the loop, a model is anything that can produce the next reply:
+The loop needs one thing from a model: the next reply.
+Because that is a single method, the scripted model in this chapter and the real client in chapter 2 can both provide it, and tests never need the network.
+Nothing in the loop will know which one it is talking to.
+A request is the conversation plus the tools the model may use, and a message is one entry in the conversation:
+A message from the model can hold text, tool calls, or both.
+A message from a tool answers exactly one call, named by ToolCallID, and IsError marks a tool that failed.
+IsError is the harness's own flag; chapter 4 shows how a failure reaches an API that carries only the message text.
+Tools have two sides.
+The model sees a definition: a name, a description, and a JSON Schema for the arguments.
+When it wants a tool, it sends back a tool call with an ID, the tool's name, and the arguments as JSON:
+jsontext.Value comes from encoding/json/jsontext, part of the encoding/json/v2 packages in Go .
+It holds raw JSON bytes to be decoded later, like the older json.RawMessage; for now, treat it as a []byte holding JSON.
+Chapter 2's Go note covers json/v2.
+The arguments are left raw because each tool decodes its own, and because a model can write JSON that doesn't decode, which the harness has to handle.
+The harness's side of a tool pairs the definition with the Go function that runs it:
+The model never sees Run.
+It sees the definition, asks for the tool by name, and your code decides what happens.
+The last two types are the run's settings and its outcome:
+They hold one field each for now.
+Run returns a Result even when it stops with an error, so a run that ended early can still be shown, saved, or debugged: when something goes wrong in turn 9, the first eight turns are what you need to understand it.
+A MaxTurns of 0 allows no turns at all, so always set it.
+Later chapters add fields (a cost budget, how much a run spent), and they only ever add: no field is changed or removed, so the code you write in this chapter still compiles in chapter 17.
+The zero value of every new field will mean not used.
+The stand-in model replays a script of replies:
+It picks its next reply by counting the assistant messages already in the conversation, rather than keeping its own counter.
+A real model works the same way: everything it knows about the run is in the request.
+If the loop sent the conversation wrong, say by dropping a message, the fake would reply out of step, and a test would catch it.
+Three small helpers make scripts readable.
+Calls is a reply that calls tools, Call is one tool call, and Says is a reply with text and no tool calls, which is an answer:
+One scripted reply can hold several tool calls, as turn 2 of the bug fix did.
+The tools work on a small in-memory file system, FS, which is a map from file names to their contents.
+Nothing in this chapter touches your disk.
+FS has two methods, List and Read, and the project starts with the two duration files from the bug fix.
+All four tools decode their arguments with one small generic helper:
+The error matters as much as the decoding.
+A model that sends {path: 5} gets back a message that says what was wrong and shows the shape to send, and it can fix its next call.
+Here is read_file:
+encoding/json/v2 matches field names exactly, so path does not fill a field named Path unless the field has a json:path tag.
+Leave the tag off and the tool receives an empty path, with no error.
+Tag every field that a model fills.
+The other three tools follow the same pattern:
+A failing test is not a tool error.
+run_tests succeeded at its job, which was to run the tests and report what happened; the failure is information for the model.
+Tool errors are for when the tool itself couldn't do its job, like a file that doesn't exist.
+The in-memory file system can't escape its map.
+Real tools read your disk and run commands with your permissions, so they need limits on what they can touch.
+Chapter 4 starts with a scrubbed environment for running tests, chapter 14 builds a full sandbox, and chapter 17 runs the finished agent on a real service.
+Here is the loop, about 30 lines:
+A context.Context carries three things down a call chain: a signal that the work should stop, an optional deadline, and (since Go 1.20) the reason it stopped, read with context.Cause.
+You derive new contexts from existing ones, with context.WithCancel, WithTimeout, or their Cause variants, and cancelling a parent cancels everything derived from it.
+That makes it the natural way to stop an agent: one ctx for the run, passed to every model call and every tool, so one cancellation reaches all of them.
+It is always the first parameter of anything that does I/O or can block, and every chapter of this book extends what the loop does with it: a deadline on each model call (chapter 2), stopping partway through a batch of tool calls (chapter 5), an idle timer on a stream (chapter 6), cancelling parallel work (chapter 9), telling a tool's own timeout apart from the run being cancelled (chapter 12), and shutting down without losing work (chapter 15).
+Running one tool turns every kind of problem into a message the model can read:
+A tool that failed, arguments that didn't decode, and a tool name that doesn't exist all become a tool message with IsError set and a reason.
+None of them stops the run.
+Why send an unknown tool back instead of stopping?
+Models get names wrong now and then, and they can usually correct themselves once they see the real list, which the message includes.
+A run that stopped on a typo would throw away every turn before it.
+The turn limit still bounds a model that keeps getting it wrong.
+Why does the loop have a turn limit before it has anything else?
+Because it is the only thing that guarantees the loop ends.
+Nothing else in this loop stops a model that keeps asking for tools.
+The loop has been described many times, under different names.
+The ReAct paper (2022) had the model alternate Thought, Action, and Observation: it reasoned in text, named an action, and read the result.
+These map onto the four stages: building the request and calling the model produce the thought and the chosen action; running the tools is the action; the tool result is the observation; and deciding is the harness's choice to go around again.
+One thing has changed since ReAct.
+In 2022 the model wrote its actions as plain text, such as Action: read_file[duration.go], and the harness parsed that text.
+Today's model APIs return tool calls as structured data, with a name and JSON arguments, so the harness never has to parse the action out of prose.
+Chapter 4 shows what a tool call looks like on the wire.
+The script replays the bug fix from the start of the chapter:
+main makes the context: Ctrl-C cancels it, and the loop stops before its next turn.
+And run loads the project into an FS, starts the conversation with the task, and runs the loop:
+Run it:
+The output is the table from the start of the chapter, produced by your own loop.
+The program prints each turn after the run finishes; chapter 6 prints them as they happen.
+The tests in ch01/agent check the loop's behavior one rule at a time: it stops on an answer, it stops at the turn limit, every tool call gets a tool message (including several calls in one reply), tool errors go back with IsError, and an unknown tool gets the list of real ones.
+They run in milliseconds and need no network:
+An agent is not always the right tool.
+Every turn is a model call, which costs money and takes seconds.
+Mistakes compound: a wrong guess in turn 3 shapes everything after it.
+And two runs of the same task can take different paths, which makes an agent harder to test than ordinary code.
+When you know the steps in advance, a workflow is usually cheaper, faster, and easier to test.
+An agent earns its cost when the next step depends on what the last one found, as it did in the bug fix.
+Chapter 5 ends with a table of shapes, from a fixed chain of model calls to several agents working together, once you have a real agent to compare them against.
+Your tools run with your permissions: check what the model asks for before your code does it.
+Change the script so the model asks for a tool that doesn't exist, such as read_files.
+Then add a scripted reply that corrects the name after the error, and watch the run recover.
+Lower MaxTurns until the task can't finish.
+Run returns ErrMaxTurns and the conversation up to that point; check both.
+Make the scripted edit wrong (replace time.Second with time.Hour) and watch run_tests keep failing.
+Give the run a deadline that has already passed, with context.WithTimeout(ctx, 0).
+What does Run return, how many turns ran, and what does errors.Is(err, context.DeadlineExceeded) say?
+Print each turn as it happens: write a type that implements Model by wrapping another Model, prints the request's last message, and passes the call on.
+Hint: a struct with a field holding the wrapped Model, and a Generate method that calls it.
+Anthropic, Building effective agents: the workflow and agent distinction, and the common shapes, with examples.
+Simon Willison on the definition of agent: where the one-line definition comes from.
+HumanLayer, 12-Factor Agents: principles for agents in production, including owning your context window.
+You built a working agent loop, a scripted model to drive it, four tools over an in-memory project, and the types the rest of the book grows.
+The files are in ch01: the agent package (types.go, fake.go, memfs.go, tools.go, loop.go) and the program that runs it (main.go, script.go).
+What's missing is a real model.
+Chapter 2 builds a client for one, using only the standard library, that satisfies the Model interface you wrote here; chapter 4 connects the two.
+Chapter 1's loop ran on a script.
+This chapter puts a real model in its place.
+You'll write a client for a model API using only net/http and encoding/json/v2, make it satisfy the Model interface from chapter 1, and use it in a small chat program that prints what every reply cost.
+Chapter 3 then opens the model up, and chapter 4 gives it tools.
+You can run the finished program now, before setting anything up:
+With no API key set, the program replays a conversation saved from the real API, so it runs offline and costs nothing.
+Each > line is what was typed; under it are the model's answer and a line in brackets saying what the call cost: how many tokens (chunks of text, a few characters each) went in, how many came out, and the price in dollars.
+By the end of the chapter you'll know what each of those numbers means, why the first one grows on every turn, and how the program replays a conversation without the network.
+The model runs on someone else's computers.
+Your program reaches it over HTTPS, with a key that identifies your account.
+The company that runs a model on its servers and sells access to it through an API, such as Anthropic, OpenAI, or Google, is a provider.
+Popular open-weight models are served by several providers at once, at different prices and speeds.
+This book reaches them all through OpenRouter.
+A service that sits in front of many providers and gives them one API, one key, and one bill.
+You name a model, and OpenRouter forwards the request to a provider serving it.
+Three things make OpenRouter a good fit for a book.
+You can try hundreds of models from many companies by changing one string, so nothing here depends on one company's models.
+When a provider is down, OpenRouter can try another one serving the same model, which it shows as a dashed line.
+And its API uses the request format OpenAI introduced for chat completions, which most other services and local model servers also accept, so the client you write here works with them too.
+The routing has a cost: two requests for the same model may be served by different providers, which can differ slightly in speed, limits, and even behavior.
+OpenRouter can be told to use one provider only, called pinning; chapters 8 and 13 pin when they measure, so that a change in results comes from the change being measured and not from a different provider.
+To call the live API, create an account at openrouter.ai, add a few dollars of credit, and create an API key: a secret string that identifies your account.
+Every request carries it, and every request made with it is billed to you.
+Credit is prepaid.
+When it runs out, calls fail with an error (status 402, which chapter 5 handles) instead of running up a bill, which is a reasonable safety net while you learn.
+Five dollars is far more than this chapter needs; the chat above cost a hundredth of a cent.
+The programs in this book read the key from the environment:
+Never put your key in source code or a file you commit.
+Keys pushed to public repositories are found by automated scanners within minutes and used to run up bills.
+Read the key from the environment, as every program in this book does, and if one ever leaks, delete it on OpenRouter's keys page and create a new one.
+An API names each model with a model ID, such as ; on OpenRouter, the part before the slash names the company that made the model.
+The book's examples use , a small, fast model with tool support that costs  per million input tokens and  per million output tokens (as of ).
+Tokens are the next section's topic; for now, a million tokens is about 750,000 English words, several long novels.
+The model ID is a setting, read from OPENROUTER_MODEL when it is set, so you can switch models without touching the code.
+Here are a few other cheap models that support tools, with their prices per million input and output tokens:
+Models are retired and prices change, so treat the table as a starting point; the companion repository's README names the current recommendation.
+Some models also have free variants, with IDs ending in :free.
+They are rate-limited, come and go without notice, and are usually worse at calling tools.
+They're fine for this chapter's chat, but from chapter 4 on, a paid model will save you time.
+Every program in Part 1 runs without a key.
+When OPENROUTER_API_KEY is empty, it replays replies saved from the real API, as you saw at the start of the chapter; the last section of this chapter shows how.
+The address of the API is a setting too, read from OPENROUTER_BASE_URL.
+Point it at another service that accepts the same request format, such as a local model server (Ollama serves one at http://localhost:11434/v1), set OPENROUTER_MODEL to a model that server has, and the same client talks to it instead.
+A local server needs no key, but the program replays whenever the key is empty, so set OPENROUTER_API_KEY to any value.
+Fields that only OpenRouter sends, such as the cost of a call, then read as zero.
+Every call in this book goes to one endpoint, the URL an API receives a particular kind of request at:
+The body is JSON: the model ID and the messages so far.
+The reply is JSON too, holding the model's message and some bookkeeping.
+The API's JSON gets its own Go types, separate from chapter 1's:
+They live in a package of their own, openrouter, and they're unexported: nothing outside the client ever sees them.
+Why not send agent.Message directly?
+Because the two change for different reasons.
+The wire types follow the API, which names things its own way and has fields the agent doesn't need; chapter 4 adds tool calls, which the API encodes differently from the agent's ToolCall.
+The agent's types follow the book, and chapter 11 sends them to a second API with a different shape again.
+Keeping them apart means the API's quirks stay in one file, and the loop never learns them.
+Go  includes encoding/json/v2, a new version of the JSON package, and encoding/json/jsontext, which reads and writes JSON token by token.
+The book uses v2 throughout.
+Four differences from the old encoding/json matter here:
+Field names match exactly, as chapter 1's Watch out said, so every wire field has a json tag.
+Invalid UTF-8 and duplicate object keys are errors, where v1 accepted both. Models do sometimes write malformed JSON, and it should fail to decode rather than decode wrong.
+Unknown fields in input are ignored by default, which suits an API that adds fields over time; chapter 7 turns on RejectUnknownMembers for tool arguments, where an unknown field is a mistake.
+omitempty now omits a field only when its JSON would be empty (null, , {}, or []). Zero numbers aren't empty, so MaxTokens uses omitzero. The first draft of this client used omitempty and sent max_tokens: 0 on every call, a request for a reply of at most zero tokens; the test that compares the client's requests with the saved ones caught it.
+Request gains a field in this chapter, MaxTokens, the longest reply the caller allows; zero leaves it to the provider:
+Chapter 1's code still compiles, since the core types only ever gain fields.
+it uses MaxTokens to make a reply stop early.
+The conversion from the agent's request is a loop:
+It sends only each message's role and text.
+The tools and the tool-call fields from chapter 1 are left out until chapter 4, which encodes them; until then, this client can chat but can't run chapter 1's agent.
+Every field has a useful zero value: an empty BaseURL means OpenRouter, a nil HTTP means http.DefaultClient, and a zero Timeout means two minutes.
+So &openrouter.Client{APIKey: key, Model: id} is a working client, and tests set only what they change.
+Here is Generate, which makes *Client a Model:
+The rest is plain net/http.
+http.NewRequestWithContext ties the HTTP request to ctx, so cancelling ctx abandons the request, even halfway through reading the reply.
+The key goes in the Authorization header as a bearer token, the usual scheme for API keys.
+defer resp.Body.Close() releases the connection whatever happens next, and readReply, shown in it, decodes the body.
+Why put the deadline on the context rather than on http.Client.Timeout?
+The default http.Client has no timeout at all, and a model call can legitimately take a minute or more, so some limit is needed.
+http.Client.Timeout would work, but it belongs to the client, which is often shared (http.DefaultClient is shared by the whole program), not to one call.
+It also records no reason, so the error can't say which limit fired.
+A deadline derived from ctx belongs to this call, combines with any deadline the caller already set (whichever comes first wins), and carries a cause.
+Chapter 5 stops tools when a turn is cancelled, and chapter 9 cancels a whole tree of sub-agents, with the same mechanism.
+The cause matters because a bare context deadline exceeded doesn't say whose deadline it was.
+context.WithTimeoutCause records a reason along with the cancellation, and context.Cause reads it back.
+Callers want both: the kind of cancellation, to check with errors.Is(err, context.DeadlineExceeded), and the cause, to say what happened.
+net/http doesn't reliably give both.
+Over HTTP/1.1 its error carries the cause and not the kind; over HTTP/2, which OpenRouter uses, it carries the kind and not the cause.
+callError adds whichever is missing:
+If the call wasn't cancelled, the error is about something else, and callError leaves it alone.
+Otherwise it adds the kind (ctx.Err()) and the cause (context.Cause(ctx)) when the error doesn't already match them, using the %w: %w format, which wraps two errors at once (Go 1.20) so errors.Is finds either.
+readReply uses it too, for a deadline that passes while the body is arriving.
+Over HTTP/2, a call that times out now reads as send request: Post ...: context deadline exceeded: openrouter: model call timed out, and both errors.Is(err, context.DeadlineExceeded) and errors.Is(err, openrouter.ErrCallTimeout) are true.
+The tests in openrouter/client_test.go check this over both HTTP versions, for a call that hits its own deadline and for one whose caller cancels it with a reason; a first version of callError that only added the kind passed over HTTP/1.1 and failed over HTTP/2.
+Everything about a model call is counted in tokens: what you send, what comes back, the limits, and the price.
+The unit a model reads and writes: a chunk of text, often a whole common word, part of a longer one, or a punctuation mark.
+English averages roughly four characters per token.
+Chapter 3 shows how text is split into tokens, and why.
+Everything you send the model on one call is the prompt: in this book, the messages and, from chapter 4, the tool definitions.
+The model's reply is the completion.
+Prices are quoted per million tokens, separately for input and output, and output costs more: for the default model,  per million against .
+Generating a token takes far more work than reading one, as chapter 3 explains.
+Every reply reports what the call consumed.
+The token counts for one call, as the API reports them with the reply: tokens in, tokens out, and on OpenRouter the cost in dollars.
+The agent's Reply gains two fields to carry this, along with a third you'll meet in the next section:
+Two of the counts need a word.
+Cached tokens are input tokens the provider has seen recently at the start of an earlier request and charges less for; chapter 8 arranges requests to get that discount.
+Reasoning tokens are output the model writes for itself, thinking before it answers, which some models do; some providers return that text with the reply, in a field this client ignores, and either way you pay for it as output, which chapter 3 discusses.
+Check the arithmetic on the first turn of the transcript: 58 tokens in at  per million is about $0.0000058, and 46 tokens out at  per million is $0.000023, for $0.000029 in all.
+These are small numbers for one short answer.
+The rest of the chapter shows why they don't stay small in an agent.
+Here is a call asked to explain Go interfaces with MaxTokens set to 12, and what came back:
+The request body the client sent:
+And the response body:
+choices is a list because the API can return several alternative replies to one request; the book never asks for more than one, and the client reads the first.
+The message is the model's reply, in the same shape as the messages you sent.
+finish_reason says why the model stopped: here, because it ran into the 12-token limit mid-sentence.
+native_finish_reason is the same thing in the provider's own words, here Anthropic's max_tokens, before OpenRouter translated it.
+id names this generation (chapter 12 uses it to look up the cost of a call that failed partway), and provider says who served it.
+usage holds the counts and the cost.
+object and created are part of the OpenAI format, and the client ignores them.
+The client decodes the parts it uses into wire types that mirror this JSON:
+The nested structs mirror the nested JSON objects, so u.PromptDetails.CachedTokens reads usage.prompt_tokens_details.cached_tokens.
+Reading a reply takes two steps.
+First, check that the call worked at all:
+io.LimitReader caps how much of the body is read, at 16 MB, so a broken server can't make the program read forever; reading one byte more than the limit tells a response that is too large from one that fits exactly.
+For now every failure is a plain error.
+This client tries each call once.
+Real model APIs fail often enough to plan for: rate limits (429), overloaded providers (502 and 503), connections dropped mid-reply.
+Chapter 5 sorts errors into those worth retrying and those that aren't, and chapter 12 retries with backoff.
+Then copy out what the agent needs:
+Why the model stopped writing, reported with every reply.
+OpenRouter reports one of five:
+Why isn't length an error?
+Because a reply cut off at the limit is still a reply, and whether to use it, retry with a higher limit, or give up is the caller's decision.
+The chat program prints the reason when it isn't stop and carries on.
+Chapter 5's loop, which checks every reply, is stricter: it never takes a cut-off reply as an agent's final answer.
+Don't lean on the finish reason too hard, though.
+Providers don't report it consistently, and some say stop for a reply that holds tool calls.
+That is why chapter 1's loop decides from the reply itself, by checking for tool calls, and not from the finish reason.
+A model API keeps nothing between calls.
+To hold a conversation, the program keeps the messages and sends all of them every time, exactly as chapter 1's loop does.
+The chat program's conversation starts with a message of its own.
+A message with the role system, placed first, holding instructions for the whole conversation: what the model is for and how it should answer.
+This one is short: You are a helpful assistant for Go programmers. Answer in a few sentences.
+Models generally follow the system prompt more closely than instructions in user messages.
+Chapter 7 writes a full one for the triage agent, and chapter 8 measures which of its sentences matter.
+Here is the chat loop:
+printer is the small helper from chapter 1's main.go that writes output and keeps the first write error, returned at the end.
+echo prints each typed line back, so a replayed conversation shows its questions.
+printReply prints the answer, the usage line, and the finish reason if it isn't stop.
+The interesting part is waiting for input.
+The obvious way to read lines is a bufio.Scanner and a loop around sc.Scan().
+But Scan blocks until a line arrives, and nothing can interrupt it: io.Reader has no context parameter, so a read in progress can't be cancelled.
+main uses signal.NotifyContext, as in chapter 1, which turns Ctrl-C into a cancelled ctx instead of ending the program.
+With the read blocking, Ctrl-C at the prompt would cancel ctx and nothing would notice until you pressed Enter.
+The fix is a common Go pattern: move the blocking read to its own goroutine, and make the waiting happen in a select, which can wait on several things at once.
+Every goroutine needs an owner and a way to stop.
+This one belongs to readLines and stops at the end of input, or at the next line once ctx is done.
+The read itself still can't be interrupted, so after Ctrl-C the goroutine waits in Scan until the program exits, which here is immediately.
+In a long-running program, the way to unblock a read is to close what it is reading from; chapter 14 meets the same problem when an agent waits for a person to approve a step, and chapter 17 when a service shuts down.
+Press Ctrl-C at the prompt and the program ends at once, with log.Fatal in main printing wait for input: context canceled: interrupt signal received.
+Ctrl-C during a model call works through the same ctx: Generate passes it to the HTTP request, which is abandoned, and the error carries the cause.
+The saved conversation happens to be about this problem.
+Its second answer says you can't stop a goroutine from outside and should give it a context to watch, and its third shows two lines that do it.
+Look at the tokens-in column of the transcript:
+Turn 2's input is roughly turn 1's input (58), plus the answer it got back (46), plus the new question.
+The counts don't come out exactly by length, because every message also carries a few tokens of formatting that mark its role; chapter 3 shows them.
+Every answer is paid for once as output when it is written, then again as input on every later turn.
+The cost of each turn grows with the length of the conversation, so the cost of the whole conversation grows roughly with the square of its length.
+Three short turns don't show it; an agent that reads files and runs tests for thirty turns does.
+Nothing in this chapter's program limits the history.
+Every turn resends all of it, so every turn costs more than the last, until the conversation no longer fits.
+Chapter 5 adds a cost budget that stops a run, and chapter 8 keeps the history in bounds by trimming, clearing old tool results, and summarizing.
+No longer fits is a hard limit.
+Everything the model sees on one call, and the most tokens that can be.
+The prompt and the reply must fit in it together.
+The default model's window is  tokens; others range from a few thousand tokens for small open models to a few million.
+A request that doesn't fit is usually refused with an error (for models with very small windows, OpenRouter instead drops messages from the middle of the conversation by default, which changes what the model sees without an error).
+But the size of the window is the wrong number to plan around, because models get worse well before they reach it.
+Models don't use long inputs evenly.
+In 2023, Lost in the Middle (Liu and others) showed models finding a fact reliably near the start or end of a long input and missing it in the middle.
+In 2025, Chroma's report Context Rot tested 18 models on simple tasks and found accuracy falling as inputs grew, on every model, long before the window was full.
+Anthropic's guide to context engineering draws the lesson for agents: a model has a limited attention budget, every token in the context spends some of it, and the job of the harness is to find the smallest set of high-value tokens for each call.
+For an agent, that makes context a budget to spend.
+A file the model read twenty turns ago and no longer needs still costs money on every call and still competes for the model's attention.
+Chapter 3 shows the mechanism behind this: every token the model writes attends to every token before it.
+Chapter 8 spends the budget carefully.
+The tests in this book never call a live model, and neither do the programs when no key is set.
+They replay saved calls instead.
+Why not call the model in tests?
+Its answers vary from run to run, so a test can't check them exactly.
+Each call costs money and takes seconds.
+And models are retired: a test that depends on today's model breaks next year.
+A saved reply is the same every time, free, and instant.
+Saved replies can test your code, but they can't tell you whether the model does its job well; for that you need a different kind of check.
+A measurement of how well a model, prompt, or agent does a task: many runs against a real model, scored, and summarized as a rate.
+Chapter 5 builds the first one.
+Every HTTP request in Go goes through an http.RoundTripper, an interface with one method that takes a request and returns a response.
+http.Client uses http.DefaultTransport, which talks to the network, unless you give it another.
+Give it one that reads responses from files, and the client can't tell the difference.
+Saved calls are grouped into scripts, each a numbered sequence: chat-01.json, chat-02.json, chat-03.json.
+One directory holds several scripts (this chapter's has chat, length, error, and unauthorized), and one client can make calls belonging to different scripts, so the script can't be a field of the transport.
+A program names its script in the context:
+Context values are for request-scoped data that has to cross an API boundary, and this is a clear case.
+The script name has to get from the program, through the client and http.Client, to the transport, and the only thing that makes that whole trip is the request's context.
+The key is an unexported type, scriptKey, so no other package can read or overwrite the value by accident.
+The replaying transport:
+The counter numbers calls per script, under a mutex, since a client can be used from several goroutines.
+Calls are numbered in the order they're made, so a script has to be one conversation making one call at a time; chapter 9, which runs agents in parallel, gives each its own script.
+A call past the end of a script fails with ErrNoRecording, naming the call and the script.
+That is deliberate: a program that makes an unexpected extra call should fail loudly in a test, not hang, and not reach the network.
+The recorder is the other half: a transport that passes each request on to the real network and saves what came back.
+The chat program puts it together:
+To record a conversation of your own, run the program with a key and a directory:
+Each call lands in /tmp/chat as chat-01.json, chat-02.json, and so on.
+To replay your conversation instead of the saved one, copy those files into testdata/replies and write the lines you typed into chat-inputs.txt, which the recorder doesn't save.
+The test that compares the replay with testdata/transcript.txt then fails until you run it with -update.
+The tests for this chapter run in about a second with no network:
+What each package's tests check:
+openrouter: the HTTP request the client builds (method, path, headers, and body, against an httptest server); the client on every saved reply (a normal answer, a cut-off one, an error inside a 200, and a 401); and a call stopping at its own deadline and when its caller cancels, with an error that matches both the kind and the cause.
+replay: scripts replay in order and fail on an extra call; a recorded call replays and holds no API key.
+ch02: the replayed chat matches the transcript at the start of the chapter; the chat program sends exactly the requests the saved conversation says it sent; Ctrl-C ends a chat waiting at the prompt.
+None of them says anything about whether the model's answers are good.
+That is an eval's job.
+The model reads the whole conversation on every turn, and bills you for it on every turn too.
+Ask the same question three times in a live chat, each in a new session.
+Compare the answers and their costs.
+Switch OPENROUTER_MODEL to one of the alternatives in the table and ask the same questions.
+Estimate the cost of a 20-turn conversation in which each question is 20 tokens and each answer 200, at the default model's prices.
+Then check your estimate with a live chat.
+Set Timeout to one second, ask for something long, and watch the deadline fire.
+What does errors.Is(err, openrouter.ErrCallTimeout) say?
+Add a -max-tokens flag that sets Request.MaxTokens, set it to 20, and watch for the length finish reason.
+On a reasoning model, the limit covers the reasoning tokens too, so a small one can leave no room for the answer at all.
+If you run a local model server, point OPENROUTER_BASE_URL at it, set OPENROUTER_MODEL to one of its models and OPENROUTER_API_KEY to any value, and chat with a model on your own machine.
+OpenRouter documentation: the API reference, model routing and provider pinning, and the error codes.
+Anthropic, Effective context engineering for AI agents: context as a limited budget, and how agents spend it.
+Chroma, Context Rot: measurements of how accuracy falls as inputs grow.
+encoding/json/v2: the package documentation, including how it differs from v1.
+You built a client for a real model using only the standard library, in the openrouter package: wire types for the API's JSON, a Client that satisfies chapter 1's Model interface, a deadline on every call with a cause that says whose it was, and errors for failed calls.
+Reply gained FinishReason and Usage, and Request gained MaxTokens.
+The replay package saves calls and replays them by script, so the programs and tests run offline.
+And main.go is a chat program that stops on Ctrl-C, even at the prompt, and prints what every turn cost.
+You have been treating the model as a service with an API.
+Chapter 3 opens it up: what a token is, how a model picks the next one, and why it costs what it does, using the client you just wrote.

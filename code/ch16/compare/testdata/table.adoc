@@ -1,0 +1,61 @@
+// tag::code[]
+| Measure | Book's agent | Eino | Genkit
+
+| Lines of code for the task
+| 80
+| 156
+| 116
+
+| Lines of code under it, outside the standard library and the shared task code
+| 5,351
+| 97,076 (14,443 generated)
+| 132,201 (24,238 generated)
+
+| Largest modules under it
+| none
+| `cloudwego/eino` 29%, `golang.org/x/sys` 18%
+| `openai/openai-go` 23%, `golang.org/x/sys` 13%
+
+| Modules under it, besides the book's
+| 0
+| 27
+| 29
+// end::code[]
+
+// tag::behavior[]
+
+| Model calls to finish
+| 3
+| 3
+| 4
+
+| First request (bytes)
+| 1,856
+| 1,814
+| 1,884
+
+| Tool schemas marked strict
+| yes
+| not sent
+| no (`strict: false` sent)
+
+| A tool's text result is sent as
+| the text
+| the text
+| a JSON string, quotes and escapes included
+
+| A tool's error
+| sent to the model, which corrected the call; 4 calls
+| ends the run; `errors.Is` finds the tool's error: yes
+| ends the run; `errors.Is` finds the tool's error: yes
+
+| A 503 on the first call, as ported
+| retried; 4 calls in all
+| ends the run
+| retried; 5 calls in all
+
+| Waiting for the person
+| the run stops; resuming needs 1,692 bytes kept
+| the run stops; resuming needs 45,562 bytes kept
+| the run stops; resuming needs 1,322 bytes kept
+// end::behavior[]

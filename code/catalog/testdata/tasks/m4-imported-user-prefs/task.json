@@ -1,0 +1,92 @@
+{
+  "id": "m4-imported-user-prefs",
+  "category": "misleading",
+  "title": "Imported users changing their settings",
+  "notes": "ImportUsers stores users with nil Prefs; updatePrefs then copies *u.Prefs. The panic is in the API handler; the bug is in the import.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "extra_users": [
+    {
+      "ID": "usr_cy",
+      "Name": "Cy Okafor",
+      "Email": "cy.okafor@example.com",
+      "Token": "rk_live_0c5d3e9a7b14f2e8",
+      "UA": "remind-android/3.4.0 (Pixel 9; Android 16)",
+      "NoSeed": true
+    }
+  ],
+  "steps": [
+    {
+      "as": "usr_ops",
+      "method": "POST",
+      "path": "/v1/admin/users/import",
+      "body": [
+        {
+          "id": "usr_cy",
+          "name": "Cy Okafor",
+          "email": "cy.okafor@example.com",
+          "token": "rk_live_0c5d3e9a7b14f2e8"
+        }
+      ]
+    },
+    {
+      "as": "usr_cy",
+      "method": "GET",
+      "path": "/v1/me"
+    },
+    {
+      "as": "usr_cy",
+      "method": "PUT",
+      "path": "/v1/me/prefs",
+      "body": {
+        "tz": "Africa/Lagos"
+      },
+      "group": "A"
+    },
+    {
+      "as": "usr_cy",
+      "method": "PUT",
+      "path": "/v1/me/prefs",
+      "body": {
+        "channel": "webhook",
+        "webhook": "https://hooks.example.com/cy"
+      },
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "store/users.go:(*Store).ImportUsers",
+        "api/admin.go:(*API).importUsers"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "store/users.go",
+      "old": "\t\tif _, ok := s.users[u.ID]; ok {\n\t\t\tcontinue\n\t\t}\n\t\ts.users[u.ID] = &u",
+      "new": "\t\tif _, ok := s.users[u.ID]; ok {\n\t\t\tcontinue\n\t\t}\n\t\tif u.Prefs == nil {\n\t\t\tu.Prefs = DefaultPrefs()\n\t\t}\n\t\ts.users[u.ID] = &u"
+    }
+  ],
+  "noise": [
+    "d4-preview-multibyte",
+    "d5-bearer-no-token"
+  ],
+  "decoys": [
+    [
+      {
+        "file": "api/users.go",
+        "old": "\tp := *u.Prefs",
+        "new": "\tp := store.Prefs{Channel: \"email\"}\n\tif u.Prefs != nil {\n\t\tp = *u.Prefs\n\t}"
+      },
+      {
+        "file": "api/users.go",
+        "old": "\t\"example.com/remind/notify\"\n)",
+        "new": "\t\"example.com/remind/notify\"\n\t\"example.com/remind/store\"\n)"
+      }
+    ]
+  ]
+}

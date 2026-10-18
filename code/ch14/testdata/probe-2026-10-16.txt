@@ -1,0 +1,64 @@
+# Experiment E4: what test code could do, run by go test through
+# safety.TestRunner on the author's machine (macOS 26.5.2, Apple M1 Pro,
+# Go 1.27.0), 2026-10-16, load averages 6.58 8.39 11.50.
+# SAFETY_PROBE=1 go test ./ch14/safety -run 'ProbeGoTest|ProbeRemind' -v
+#
+# Rung 3 is the deny-by-default Seatbelt profile (Seatbelt in sandbox.go).
+# key: the agent's API key visible in the environment
+# read: a planted file outside the workspace, standing in for ~/.ssh, readable
+# write: a file outside the workspace and scratch directory writable
+# offmachine: a connection to an address off this machine (192.0.2.1) not
+#   refused by the sandbox (outside a sandbox it times out after 2s instead)
+# loopback: a connection to a listener on 127.0.0.1 (the profile allows
+#   loopback, which httptest servers need)
+rung 2, empty cache: 6s key=false read=true write=true offmachine=true loopback=true
+rung 2, warm cache: 2.4s key=false read=true write=true offmachine=true loopback=true
+rung 3, empty cache: 3.5s key=false read=false write=false offmachine=false loopback=true
+rung 3, warm cache: 400ms key=false read=false write=false offmachine=false loopback=true
+# rung 2's times include the 2-second dial timeout to 192.0.2.1.
+#
+# remind's tests built (go test -run '^$' ./...) at rung 3, private cache:
+remind, rung 3, empty cache: 9.9s
+remind, rung 3, warm cache: 3.9s
+# remind's whole suite (go test ./... and go test -race ./notify) passes
+# inside the profile (checked by hand the same day).
+#
+# An earlier run the same day, under the first profile (allow by default,
+# deny the network and writes outside, deny reads of listed paths), load
+# about 12: remind's build took 13.2s empty and 3.6s warm.
+#
+# Reading the harness's environment (2026-10-16, later, after the expert
+# review; load about 11). A probe test, run the same way, read another
+# process's starting environment through sysctl, for every process ID,
+# and counted the processes whose environment held the key. The probe's
+# code is not kept in the repository.
+# Harness started with OPENROUTER_API_KEY set, and calling os.Unsetenv
+# before the run, under the profile with the named sysctl list:
+rung 2: key read from the environment of the harness and of the go command that started it
+rung 3: key read from the environment of the harness and of the go command that started it
+# (at rung 3 the profile refused 99,105 of the IDs asked about; a smaller
+# run, with the sandbox's log on, found it refused the IDs with no live
+# process and answered for every live process of the same user)
+# Harness started with OPENROUTER_API_KEY_FILE naming a file instead:
+rung 2: key in no process's environment
+rung 3: key in no process's environment
+# (at rung 2 test code can still read the file itself, as it can any file
+# of yours; at rung 3 the profile denies reads outside the paths it lists)
+# The same probe under the earlier profile (sysctl-read allowed without a
+# filter) found the same two processes at both rungs. Programs that are
+# part of macOS, such as /bin/sh, came back with no environment.
+# Every sysctl that go test, the compiler, vet, the race detector, and
+# remind's suite read inside the profile (logged with "with report"):
+# hw.machine hw.ncpu hw.optional.* hw.pagesize_compat kern.bootargs
+# kern.hostname kern.iossupportversion kern.ipc.somaxconn
+# kern.maxfilesperproc kern.osproductversion kern.osrelease kern.ostype
+# kern.osvariant_status kern.version security.mac.lockdown_mode_state
+# Under the named list, remind's whole suite and go test -race ./notify
+# pass, and no sysctl read was denied.
+#
+# Bubblewrap, run for the first time on Linux (2026-10-16, a privileged
+# Debian 13 container on the same Mac, arm64, as root, bwrap from
+# Debian's package, the safety tests built with GOOS=linux):
+# TestSandboxTest, TestSandboxFixed, TestSandboxReads, TestBubblewrapArgs,
+# TestBubblewrapProcesses, and the TestRunner tests pass. Inside bwrap,
+# /proc has no entry for the harness's process; at rung 2 it does.

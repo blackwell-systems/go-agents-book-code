@@ -1,0 +1,110 @@
+{
+  "id": "dl1-lock-order",
+  "category": "deadlock",
+  "title": "Requests stuck behind the dispatcher",
+  "notes": "flush holds the dispatcher lock while calling the store; Update holds the store lock while calling OnChange, which takes the dispatcher lock. The report is a goroutine dump from the stuck-request watchdog.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "stress": {
+    "setup": [
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "hydrate 0",
+          "every": "every 1s"
+        },
+        "save": "id"
+      },
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "hydrate 1",
+          "every": "every 1s"
+        },
+        "save": "id"
+      },
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "hydrate 2",
+          "every": "every 1s"
+        },
+        "save": "id"
+      },
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "hydrate 3",
+          "every": "every 1s"
+        },
+        "save": "id"
+      },
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "hydrate 4",
+          "every": "every 1s"
+        },
+        "save": "id"
+      },
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "hydrate 5",
+          "every": "every 1s"
+        },
+        "save": "id"
+      }
+    ],
+    "workers": 40,
+    "step": {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders/{id}/snooze",
+      "body": {
+        "for": "1s"
+      }
+    },
+    "group": "A"
+  },
+  "groups": {
+    "A": {
+      "root_cause": [
+        "notify/notify.go:(*Dispatcher).flush",
+        "notify/notify.go:(*Dispatcher).forget",
+        "store/store.go:(*Store).Update"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "notify/notify.go",
+      "old": "\tmu      sync.Mutex\n\tretries map[string]int // failed sends per reminder ID",
+      "new": "\tmu      sync.Mutex // serializes flushes\n\trmu     sync.Mutex // guards retries; never held while calling the store\n\tretries map[string]int // failed sends per reminder ID"
+    },
+    {
+      "file": "notify/notify.go",
+      "old": "\t\t\td.retries[r.ID]++\n\t\t\td.log.Warn(\"notify: send failed\", \"reminder\", r.ID, \"attempt\", d.retries[r.ID], \"err\", err)\n\t\t\tcontinue\n\t\t}\n\t\tdelete(d.retries, r.ID)",
+      "new": "\t\t\td.rmu.Lock()\n\t\t\td.retries[r.ID]++\n\t\t\tattempt := d.retries[r.ID]\n\t\t\td.rmu.Unlock()\n\t\t\td.log.Warn(\"notify: send failed\", \"reminder\", r.ID, \"attempt\", attempt, \"err\", err)\n\t\t\tcontinue\n\t\t}\n\t\td.rmu.Lock()\n\t\tdelete(d.retries, r.ID)\n\t\td.rmu.Unlock()"
+    },
+    {
+      "file": "notify/notify.go",
+      "old": "func (d *Dispatcher) forget(r *store.Reminder) {\n\td.mu.Lock()\n\tdefer d.mu.Unlock()",
+      "new": "func (d *Dispatcher) forget(r *store.Reminder) {\n\td.rmu.Lock()\n\tdefer d.rmu.Unlock()"
+    }
+  ]
+}

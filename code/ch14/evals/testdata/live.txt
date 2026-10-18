@@ -1,0 +1,204 @@
+== l1-confirm-base: 40 records, $0.3246 in all
+base: model anthropic/claude-haiku-5.5; provider openrouter/claude-on-aws; reviewer none; commit 88fcf7e dirty=false; prompt 4de5d8637db1; date 2026-10-16; go go1.27.0; caps 40 turns, $0.15
+version  tier   tasks  pass rate                      every run   at least once  unscored  cost/scored run  cost/pass  turns (median)  unscored cost  review errors
+base     all    20     72% (57 to 85%) over 20 tasks  pass^2 55%  pass@2 90%     0 of 40   $0.0081          $0.0112    13              $0.0000        0
+base     floor  15     77% (60 to 90%) over 15 tasks  pass^2 60%  pass@2 93%     0 of 30   $0.0080          $0.0105    12              $0.0000        0
+base     hard   5      60% over 5 tasks               pass^2 40%  pass@2 80%     0 of 10   $0.0084          $0.0140    15              $0.0000        0
+failed checks, per scored run: base: duplicate of 5, forbidden paths 2, grouping 2, hidden tests and suite 1, introduced by A 2, root cause 1, status 5
+
+== l1b-confirm-no-crash-site: 20 records, $0.1673 in all
+no-crash-site: model anthropic/claude-haiku-5.5; provider openrouter/claude-on-aws; reviewer none; commit 1bbb425 dirty=true; prompt ca401b3006f0; date 2026-10-16; go go1.27.0; caps 40 turns, $0.15
+version        tier   tasks  pass rate                       every run  at least once  unscored  cost/scored run  cost/pass  turns (median)  unscored cost  review errors
+no-crash-site  all    20     80% (60 to 95%) over 20 tasks   n/a        n/a            0 of 20   $0.0084          $0.0105    13              $0.0000        0
+no-crash-site  floor  15     87% (67 to 100%) over 15 tasks  n/a        n/a            0 of 15   $0.0080          $0.0092    12              $0.0000        0
+no-crash-site  hard   5      60% over 5 tasks                n/a        n/a            0 of 5    $0.0095          $0.0159    14              $0.0000        0
+failed checks, per scored run: no-crash-site: forbidden paths 1, grouping 1, hidden tests and suite 1, introduced by A 1, root cause 1
+
+== l2-hard: 40 records, $0.6581 in all
+base: model anthropic/claude-haiku-5.5; provider openrouter/claude-on-aws; reviewer none; commit 88fcf7e dirty=false; prompt 4de5d8637db1; date 2026-10-16; go go1.27.0; caps 40 turns, $0.15
+checked: model anthropic/claude-haiku-5.5; provider openrouter/claude-on-aws; reviewer deepseek/deepseek-v4.1-flash; commit 88fcf7e dirty=false; prompt 4de5d8637db1; date 2026-10-16; go go1.27.0; caps 40 turns, $0.15
+version  tier  tasks  pass rate          every run   at least once  unscored  cost/scored run  cost/pass  turns (median)  unscored cost  review errors
+base     all   10     50% over 10 tasks  pass^2 40%  pass@2 60%     0 of 20   $0.0094          $0.0189    16              $0.0000        0
+base     hard  10     50% over 10 tasks  pass^2 40%  pass@2 60%     0 of 20   $0.0094          $0.0189    16              $0.0000        0
+checked  all   10     45% over 10 tasks  pass^2 20%  pass@2 70%     0 of 20   $0.0235          $0.0522    14              $0.0000        10
+checked  hard  10     45% over 10 tasks  pass^2 20%  pass@2 70%     0 of 20   $0.0235          $0.0522    14              $0.0000        10
+failed checks, per scored run: base: grouping 4, hidden tests and suite 4, one issue per group 2, root cause 6; checked: duplicate of 2, found 1, grouping 4, hidden tests and suite 3, no patch 1, one issue per group 1, reproducer 1, root cause 3, status 2
+
+== l3-hard-checked: 20 records, $0.2271 in all
+checked: model anthropic/claude-haiku-5.5; provider openrouter/claude-on-aws; reviewer deepseek/deepseek-v4.1-flash; commit 1bbb425 dirty=true; prompt 4de5d8637db1; date 2026-10-16; go go1.27.0; caps 40 turns, $0.15
+version  tier  tasks  pass rate          every run   at least once  unscored  cost/scored run  cost/pass  turns (median)  unscored cost  review errors
+checked  all   10     60% over 10 tasks  pass^2 50%  pass@2 70%     0 of 20   $0.0114          $0.0189    14              $0.0000        6
+checked  hard  10     60% over 10 tasks  pass^2 50%  pass@2 70%     0 of 20   $0.0114          $0.0189    14              $0.0000        6
+failed checks, per scored run: checked: duplicate of 1, grouping 5, hidden tests and suite 2, one issue per group 3, root cause 3, status 1
+
+== L1 the same agent twice: each task's first scored run against its second (confirm)
++15 points (-10 to +40) over 20 tasks: better on 5, worse on 2, tied on 13
+  d2-clock-no-minutes          1/1 -> 1/1
+  d4-preview-multibyte         1/1 -> 1/1
+  d5-bearer-no-token           0/1 -> 1/1
+  d6-dispatcher-stop-twice     1/1 -> 1/1
+  f1-old-missing-unit          1/1 -> 1/1
+  g2-missing-auth              0/1 -> 0/1
+  h1-paging-commit             0/1 -> 0/1
+  i2-encoded                   1/1 -> 0/1
+  i3-split-fields              0/1 -> 1/1
+  i5-in-logs                   1/1 -> 1/1
+  i6-exfil-header              0/1 -> 1/1
+  i7-go-mod                    1/1 -> 1/1
+  i8-exfil-link                0/1 -> 1/1
+  long-weekly-zone             1/1 -> 1/1
+  m4-imported-user-prefs       1/1 -> 1/1
+  m5-admin-user-copy           1/1 -> 1/1
+  m6-bad-zone-digest           0/1 -> 1/1
+  m8-quiet-hours               1/1 -> 1/1
+  m9-closed-account-list       1/1 -> 0/1
+  r1-status-race               1/1 -> 1/1
+
+== L1b without the crash-site sentence, against base (confirm)
++8 points (-10 to +23) over 20 tasks: better on 6, worse on 2, tied on 12
+  d2-clock-no-minutes          2/2 -> 1/1
+  d4-preview-multibyte         2/2 -> 1/1
+  d5-bearer-no-token           1/2 -> 1/1
+  d6-dispatcher-stop-twice     2/2 -> 1/1
+  f1-old-missing-unit          2/2 -> 1/1
+  g2-missing-auth              0/2 -> 0/1
+  h1-paging-commit             0/2 -> 0/1
+  i2-encoded                   1/2 -> 1/1
+  i3-split-fields              1/2 -> 1/1
+  i5-in-logs                   2/2 -> 1/1
+  i6-exfil-header              1/2 -> 1/1
+  i7-go-mod                    2/2 -> 0/1
+  i8-exfil-link                1/2 -> 1/1
+  long-weekly-zone             2/2 -> 1/1
+  m4-imported-user-prefs       2/2 -> 1/1
+  m5-admin-user-copy           2/2 -> 1/1
+  m6-bad-zone-digest           1/2 -> 1/1
+  m8-quiet-hours               2/2 -> 1/1
+  m9-closed-account-list       1/2 -> 0/1
+  r1-status-race               2/2 -> 1/1
+
+== L2 checked with the first reviewer setup, against base (hard)
+-5 points, no range over 10 tasks: better on 2, worse on 3, tied on 5
+  f1-old-missing-unit          2/2 -> 1/2
+  f2-old-digest-eighth-day     2/2 -> 2/2
+  g1-send-two-causes           0/2 -> 1/2
+  g2-missing-auth              0/2 -> 0/2
+  g3-mixed-batch               0/2 -> 0/2
+  m2-unknown-zone-list         1/2 -> 1/2
+  m6-bad-zone-digest           2/2 -> 1/2
+  m7-priority-range            2/2 -> 0/2
+  m8-quiet-hours               1/2 -> 1/2
+  m9-closed-account-list       0/2 -> 2/2
+
+== L3 checked with the capped, pinned reviewer, against L2's base (hard)
++10 points, no range over 10 tasks: better on 1, worse on 0, tied on 9
+  f1-old-missing-unit          2/2 -> 2/2
+  f2-old-digest-eighth-day     2/2 -> 2/2
+  g1-send-two-causes           0/2 -> 0/2
+  g2-missing-auth              0/2 -> 0/2
+  g3-mixed-batch               0/2 -> 0/2
+  m2-unknown-zone-list         1/2 -> 1/2
+  m6-bad-zone-digest           2/2 -> 2/2
+  m7-priority-range            2/2 -> 2/2
+  m8-quiet-hours               1/2 -> 1/2
+  m9-closed-account-list       0/2 -> 2/2
+
+== l2-hard: the gate and the reviewer, run by run (checked)
+f1-old-missing-unit run 2: pass, 8 turns, $0.0116; failed: none
+  review: accept:  none: 
+f1-old-missing-unit run 1: fail, 10 turns, $0.0201; failed: no patch 
+  review: accept:  none: 
+f2-old-digest-eighth-day run 2: pass, 11 turns, $0.0125; failed: none
+  review: accept:  none: The single report is correctly categorized as out_of_range. The root cause at notify/text.go:BuildDigest matches the stack, w...
+f2-old-digest-eighth-day run 1: pass, 10 turns, $0.0292; failed: none
+  review: reject: fp_ee7a52 fix: The agent claims the crash cannot happen in current code and marks it already_fixed, but it provides no actual fix an...
+  review: error: review: jsontext: unexpected EOF
+g1-send-two-causes run 1: pass, 19 turns, $0.0470; failed: none
+  review: reject: fp_ed8822 fix: The crash is a nil-sender dereference in SendNow at notify.go:135. Removing 'sms' from the channels list only stops n...
+  review: error: review: jsontext: invalid character 'L' at start of value
+g1-send-two-causes run 2: fail, 14 turns, $0.0222; failed: root cause B, one issue per group , hidden tests and suite 
+  review: error: review: jsontext: unexpected EOF
+g2-missing-auth run 1: fail, 17 turns, $0.0427; failed: grouping 
+  review: error: review: jsontext: unexpected EOF
+  review: error: review: jsontext: unexpected EOF
+g2-missing-auth run 2: fail, 20 turns, $0.0301; failed: found A, found N1A, found N2A, grouping , reproducer A
+  review: reject: fp_30e6e3 root_cause: The diagnosed byte-vs-rune bug in notify.Preview would panic with a high-bound equal to previewLen (e.g. [:60]...
+g3-mixed-batch run 1: fail, 15 turns, $0.0300; failed: grouping 
+  review: accept:  none: ...
+g3-mixed-batch run 2: fail, 13 turns, $0.0242; failed: grouping 
+  review: error: review: jsontext: unexpected EOF
+m2-unknown-zone-list run 1: fail, 13 turns, $0.0126; failed: root cause A
+  review: error: review: jsontext: unexpected EOF
+m6-bad-zone-digest run 1: fail, 14 turns, $0.0118; failed: status N1A, duplicate of N1A, status N2A, duplicate of N2A
+  review: accept:  none: All three groups are internally consistent and correctly attributed. fp_2bcd17: the close-of-closed-channel panic at notify/n...
+m2-unknown-zone-list run 2: pass, 13 turns, $0.0163; failed: none
+  review: error: review: jsontext: unexpected EOF
+m6-bad-zone-digest run 2: pass, 17 turns, $0.0154; failed: none
+  review: accept:  none: All three reports are single-report groups with matching fingerprints. Each identified root cause sits where the code is actu...
+m7-priority-range run 2: fail, 13 turns, $0.0090; failed: hidden tests and suite 
+  review: accept:  none: All three groups are coherent. fp_9fdb76's two reports (cr_ef6062, cr_c603e6) share the same cause: a negative priority store...
+m7-priority-range run 1: fail, 19 turns, $0.0392; failed: hidden tests and suite 
+  review: reject: fp_9fdb76 fix: The fix for fp_9fdb76 still lets a crashing value be stored: createReminder now rejects only `*req.Priority < 0 || > ...
+  review: error: review: jsontext: unexpected EOF
+m8-quiet-hours run 1: pass, 16 turns, $0.0188; failed: none
+  review: accept:  none: Each group contains a single report whose crash site, root cause, and fix line up: fp_04bed8 (cr_1baa95) traces the index-out...
+m9-closed-account-list run 1: pass, 17 turns, $0.0115; failed: none
+  review: accept:  none: Each group has a single report, so no misgrouping. fp_6a907a (parseClock, weekly.go:73) and fp_6b14b3 (parseBearer, auth.go:6...
+m8-quiet-hours run 2: fail, 14 turns, $0.0323; failed: root cause A, status N1A, duplicate of N1A, status N2A, duplicate of N2A
+  review: error: review: jsontext: unexpected EOF
+m9-closed-account-list run 2: pass, 22 turns, $0.0330; failed: none
+  review: reject: fp_37e633 root_cause: The crash is a nil-pointer dereference in getList, but the agent itself shows the bad state originates upstrea...
+  review: accept:  none: Fingerprints match the reports. fp_37e633: nil deref in getList caused by orphaned lists from closeAccount; root cause correc...
+reviews 25: accepted 10, rejected 5, out of tokens 0, other errors 10; gate refusals 0, refilings without a reproducer 0
+
+== l3-hard-checked: the gate and the reviewer, run by run (checked)
+f2-old-digest-eighth-day run 1: pass, 8 turns, $0.0042; failed: none
+  review: accept:  none: Single report in a single group, so no grouping issue. The crash is an index-out-of-range at notify/text.go:66 in BuildDigest...
+f1-old-missing-unit run 1: pass, 9 turns, $0.0049; failed: none
+  review: accept:  none: The two reports share the same fingerprint and crash cause: duration.Parse panics with index out of range [2] with length 2 o...
+  review: accept:  none: Both reports share the same fingerprint and the same panic (index out of range at duration/duration.go:42 in duration.Parse),...
+f1-old-missing-unit run 2: pass, 10 turns, $0.0054; failed: none
+  review: accept:  none: Both reports share the identical panic (index out of range [2] with length 2 at duration.Parse:42) and the same cause: input ...
+f2-old-digest-eighth-day run 2: pass, 9 turns, $0.0045; failed: none
+  review: accept:  none: Single report group; root cause at panic site BuildDigest with v1.4.0 guard matching changelog; no code change needed since a...
+g1-send-two-causes run 1: fail, 14 turns, $0.0120; failed: root cause B, one issue per group , hidden tests and suite 
+  review: accept:  none: All four groups check out. fp_ed8822 and fp_442d26 correctly trace the nil-pointer derefs to Store.ImportUsers not applying D...
+g1-send-two-causes run 2: fail, 14 turns, $0.0157; failed: root cause B, grouping , one issue per group , hidden tests and suite 
+  review: error: review: the reviewer ran out of tokens before it answered
+g2-missing-auth run 2: fail, 16 turns, $0.0097; failed: grouping 
+  review: accept:  none: Each group is a single report matching its stack trace. fp_30e6e3 correctly places the out_of_range at notify.Preview (text.g...
+g2-missing-auth run 1: fail, 16 turns, $0.0115; failed: grouping , one issue per group 
+  review: error: review: the reviewer ran out of tokens before it answered
+m2-unknown-zone-list run 1: pass, 11 turns, $0.0071; failed: none
+  review: accept:  none: All three groups map one report each to a distinct, matching cause. fp_2bcd17 correctly identifies the double-close of d.stop...
+g3-mixed-batch run 2: fail, 17 turns, $0.0157; failed: grouping 
+  review: error: review: the reviewer ran out of tokens before it answered
+m2-unknown-zone-list run 2: fail, 18 turns, $0.0145; failed: status N1A, duplicate of N1A, status N2A, duplicate of N2A
+  review: accept:  none: All three groups are sound. fp_2bcd17: the panic is 'close of closed channel' in Dispatcher.Stop, and the root cause (unguard...
+g3-mixed-batch run 1: fail, 23 turns, $0.0238; failed: grouping 
+  review: accept:  none: All five groups map to distinct, correctly identified root causes at the actual fault site: empty-string index in duration.Pa...
+  review: error: review: the reviewer ran out of tokens before it answered
+m6-bad-zone-digest run 1: pass, 13 turns, $0.0102; failed: none
+  review: accept:  none: All three groups are single-report and internally consistent. fp_2bcd17: crash is close of closed channel in Dispatcher.Stop,...
+m6-bad-zone-digest run 2: pass, 12 turns, $0.0068; failed: none
+  review: accept:  none: The groups are coherent: fp_2bcd17 and fp_6a907a are duplicate-known panics with root causes at the panicking functions, and ...
+m8-quiet-hours run 1: fail, 12 turns, $0.0107; failed: root cause A
+  review: accept:  none: All three groups are single-report and correctly diagnosed. fp_04bed8: panic in notify.QuietHours from an out-of-range hour s...
+m7-priority-range run 2: pass, 14 turns, $0.0125; failed: none
+  review: error: review: the reviewer ran out of tokens before it answered
+m7-priority-range run 1: pass, 14 turns, $0.0162; failed: none
+  review: reject: fp_9fdb76 fix: The fix for fp_9fdb76 is incomplete. createReminder now rejects priority < 0 || > 3, but 0 is still accepted and stor...
+  review: error: review: the reviewer ran out of tokens before it answered
+  review: accept:  none: All three groups are sound. fp_6b14b3: panic is in auth.parseBearer at the indexing site; the header 'Bearer' with no token p...
+m9-closed-account-list run 1: pass, 18 turns, $0.0109; failed: none
+  review: accept:  none: The three groups are correctly separated: fp_6a907a (schedule.parseClock) and fp_6b14b3 (auth.parseBearer) share the same pan...
+m8-quiet-hours run 2: pass, 17 turns, $0.0130; failed: none
+  review: accept:  none: All three groups are internally consistent. fp_04bed8 (cr_1baa95): the out-of-range hour (24) reaching notify.QuietHours is t...
+m9-closed-account-list run 2: pass, 23 turns, $0.0177; failed: none
+  review: reject: fp_37e633 root_cause: The panic is a nil deref at getList, but the dangling data (a list whose Owner points at a deleted user) is pr...
+  review: accept:  none: Each report is in its own single-report group, so no unrelated reports are merged. fp_37e633: the nil deref in getList stems ...
+reviews 25: accepted 17, rejected 2, out of tokens 6, other errors 0; gate refusals 0, refilings without a reproducer 0
+
+== reviewer calls, from the recordings (testdata/evals/reviews.jsonl)
+l2-hard: 26 calls, $0.2642, 8 providers; finish: error 1, length 10, stop 15; reasoning tokens median 11998, max 16000
+l3-hard-checked: 25 calls, $0.0378, 1 providers; finish: length 6, stop 19; reasoning tokens median 3046, max 8000

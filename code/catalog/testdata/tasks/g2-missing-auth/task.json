@@ -1,0 +1,58 @@
+{
+  "id": "g2-missing-auth",
+  "category": "grouping",
+  "title": "One cause on two lines",
+  "notes": "Routes registers /v1/me/export and /v1/me/stats without auth.Require, so both handlers get a nil user; the panics are on different lines in different handlers.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "quarterly taxes",
+        "in": "2w"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/export",
+      "group": "A"
+    },
+    {
+      "as": "usr_bo",
+      "method": "GET",
+      "path": "/v1/me/stats",
+      "group": "A",
+      "repeat": 2
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/export",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "api/api.go:(*API).Routes"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "api/api.go",
+      "old": "\tmux.HandleFunc(\"GET /v1/me/export\", a.export)\n\tmux.HandleFunc(\"GET /v1/me/stats\", a.stats)",
+      "new": "\tmux.Handle(\"GET /v1/me/export\", user(a.export))\n\tmux.Handle(\"GET /v1/me/stats\", user(a.stats))"
+    }
+  ],
+  "noise": [
+    "d4-preview-multibyte",
+    "d5-bearer-no-token"
+  ]
+}

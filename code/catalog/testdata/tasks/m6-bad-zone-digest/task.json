@@ -1,0 +1,75 @@
+{
+  "id": "m6-bad-zone-digest",
+  "category": "misleading",
+  "title": "A digest for a user whose zone name is wrong",
+  "notes": "updatePrefs accepts any zone name; digest calls must.Get on time.LoadLocation, so the panic is in a generic helper with the comment that the zone was checked.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "PUT",
+      "path": "/v1/me/prefs",
+      "body": {
+        "tz": "Europe/Lisboa"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "farmers market",
+        "every": "on sat at 08:30",
+        "tz": "Europe/Lisbon"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/digest",
+      "group": "A"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/digest?days=14",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "api/users.go:(*API).updatePrefs",
+        "api/users.go:(*API).digest"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "api/users.go",
+      "old": "\tif req.TZ != \"\" {\n\t\tp.TZ = req.TZ\n\t}",
+      "new": "\tif req.TZ != \"\" {\n\t\tif _, err := time.LoadLocation(req.TZ); err != nil {\n\t\t\ta.fail(w, http.StatusBadRequest, \"unknown time zone \"+strconv.Quote(req.TZ))\n\t\t\treturn\n\t\t}\n\t\tp.TZ = req.TZ\n\t}"
+    }
+  ],
+  "noise": [
+    "d6-dispatcher-stop-twice",
+    "d2-clock-no-minutes"
+  ],
+  "decoys": [
+    [
+      {
+        "file": "api/users.go",
+        "old": "\tloc := must.Get(time.LoadLocation(u.Prefs.TZ))",
+        "new": "\tloc, err := time.LoadLocation(u.Prefs.TZ)\n\tif err != nil {\n\t\tloc = time.UTC\n\t}"
+      },
+      {
+        "file": "api/users.go",
+        "old": "\t\"example.com/remind/internal/must\"\n",
+        "new": ""
+      }
+    ]
+  ]
+}

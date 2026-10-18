@@ -1,0 +1,82 @@
+{
+  "id": "m3-zero-interval",
+  "category": "misleading",
+  "title": "A zero interval, with a full disk in the logs",
+  "notes": "parseEvery accepts a zero interval and Every.Next divides by it. The crash shows store frames and the logs show a failed snapshot from a full disk, which is unrelated.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ops",
+      "method": "POST",
+      "path": "/v1/admin/snapshot",
+      "status": 500
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "stretch",
+        "every": "every 45m"
+      }
+    },
+    {
+      "as": "usr_ops",
+      "method": "POST",
+      "path": "/v1/admin/snapshot",
+      "status": 500,
+      "advance": "3s"
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "drink water",
+        "every": "every 0m"
+      },
+      "group": "A",
+      "advance": "2s"
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "ping",
+        "every": "every 0s"
+      },
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "schedule/every.go:parseEvery"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "schedule/every.go",
+      "old": "\t\treturn Every{}, fmt.Errorf(\"schedule: %w\", err)\n\t}\n\treturn Every{Start: start, Interval: d}, nil",
+      "new": "\t\treturn Every{}, fmt.Errorf(\"schedule: %w\", err)\n\t}\n\tif d <= 0 {\n\t\treturn Every{}, fmt.Errorf(\"schedule: interval %q must be positive\", s)\n\t}\n\treturn Every{Start: start, Interval: d}, nil"
+    }
+  ],
+  "noise": [
+    "d2-clock-no-minutes",
+    "d4-preview-multibyte"
+  ],
+  "decoys": [
+    [
+      {
+        "file": "schedule/every.go",
+        "old": "\tn := after.Sub(e.Start) / e.Interval",
+        "new": "\tif e.Interval <= 0 {\n\t\treturn time.Time{}\n\t}\n\tn := after.Sub(e.Start) / e.Interval"
+      }
+    ]
+  ]
+}

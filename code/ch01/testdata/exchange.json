@@ -1,0 +1,26 @@
+{
+  "the harness sends": {
+    "messages": [
+      {"role": "user",
+       "content": "The tests in this project fail. Find out why..."}
+    ],
+    "tools": [
+      {"name": "read_file",
+       "description": "Read a file in the project.",
+       "parameters": {"type": "object",
+                      "properties": {"path": {"type": "string"}}}}
+    ]
+  },
+  "the model replies": {
+    "role": "assistant",
+    "tool_calls": [
+      {"id": "call_2", "name": "read_file",
+       "arguments": {"path": "duration.go"}}
+    ]
+  },
+  "the harness adds, then sends everything again": {
+    "role": "tool",
+    "tool_call_id": "call_2",
+    "content": "// Package duration parses durations such as ..."
+  }
+}

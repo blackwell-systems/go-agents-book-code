@@ -1,0 +1,28 @@
+{
+	"id": "cr_1e2ea0",
+	"version": "v1.4.0",
+	"commit": "9c41e7a",
+	"kind": "panic",
+	"panic": "runtime error: invalid memory address or nil pointer dereference",
+	"stack": "goroutine 25 [running]:\nruntime/debug.Stack()\n\t/usr/local/go/src/runtime/debug/stack.go:26 +0x64\nexample.com/remind/crash.(*Reporter).Middleware.func1.1()\n\t/app/remind/crash/crash.go:102 +0x168\npanic({0xc000010000?, 0xc0000101a8?})\n\t/usr/local/go/src/runtime/panic.go:859 +0x120\nexample.com/remind/api.(*API).owned(0xc000010350, {0xc0000104f8, 0xc0000106a0}, 0xc000010848)\n\t/app/remind/api/reminders.go:144 +0xe8\n[29 more lines]",
+	"request": {
+		"method": "POST",
+		"path": "/v1/reminders/rem_0001/done",
+		"query": "",
+		"headers": {
+			"Accept-Encoding": "gzip",
+			"Authorization": "Bearer rk_live_4f9c2a7e81d03b56",
+			"Content-Length": "0",
+			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15",
+			"X-Request-Id": "6ac3ae14-0005"
+		},
+		"body": ""
+	},
+	"logs": [
+		"[3 earlier lines]",
+		"2026-10-05T14:11:02Z INFO request method=DELETE path=/v1/reminders/rem_0001 status=204 dur=1.7ms ua=\"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15\""
+	],
+	"first_seen": "2026-10-05T14:12:55.0629Z",
+	"last_seen": "2026-10-05T14:13:09.0697Z",
+	"count": 2
+}

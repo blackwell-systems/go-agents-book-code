@@ -1,0 +1,44 @@
+No OPENROUTER_API_KEY: replaying a saved conversation.
+> What is a goroutine?
+A goroutine is a lightweight thread of execution managed by the Go
+runtime rather than the operating system. You start one by placing the
+`go` keyword before a function call, such as `go doSomething()`, and
+it runs concurrently with the rest of your program. Goroutines are
+cheap to create (they start with a small, growable stack), so a Go
+program can run thousands or even millions of them at once.
+[43 tokens in, 122 out, $0.000065; total $0.000065]
+> And how do I stop one?
+There's no direct way to kill a goroutine from outside it. The
+idiomatic approach is to signal it to stop and let it exit on its own,
+usually by passing a `context.Context` and checking `ctx.Done()` in a
+`select` statement, or by listening on a done channel. For example:
+
+```go
+ctx, cancel := context.WithCancel(context.Background())
+go func() {
+    for {
+        select {
+        case <-ctx.Done():
+            return
+        default:
+            // do work
+        }
+    }
+}()
+cancel() // signals the goroutine to stop
+```
+
+Calling `cancel()` closes the context's Done channel, and the
+goroutine returns the next time it checks. If the goroutine is blocked
+on something else, include `ctx.Done()` in that `select` as well so it
+can wake up.
+[175 tokens in, 253 out, $0.000144; total $0.000209]
+> Show me a two-line example.
+```go
+done := make(chan struct{})
+go func() { <-done }()  // goroutine blocks until done is closed, then
+exits
+close(done)             // signals it to stop
+```
+[439 tokens in, 700 out, $0.000394; total $0.000603]
+> 

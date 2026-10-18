@@ -1,0 +1,17 @@
+cr_1e2ea0: panic in v1.4.0 (commit 9c41e7a), 2 times, 2026-10-05 14:12 to 2026-10-05 14:13
+fingerprint: fp_4828a6
+panic: runtime error: invalid memory address or nil pointer dereference
+request: POST /v1/reminders/rem_0001/done
+  Accept-Encoding: gzip
+  Authorization: Bearer [REDACTED]
+  Content-Length: 0
+  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Safari/605.1.15
+  X-Request-Id: 6ac3ae14-0005
+stack, remind's frames, innermost first:
+  api.(*API).owned  api/reminders.go:144
+  api.(*API).markDone  api/reminders.go:171
+  auth.Require  auth/auth.go:23
+  server.accessLog  server/server.go:130
+  metrics.Instrument  metrics/instrument.go:24
+log lines: 4; read them with crash_logs
+

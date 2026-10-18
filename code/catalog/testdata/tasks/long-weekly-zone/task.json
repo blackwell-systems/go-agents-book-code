@@ -1,0 +1,94 @@
+{
+  "id": "long-weekly-zone",
+  "category": "long",
+  "title": "A digest crash three packages from its cause",
+  "notes": "BuildDigest gets an occurrence from the day before the digest starts. Upcoming trusts Rule.Next to return times after `from`; Weekly.Next doesn't for zones west of UTC, because Time.Truncate(24h) truncates to midnight UTC, not local midnight.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-12T16:31:00Z",
+  "extra_users": [
+    {
+      "ID": "usr_eli",
+      "Name": "Eli Navarro",
+      "Email": "eli.navarro@example.com",
+      "Token": "rk_live_93be7a2c40f1d685",
+      "UA": "remind-ios/3.4.1 (iPhone15,3; iOS 19.0)",
+      "TZ": "America/Los_Angeles"
+    }
+  ],
+  "steps": [
+    {
+      "as": "usr_eli",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "water the garden",
+        "in": "3h"
+      }
+    },
+    {
+      "as": "usr_eli",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "team sync",
+        "every": "on mon,wed at 09:30"
+      }
+    },
+    {
+      "as": "usr_eli",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "call mom",
+        "every": "on sun at 20:00"
+      }
+    },
+    {
+      "as": "usr_eli",
+      "method": "GET",
+      "path": "/v1/reminders"
+    },
+    {
+      "as": "usr_eli",
+      "method": "GET",
+      "path": "/v1/me/digest",
+      "group": "A",
+      "advance": "14m"
+    },
+    {
+      "as": "usr_eli",
+      "method": "GET",
+      "path": "/v1/me/digest?days=3",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "schedule/weekly.go:Weekly.Next"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "schedule/weekly.go",
+      "old": "\tday := local.Truncate(24 * time.Hour)",
+      "new": "\tday := time.Date(local.Year(), local.Month(), local.Day(), 0, 0, 0, 0, local.Location())"
+    }
+  ],
+  "noise": [
+    "d5-bearer-no-token",
+    "d6-dispatcher-stop-twice"
+  ],
+  "decoys": [
+    [
+      {
+        "file": "notify/text.go",
+        "old": "\t\tif i >= days {",
+        "new": "\t\tif i < 0 || i >= days {"
+      }
+    ]
+  ]
+}

@@ -1,0 +1,280 @@
+{
+	"note": "Recorded from Novita before the client could pin a provider; provider.only was added to the request afterwards, to match what the client now sends. The response is as recorded.",
+	"status": 200,
+	"request": {
+		"model": "meta-llama/llama-3.1-8b-instruct",
+		"messages": [
+			{
+				"role": "user",
+				"content": "Describe Go in exactly three words."
+			}
+		],
+		"max_tokens": 10,
+		"temperature": 1.2,
+		"logprobs": true,
+		"top_logprobs": 3,
+		"provider": {
+			"only": [
+				"novita"
+			],
+			"require_parameters": true
+		}
+	},
+	"response": {
+		"id": "gen-1792089610-MQOqvyhRYDEcdd7Y7HB7",
+		"object": "chat.completion",
+		"created": 1792089610,
+		"model": "meta-llama/llama-3.1-8b-instruct",
+		"provider": "Novita",
+		"system_fingerprint": null,
+		"service_tier": null,
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": {
+					"content": [
+						{
+							"token": "Simple",
+							"bytes": [
+								83,
+								105,
+								109,
+								112,
+								108,
+								101
+							],
+							"logprob": -1.4369200468063354,
+							"top_logprobs": [
+								{
+									"token": "Con",
+									"bytes": [
+										67,
+										111,
+										110
+									],
+									"logprob": -1.3327521085739136
+								},
+								{
+									"token": "Simple",
+									"bytes": [
+										83,
+										105,
+										109,
+										112,
+										108,
+										101
+									],
+									"logprob": -1.4369200468063354
+								},
+								{
+									"token": "S",
+									"bytes": [
+										83
+									],
+									"logprob": -2.3744189739227295
+								}
+							]
+						},
+						{
+							"token": ",",
+							"bytes": [
+								44
+							],
+							"logprob": -1.2955574989318848,
+							"top_logprobs": [
+								{
+									"token": ",",
+									"bytes": [
+										44
+									],
+									"logprob": -1.2955574989318848
+								},
+								{
+									"token": " concurrent",
+									"bytes": [
+										32,
+										99,
+										111,
+										110,
+										99,
+										117,
+										114,
+										114,
+										101,
+										110,
+										116
+									],
+									"logprob": -2.337223529815674
+								},
+								{
+									"token": " yet",
+									"bytes": [
+										32,
+										121,
+										101,
+										116
+									],
+									"logprob": -2.337223529815674
+								}
+							]
+						},
+						{
+							"token": " Fast",
+							"bytes": [
+								32,
+								70,
+								97,
+								115,
+								116
+							],
+							"logprob": -4.374850273132324,
+							"top_logprobs": [
+								{
+									"token": " Efficient",
+									"bytes": [
+										32,
+										69,
+										102,
+										102,
+										105,
+										99,
+										105,
+										101,
+										110,
+										116
+									],
+									"logprob": -1.4581843614578247
+								},
+								{
+									"token": " efficient",
+									"bytes": [
+										32,
+										101,
+										102,
+										102,
+										105,
+										99,
+										105,
+										101,
+										110,
+										116
+									],
+									"logprob": -1.5623505115509033
+								},
+								{
+									"token": " concurrent",
+									"bytes": [
+										32,
+										99,
+										111,
+										110,
+										99,
+										117,
+										114,
+										114,
+										101,
+										110,
+										116
+									],
+									"logprob": -2.1873505115509033
+								}
+							]
+						},
+						{
+							"token": " Programming",
+							"bytes": [
+								32,
+								80,
+								114,
+								111,
+								103,
+								114,
+								97,
+								109,
+								109,
+								105,
+								110,
+								103
+							],
+							"logprob": -2.557222843170166,
+							"top_logprobs": [
+								{
+									"token": ",",
+									"bytes": [
+										44
+									],
+									"logprob": -0.5780559778213501
+								},
+								{
+									"token": " Language",
+									"bytes": [
+										32,
+										76,
+										97,
+										110,
+										103,
+										117,
+										97,
+										103,
+										101
+									],
+									"logprob": -1.51555597782135
+								},
+								{
+									"token": " Programming",
+									"bytes": [
+										32,
+										80,
+										114,
+										111,
+										103,
+										114,
+										97,
+										109,
+										109,
+										105,
+										110,
+										103
+									],
+									"logprob": -2.557222843170166
+								}
+							]
+						}
+					],
+					"refusal": null
+				},
+				"finish_reason": "stop",
+				"native_finish_reason": "stop",
+				"message": {
+					"role": "assistant",
+					"content": "Simple, Fast Programming",
+					"refusal": null,
+					"reasoning": null
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 42,
+			"completion_tokens": 5,
+			"total_tokens": 47,
+			"cost": 0.00000109,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.00000109,
+				"upstream_inference_prompt_cost": 8.4e-7,
+				"upstream_inference_completions_cost": 2.5e-7
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

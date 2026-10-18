@@ -1,0 +1,67 @@
+{
+  "id": "m2-unknown-zone-list",
+  "category": "misleading",
+  "title": "Listing after creating a reminder in an unknown zone",
+  "notes": "createReminder stores a nil *Zone when the zone name is unknown; the panic comes later, in Weekly.MarshalJSON under encoding/json, when the list is read.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "call grandma",
+        "in": "5h"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "Paris office stand-up",
+        "every": "on mon,thu at 09:00",
+        "tz": "Europe/Pariss"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders",
+      "group": "A",
+      "repeat": 3
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "api/reminders.go:(*API).createReminder",
+        "schedule/schedule.go:Parse"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "api/reminders.go",
+      "old": "\t\tzone := schedule.LookupZone(cmp.Or(req.TZ, u.Prefs.TZ))\n",
+      "new": "\t\ttz := cmp.Or(req.TZ, u.Prefs.TZ)\n\t\tzone := schedule.LookupZone(tz)\n\t\tif zone == nil {\n\t\t\ta.fail(w, http.StatusBadRequest, \"unknown time zone \"+tz)\n\t\t\treturn\n\t\t}\n"
+    }
+  ],
+  "noise": [
+    "d6-dispatcher-stop-twice",
+    "d2-clock-no-minutes"
+  ],
+  "decoys": [
+    [
+      {
+        "file": "schedule/weekly.go",
+        "old": "\t\t\"zone\": w.Zone.Name,",
+        "new": "\t\t\"zone\": w.Zone.Location().String(),"
+      }
+    ]
+  ],
+  "tier": "hard"
+}

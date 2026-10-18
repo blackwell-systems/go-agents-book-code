@@ -1,0 +1,288 @@
+package agent
+
+import (
+	"cmp"
+	"context"
+	"errors"
+	"fmt"
+	"iter"
+	"slices"
+	"time"
+)
+
+// tag::event[]
+
+// An EventKind says what an Event reports.
+type EventKind int
+
+// The kinds of Event. The first five are in the order a turn produces
+// them; ResetEvent comes last so that no earlier kind changes value.
+const (
+	TextEvent       EventKind = iota + 1 // a piece of the model's text
+	CallEvent                            // a complete tool call
+	ToolResultEvent                      // a tool's result
+	TurnEvent                            // a turn with tool calls ended
+	StoppedEvent                         // the run ended; always last
+
+	// ResetEvent: the reply so far is being discarded, because the call
+	// failed partway and is being retried (chapter 12). Text events
+	// that follow start the reply again.
+	ResetEvent
+)
+
+// An Event is something that happened during a run.
+type Event struct {
+	Kind   EventKind
+	Text   string   // TextEvent: the new text
+	Call   ToolCall // CallEvent: the call
+	Tool   Message  // ToolResultEvent: the tool message
+	Turn   int      // TurnEvent: how many turns have ended
+	Result Result   // StoppedEvent: the run, as far as it went
+	Err    error    // StoppedEvent: why it stopped; nil for an answer
+
+	// Agent names the run an event came from when several run at once;
+	// Merge sets it (chapter 9).
+	Agent string
+}
+
+// end::event[]
+
+// tag::events[]
+
+// errGone means the caller stopped reading events: yield returned
+// false, and calling it again would panic, so the loop just returns.
+var errGone = errors.New("agent: the caller stopped reading events")
+
+// Events runs the agent loop and reports what happens as it happens.
+// The last event is always a StoppedEvent with the Result and the
+// error, unless the caller stops reading first: breaking out of the
+// range loop stops the run, cancelling the model call in progress.
+func Events(ctx context.Context, m StreamModel, tools []Tool,
+	msgs []Message, lim Limits) iter.Seq[Event] {
+	st := State{Messages: msgs}
+	if lim.Before != nil { // chapter 14
+		st.Turns, st.Usage = lim.Before.Turns, lim.Before.Usage
+	}
+	if lim.Checkpoint != nil { // chapter 15
+		return stoppedAt(st.Result(), ErrNoRunID)
+	}
+	return events(ctx, m, tools, st, lim)
+}
+
+// events runs the loop from a state, new or saved, and keeps its
+// checkpoint, if it has one, up to date.
+func events(ctx context.Context, m StreamModel, tools []Tool,
+	st State, lim Limits) iter.Seq[Event] {
+	return func(yield func(Event) bool) {
+		ctx, cancel := context.WithCancel(ctx) // <1>
+		defer cancel()
+		start := time.Now()
+		j := newJournal(lim.Checkpoint, st) // chapter 15
+		// The run's own ID, and no key from a call this run runs in,
+		// such as a sub-agent's parent call (chapter 15).
+		inner := withRun(WithKey(ctx, ""), st.RunID)
+		res, err := loop(inner, m, tools, j, lim, yield)
+		err = j.finish(ctx, res, err)
+		res.Duration = time.Since(start)
+		if errors.Is(err, errGone) { // <2>
+			return
+		}
+		yield(Event{Kind: StoppedEvent, Result: res, Err: err})
+	}
+}
+
+// end::events[]
+
+// tag::loop[]
+
+// loop is the hardened loop from chapter 5, reporting to yield.
+func loop(ctx context.Context, m StreamModel, tools []Tool,
+	j *journal, lim Limits, yield func(Event) bool) (Result, error) {
+	defs, byName := index(tools)
+	res := j.start() // <1>
+	// tag::resume[]
+	ctx = WithApprover(ctx, lim.Approver) // for the gate (chapter 14)
+	calls, err := unanswered(res.Messages)
+	if err != nil {
+		return *res, err
+	}
+	if err := j.save(ctx, phaseFor(calls)); err != nil {
+		return *res, err
+	}
+	if len(calls) > 0 {
+		done, err := act(ctx, byName, calls, j, yield) // <2>
+		if done || err != nil {
+			return *res, err
+		}
+		// The resumed turn has ended, as a turn in the loop below does;
+		// one that this run's counts don't include (no Limits.Before)
+		// has no number to report.
+		if res.Turns > 0 && !yield(Event{Kind: TurnEvent,
+			Turn: res.Turns}) {
+			return *res, errGone
+		}
+	}
+	// end::resume[]
+	nudges := 0
+	for turn := res.Turns; turn < lim.MaxTurns; turn++ {
+		if err := beforeTurn(ctx, *res, lim); err != nil {
+			return *res, err
+		}
+		spent := res.Usage.Cost
+		sent, err := build(ctx, lim, res)
+		if err != nil {
+			return *res, err
+		}
+		if res.Usage.Cost > spent { // a summary cost money: check again
+			if err := beforeTurn(ctx, *res, lim); err != nil {
+				return *res, err
+			}
+		}
+		req := Request{Messages: sent, Tools: defs}
+		reply, err := receive(ctx, m, req, yield) // <1>
+		res.Turns++
+		res.Usage = res.Usage.Add(reply.Usage)
+		lim.Spend.Add(reply.Usage.Cost)
+		if err != nil {
+			return *res, err
+		}
+		if err := check(reply, res.Messages); err != nil {
+			return *res, err
+		}
+		res.Messages = append(res.Messages, reply.Message)
+		if len(reply.Message.ToolCalls) > 0 { // chapter 15
+			if err := j.save(ctx, PhaseTools); err != nil { // <2>
+				return *res, err
+			}
+		}
+		for _, c := range reply.Message.ToolCalls {
+			if !yield(Event{Kind: CallEvent, Call: c}) {
+				return *res, errGone
+			}
+		}
+		// tag::nudge[]
+		if len(reply.Message.ToolCalls) == 0 {
+			final, ok := finalTool(tools)
+			if !ok {
+				return *res, nil // an answer
+			}
+			if nudges == maxNudges { // <1>
+				return *res, ErrNoFinalAnswer
+			}
+			nudges++
+			res.Messages = append(res.Messages, nudge(final)) // <2>
+			if err := j.save(ctx, PhaseModel); err != nil {
+				return *res, err
+			}
+			continue
+		}
+		// end::nudge[]
+		// end::loop[]
+		// tag::loop-tools[]
+		done, err := act(ctx, byName, reply.Message.ToolCalls, j, yield)
+		if done || err != nil {
+			return *res, err
+		}
+		if !yield(Event{Kind: TurnEvent, Turn: turn + 1}) {
+			return *res, errGone
+		}
+	}
+	if err := stopped(ctx); err != nil {
+		return *res, err
+	}
+	return *res, ErrMaxTurns
+}
+
+// end::loop-tools[]
+
+// tag::act[]
+
+// act runs one reply's calls and adds their answers to the run. It
+// reports whether the run is done, because the final tool succeeded,
+// and stops it when a tool can't run or a call waits for a person.
+func act(ctx context.Context, byName map[string]Tool, calls []ToolCall,
+	j *journal, yield func(Event) bool) (bool, error) {
+	answer := func(m Message) bool {
+		return yield(Event{Kind: ToolResultEvent, Tool: m})
+	}
+	answers, ok, err := runTools(ctx, byName, calls, j, answer)
+	res := j.res
+	res.Messages = append(res.Messages, answers...)
+	j.settled()
+	p, paused := errors.AsType[*ApprovalPending](err)
+	switch {
+	case !ok:
+		return false, errGone
+	case paused: // <1>
+		res.Pending = slices.Clone(calls[len(answers):])
+		return false, p
+	case err != nil: // <2>
+		return false, fmt.Errorf("run tools: %w", err)
+	}
+	args, done := finished(byName, calls, answers)
+	if done {
+		res.Final = args // <3>
+	}
+	return done, nil
+}
+
+// end::act[]
+
+// tag::receive[]
+
+// receive streams one reply, passing its text on as it arrives, and
+// returns the assembled reply. If the stream fails, the partial reply
+// is dropped; only its usage, if any arrived, comes back.
+func receive(ctx context.Context, m StreamModel, req Request,
+	yield func(Event) bool) (Reply, error) {
+	var a assembler
+	for d, err := range m.Stream(ctx, req) {
+		if err != nil {
+			if d.Usage != nil {
+				a.reply.Usage = *d.Usage
+			}
+			return Reply{Usage: a.reply.Usage,
+					ID: cmp.Or(d.ID, a.reply.ID)},
+				fmt.Errorf("generate: %w", err) // <1>
+		}
+		if d.Reset { // a retry started over (chapter 12)
+			a = assembler{}
+			if !yield(Event{Kind: ResetEvent}) {
+				return Reply{}, errGone
+			}
+			continue
+		}
+		if err := a.add(d); err != nil {
+			return Reply{Usage: a.reply.Usage}, err
+		}
+		if d.Text != "" && !yield(Event{Kind: TextEvent, Text: d.Text}) {
+			return Reply{Usage: a.reply.Usage}, errGone
+		}
+	}
+	return a.result(), nil
+}
+
+// end::receive[]
+
+// tag::build[]
+
+// build returns the messages this turn's request sends: the whole
+// conversation, or what the context policy builds from it. The policy's
+// state and cost are kept in the run's Result, and the cost goes to
+// the spending pool, if there is one.
+func build(ctx context.Context, lim Limits, res *Result) (
+	[]Message, error) {
+	if lim.Context == nil {
+		return res.Messages, nil
+	}
+	w, err := lim.Context.Build(ctx, res.Messages, res.Context)
+	res.Usage = res.Usage.Add(w.Usage)
+	lim.Spend.Add(w.Usage.Cost)
+	if err != nil {
+		return nil, fmt.Errorf("build context: %w", err)
+	}
+	res.Context = w.State
+	return w.Messages, nil
+}
+
+// end::build[]

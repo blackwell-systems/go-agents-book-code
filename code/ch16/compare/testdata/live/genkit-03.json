@@ -1,0 +1,201 @@
+{
+	"status": 200,
+	"request": {
+		"messages": [
+			{
+				"content": "You triage one crash group in the remind service. Run the tests of the package that crashed to confirm the bug, file one issue that describes the cause (a person approves it first), then call submit_diagnosis with your answer.",
+				"role": "system"
+			},
+			{
+				"content": [
+					{
+						"text": "Crash group 7f3a, 4 reports: panic: assignment to entry in nil map, at store.(*Store).Tag (store/tags.go:41), called from api.(*Server).tagReminder. All four came after a reminder was restored from the trash.",
+						"type": "text"
+					}
+				],
+				"role": "user"
+			},
+			{
+				"content": "",
+				"tool_calls": [
+					{
+						"id": "toolu_01Ks1wfYiBwCzJCvRzZcqB1V",
+						"function": {
+							"arguments": "{\"package\":\"./store\"}",
+							"name": "run_tests"
+						},
+						"type": "function"
+					}
+				],
+				"role": "assistant"
+			},
+			{
+				"content": "\"--- FAIL: TestTagRestored (0.00s)\\npanic: assignment to entry in nil map [recovered]\\n\\tstore.(*Store).Tag(...)\\n\\t\\tstore/tags.go:41\\nFAIL\\texample.com/remind/store\\t0.012s\"",
+				"tool_call_id": "toolu_01Ks1wfYiBwCzJCvRzZcqB1V",
+				"role": "tool"
+			},
+			{
+				"content": "The test reproduces the panic. I can't open source files with the tools I have, so the cause below is inferred from the stack trace and the restore timing. I'll file the issue with that caveat.",
+				"tool_calls": [
+					{
+						"id": "toolu_0185t2nppBe23mSRgj5qsmxA",
+						"function": {
+							"arguments": "{\"body\":\"Crash group 7f3a (4 reports).\\n\\nPanic: assignment to entry in nil map\\nLocation: store/tags.go:41, store.(*Store).Tag\\nCaller: api.(*Server).tagReminder\\nAll four reports occurred after a reminder was restored from the trash.\\n\\nReproduction: `go test ./store` fails in TestTagRestored with the same panic at store/tags.go:41.\\n\\nLikely cause (inferred, not confirmed by reading the code): the restore-from-trash path rebuilds the reminder without initializing its tags map. Store.Tag then writes into that nil map. A reminder created normally has the map initialized, so the bug only shows up after a restore. Fix: initialize the map on restore (or lazily in Tag before the assignment), and make sure the restore path goes through the same constructor as creation.\",\"title\":\"Panic: assignment to nil map in store.(*Store).Tag after restoring a reminder from trash\"}",
+							"name": "issue_file"
+						},
+						"type": "function"
+					}
+				],
+				"role": "assistant"
+			},
+			{
+				"content": "\"filed issue #1\"",
+				"tool_call_id": "toolu_0185t2nppBe23mSRgj5qsmxA",
+				"role": "tool"
+			}
+		],
+		"model": "anthropic/claude-haiku-5.5",
+		"tools": [
+			{
+				"function": {
+					"name": "run_tests",
+					"strict": false,
+					"description": "Run one package's tests and return their output.",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"package": {
+								"description": "a package directory, such as ./store",
+								"type": "string"
+							}
+						},
+						"required": [
+							"package"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"name": "issue_file",
+					"strict": false,
+					"description": "File an issue in the tracker. A person approves each issue before it is filed.",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"body": {
+								"description": "the cause, the evidence, and the reports",
+								"type": "string"
+							},
+							"title": {
+								"description": "one line naming the bug",
+								"type": "string"
+							}
+						},
+						"required": [
+							"title",
+							"body"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			},
+			{
+				"function": {
+					"name": "submit_diagnosis",
+					"strict": false,
+					"description": "Finish the job: submit the diagnosis. Call it once, at the end.",
+					"parameters": {
+						"additionalProperties": false,
+						"properties": {
+							"file": {
+								"description": "the file where the code is wrong",
+								"type": "string"
+							},
+							"fingerprint": {
+								"description": "the crash group's fingerprint",
+								"type": "string"
+							},
+							"function": {
+								"description": "the function where the code is wrong",
+								"type": "string"
+							},
+							"issue": {
+								"description": "the issue you filed",
+								"type": "integer"
+							}
+						},
+						"required": [
+							"fingerprint",
+							"file",
+							"function",
+							"issue"
+						],
+						"type": "object"
+					}
+				},
+				"type": "function"
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792185329-cynWEWlVfHgWiyrBxvKG",
+		"object": "chat.completion",
+		"created": 1792185329,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": null,
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_01Qf6T62o85AcLMimsgzYq5n",
+							"function": {
+								"name": "submit_diagnosis",
+								"arguments": "{\"fingerprint\": \"7f3a\", \"file\": \"store/tags.go\", \"function\": \"(*Store).Tag\", \"issue\": 1}"
+							}
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1483,
+			"completion_tokens": 135,
+			"total_tokens": 1618,
+			"cost": 0.0002158,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0002158,
+				"upstream_inference_prompt_cost": 0.0001483,
+				"upstream_inference_completions_cost": 0.0000675
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 0,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

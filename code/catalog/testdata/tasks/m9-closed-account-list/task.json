@@ -1,0 +1,100 @@
+{
+  "id": "m9-closed-account-list",
+  "category": "misleading",
+  "tier": "hard",
+  "private": true,
+  "title": "A shared list whose owner closed their account",
+  "notes": "closeAccount deletes the user but not the lists they own (the README says it should). getList later looks up the missing owner. Showing \"deleted user\" at the crash site is the wrong fix.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-11T12:05:00Z",
+  "noise": [
+    "d2-clock-no-minutes",
+    "d5-bearer-no-token"
+  ],
+  "steps": [
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/lists",
+      "body": {
+        "name": "Groceries"
+      },
+      "save": "lid"
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/lists/{lid}/members",
+      "body": {
+        "user": "usr_ana",
+        "role": "editor"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "buy coffee beans",
+        "in": "1d"
+      },
+      "save": "rid"
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/lists/{lid}/reminders",
+      "body": {
+        "reminder": "{rid}"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/lists/{lid}"
+    },
+    {
+      "as": "usr_bo",
+      "method": "DELETE",
+      "path": "/v1/me"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/lists",
+      "advance": "3h"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/lists/{lid}",
+      "group": "A",
+      "repeat": 2
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "api/users.go:(*API).closeAccount"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "api/users.go",
+      "old": "\ta.Log.Info(\"account closed\", \"user\", u.ID)",
+      "new": "\ta.Lists.RemoveUser(u.ID)\n\ta.Log.Info(\"account closed\", \"user\", u.ID)"
+    }
+  ],
+  "decoys": [
+    [
+      {
+        "file": "api/lists.go",
+        "old": "\towner, _ := a.Store.User(l.Owner)\n\ta.writeJSON(w, http.StatusOK, map[string]any{\"list\": l, \"owner\": owner.Name, \"reminders\": views})",
+        "new": "\townerName := \"deleted user\"\n\tif owner, err := a.Store.User(l.Owner); err == nil {\n\t\townerName = owner.Name\n\t}\n\ta.writeJSON(w, http.StatusOK, map[string]any{\"list\": l, \"owner\": ownerName, \"reminders\": views})"
+      }
+    ]
+  ]
+}

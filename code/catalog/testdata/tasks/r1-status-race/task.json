@@ -1,0 +1,65 @@
+{
+  "id": "r1-status-race",
+  "category": "race",
+  "title": "A data race in the dispatcher status",
+  "notes": "Status reads len(d.retries) without d.mu while flush updates the map after failed webhook sends. The report comes from a canary built with -race.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-07T08:00:00Z",
+  "race": true,
+  "stress": {
+    "setup": [
+      {
+        "as": "usr_ana",
+        "method": "PUT",
+        "path": "/v1/me/prefs",
+        "body": {
+          "channel": "webhook",
+          "webhook": "https://127.0.0.1:1/remind-hook"
+        }
+      },
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "stretch",
+          "every": "every 1s"
+        }
+      },
+      {
+        "as": "usr_ana",
+        "method": "POST",
+        "path": "/v1/reminders",
+        "body": {
+          "text": "drink water",
+          "every": "every 1s"
+        },
+        "save": "id"
+      }
+    ],
+    "workers": 6,
+    "step": {
+      "as": "usr_ops",
+      "method": "GET",
+      "path": "/v1/admin/dispatcher/status"
+    },
+    "group": "A",
+    "seconds": 3
+  },
+  "groups": {
+    "A": {
+      "root_cause": [
+        "notify/notify.go:(*Dispatcher).Status"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "notify/notify.go",
+      "old": "func (d *Dispatcher) Status() Status {\n\treturn Status{",
+      "new": "func (d *Dispatcher) Status() Status {\n\td.mu.Lock()\n\tdefer d.mu.Unlock()\n\treturn Status{"
+    }
+  ]
+}

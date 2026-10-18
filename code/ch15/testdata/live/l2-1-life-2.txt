@@ -1,0 +1,22 @@
+run l2-1, in $TMP/l2-1
+defenses on; tests run at rung 3, in Seatbelt
+resuming run l2-1: tools, 16 turns, $0.0106 so far, restart 1
+task: m1-done-after-delete, 4 crash reports, 2 issues already filed
+
+turn 1
+  model asks:  submit_diagnosis
+                 groups: [{"fingerprint":"fp_4828a6","reports":["cr_1e2ea0","cr_ee551c"],"category":"nil_value","root_cause":{"file":"store/store.go","function":"(*Store).Get"},"evidence":"Get returns (nil, nil) for a deleted reminder: the deleted case sets r = nil but not err. api.(*API).owned (api/reminders.go:144) then reads rem.UserID and panics. Logs show rem_0001 deleted at 14:11:02, then POST .../done at 14:12 crashed. The reproducer store/get_deleted_test.go TestGetDeletedReturnsNotFound fails on the old code. Fixed by setting err = ErrNotFound. Other callers (api/lists.go, api/search.go) already skip on error. Full suite passes. Filed as #103.","status":"fixed","fix":"store/store.go Get: the deleted case now sets err = ErrNotFound.","issue":103,"reproducer":{"file":"store/get_deleted_test.go","function":"TestGetDeletedReturnsNotFound"}},{"fingerprint":"fp_2bcd17","reports":["cr_fd4982"],"category":"concurrency","root_cause":{"file":"notify/notify.go","function":"(*Dispatcher).Stop"},"evidence":"Stop calls close(d.stop) with no guard, so a second POST /v1/admin/dispatcher/stop panics with close of closed channel. Matches open issue #102, which I commented on. Caveat: I applied a fix (stopOnce sync.Once in notify/notify.go) and a reproducer (notify/stop_twice_test.go TestStopTwice, which fails on the old code) before I checked the tracker closely. The change is in the working tree and the full suite passes. I did not file a new issue.","status":"duplicate","duplicate":102},{"fingerprint":"fp_6b14b3","reports":["cr_f9ee9e"],"category":"bad_input","root_cause":{"file":"auth/auth.go","function":"parseBearer"},"evidence":"parseBearer checks only the 'Bearer' prefix, then indexes strings.SplitN(h, ' ', 2)[1]. An Authorization header of just 'Bearer' has one element, so [1] panics. Matches open issue #101, which I commented on with the cause and a suggested fix. I did not change auth/: writes to auth/ were denied as protected, so this needs a person with access.","status":"duplicate","duplicate":101}]
+  tool result: <data from="submit_diagnosis" id=po4cii4... (3 lines)
+
+stopped: the model answered
+346247 tokens in (313774 from the cache), 8754 out, $0.0116
+with the sub-agent's calls: $0.0010
+took 10s
+
+diagnosis:
+  fp_4828a6 cr_1e2ea0,cr_ee551c: fixed, root cause store/store.go (*Store).Get, issue #103
+  fp_2bcd17 cr_fd4982: duplicate, root cause notify/notify.go (*Dispatcher).Stop, duplicate of #102
+  fp_6b14b3 cr_f9ee9e: duplicate, root cause auth/auth.go parseBearer, duplicate of #101
+filed #103: store.Get returns a deleted reminder with a nil error, so owned() dereferences nil
+
+graded against the catalog: 16 of 16 checks passed

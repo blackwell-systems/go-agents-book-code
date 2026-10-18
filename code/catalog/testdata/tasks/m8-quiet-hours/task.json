@@ -1,0 +1,77 @@
+{
+  "id": "m8-quiet-hours",
+  "category": "misleading",
+  "tier": "hard",
+  "private": true,
+  "title": "A digest after setting quiet hours to 24:30",
+  "notes": "updatePrefs checks quiet hours with a format-only pattern, so \"24:30\" is stored; QuietHours later indexes a 24-element array with 24. The report is the digest; making QuietHours wrap the hour is the wrong fix.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-10T21:40:00Z",
+  "noise": [
+    "d2-clock-no-minutes",
+    "d4-preview-multibyte"
+  ],
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "team stand-up",
+        "every": "on mon,wed at 09:30"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "PUT",
+      "path": "/v1/me/prefs",
+      "body": {
+        "quiet_from": "24:30",
+        "quiet_to": "07:00"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/digest",
+      "group": "A",
+      "advance": "2h"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/me/digest?days=3",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "api/users.go:(*API).updatePrefs"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "api/users.go",
+      "old": "var clockPattern = regexp.MustCompile(`^\\d{1,2}:\\d{2}$`)",
+      "new": "var clockPattern = regexp.MustCompile(`^([01]?\\d|2[0-3]):[0-5]\\d$`)"
+    }
+  ],
+  "decoys": [
+    [
+      {
+        "file": "notify/text.go",
+        "old": "\tfor h := hourOf(from); h != hourOf(to); h = (h + 1) % 24 {",
+        "new": "\tfor h := hourOf(from) % 24; h != hourOf(to)%24; h = (h + 1) % 24 {"
+      }
+    ]
+  ]
+}

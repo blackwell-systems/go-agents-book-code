@@ -1,0 +1,27 @@
+version: "2"
+
+run:
+  go: "1.27"
+
+linters:
+  # standard = errcheck, govet, ineffassign, staticcheck, unused
+  default: standard
+  enable:
+    - bodyclose     # response bodies are closed
+    - errorlint     # errors wrapped with %w and compared with errors.Is/As
+    - misspell
+    - modernize     # current idioms (range over int, min/max, WaitGroup.Go, ...)
+    - nilerr        # no returning nil after checking err != nil
+    - noctx         # HTTP requests carry a context
+    - revive        # Go Code Review Comments style checks
+    - usestdlibvars # http.MethodPost, http.StatusOK, ...
+    - wrapcheck     # errors from other packages are wrapped with context
+  exclusions:
+    presets:
+      # Allows the standard idioms, such as `defer resp.Body.Close()`.
+      - std-error-handling
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

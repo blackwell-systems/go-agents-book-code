@@ -1,0 +1,28 @@
+{
+	"function": {
+		"description": "Read part of a file of remind's source, with line numbers. Shows at most 200 lines at a time; ask for a range with start and end. Read a file before you change it.",
+		"name": "code_read",
+		"parameters": {
+			"type": "object",
+			"properties": {
+				"path": {
+					"type": "string",
+					"description": "a file path, such as store/store.go"
+				},
+				"start": {
+					"type": "integer",
+					"description": "the first line to show; default 1"
+				},
+				"end": {
+					"type": "integer",
+					"description": "the last line to show; default 200 lines after start"
+				}
+			},
+			"required": [
+				"path"
+			],
+			"additionalProperties": false
+		}
+	},
+	"type": "function"
+}

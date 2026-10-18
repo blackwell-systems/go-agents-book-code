@@ -1,0 +1,10 @@
+TestCrashSweep's "All scenarios" table with the last variant changed to
+{"keys and markers", true, false, true} in durable/sweep_test.go
+(2026-10-17; the change was reverted after the run):
+
+variant                        once  twice with dups  dups missing  asks calls+
+save once per turn               18    225       164   294       0     0    338
+save after the reply             34    654       306   360       0     0    234
++ idempotency keys               34    654         0     0       0     0    234
++ attempt markers, no keys       43    996         0     0       0   669    288
+keys and markers                 43    996         0     0       0   669    288

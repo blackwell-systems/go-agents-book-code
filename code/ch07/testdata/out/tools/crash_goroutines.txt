@@ -1,0 +1,197 @@
+46 goroutines in 8 groups of identical stacks:
+
+39 goroutine(s) [sync.RWMutex.RLock]:
+sync.runtime_SemacquireRWMutexR(...)
+	/usr/local/go/src/runtime/sema.go:100
+sync.(*RWMutex).RLock(...)
+	/usr/local/go/src/sync/rwmutex.go:74
+example.com/remind/store.(*Store).UserByToken(...)
+	/app/remind/store/users.go:99
+example.com/remind/auth.authenticate(...)
+	/app/remind/auth/auth.go:54
+example.com/remind/auth.Require.func1(...)
+	/app/remind/auth/auth.go:18
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+net/http.(*ServeMux).ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2903
+example.com/remind/server.accessLog.func1(...)
+	/app/remind/server/server.go:130
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+example.com/remind/metrics.Instrument.func1(...)
+	/app/remind/metrics/instrument.go:24
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+example.com/remind/crash.(*Reporter).Middleware.func1(...)
+	/app/remind/crash/crash.go:106
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+net/http.serverHandler.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:3413
+net/http.(*conn).serve(...)
+	/usr/local/go/src/net/http/server.go:2137
+created by net/http.(*Server).Serve in goroutine 2
+	/usr/local/go/src/net/http/server.go:3581
+
+1 goroutine(s) [select, 3 minutes]:
+main.run(...)
+	/app/remind/cmd/remind/main.go:99
+main.main(...)
+	/app/remind/cmd/remind/main.go:44
+
+1 goroutine(s) [running]:
+runtime/pprof.writeGoroutineStacks(...)
+	/usr/local/go/src/runtime/pprof/pprof.go:816
+runtime/pprof.writeGoroutine(...)
+	/usr/local/go/src/runtime/pprof/pprof.go:779
+runtime/pprof.(*Profile).WriteTo(...)
+	/usr/local/go/src/runtime/pprof/pprof.go:405
+example.com/remind/crash.(*Reporter).Check(...)
+	/app/remind/crash/crash.go:130
+example.com/remind/server.(*Server).Watch(...)
+	/app/remind/server/server.go:111
+created by main.run in goroutine 1
+	/app/remind/cmd/remind/main.go:92
+
+1 goroutine(s) [IO wait]:
+internal/poll.runtime_pollWait(...)
+	/usr/local/go/src/runtime/netpoll.go:351
+internal/poll.(*pollDesc).wait(...)
+	/usr/local/go/src/internal/poll/fd_poll_runtime.go:84
+internal/poll.(*pollDesc).waitRead(...)
+	/usr/local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Accept(...)
+	/usr/local/go/src/internal/poll/fd_unix.go:618
+net.(*netFD).accept(...)
+	/usr/local/go/src/net/fd_unix.go:149
+net.(*TCPListener).accept(...)
+	/usr/local/go/src/net/tcpsock_posix.go:159
+net.(*TCPListener).Accept(...)
+	/usr/local/go/src/net/tcpsock.go:387
+net/http.(*Server).Serve(...)
+	/usr/local/go/src/net/http/server.go:3551
+net/http.(*Server).ListenAndServe(...)
+	/usr/local/go/src/net/http/server.go:3436
+main.run.func2(...)
+	/app/remind/cmd/remind/main.go:96
+created by main.run in goroutine 1
+	/app/remind/cmd/remind/main.go:96
+
+1 goroutine(s) [sync.Mutex.Lock]:
+internal/sync.runtime_SemacquireMutex(...)
+	/usr/local/go/src/runtime/sema.go:95
+internal/sync.(*Mutex).lockSlow(...)
+	/usr/local/go/src/internal/sync/mutex.go:149
+internal/sync.(*Mutex).Lock(...)
+	/usr/local/go/src/internal/sync/mutex.go:70
+sync.(*Mutex).Lock(...)
+	/usr/local/go/src/sync/mutex.go:46
+sync.(*RWMutex).Lock(...)
+	/usr/local/go/src/sync/rwmutex.go:150
+example.com/remind/store.(*Store).MarkSent(...)
+	/app/remind/store/store.go:197
+example.com/remind/notify.(*Dispatcher).flush(...)
+	/app/remind/notify/notify.go:122
+example.com/remind/notify.(*Dispatcher).Run(...)
+	/app/remind/notify/notify.go:96
+created by main.run in goroutine 1
+	/app/remind/cmd/remind/main.go:91
+
+1 goroutine(s) [sync.Mutex.Lock]:
+internal/sync.runtime_SemacquireMutex(...)
+	/usr/local/go/src/runtime/sema.go:95
+internal/sync.(*Mutex).lockSlow(...)
+	/usr/local/go/src/internal/sync/mutex.go:149
+internal/sync.(*Mutex).Lock(...)
+	/usr/local/go/src/internal/sync/mutex.go:70
+sync.(*Mutex).Lock(...)
+	/usr/local/go/src/sync/mutex.go:46
+example.com/remind/notify.(*Dispatcher).forget(...)
+	/app/remind/notify/notify.go:128
+example.com/remind/store.(*Store).changed(...)
+	/app/remind/store/store.go:82
+example.com/remind/store.(*Store).Update(...)
+	/app/remind/store/store.go:163
+example.com/remind/api.(*API).snooze(...)
+	/app/remind/api/reminders.go:202
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+example.com/remind/auth.Require.func1(...)
+	/app/remind/auth/auth.go:23
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+net/http.(*ServeMux).ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2903
+example.com/remind/server.accessLog.func1(...)
+	/app/remind/server/server.go:130
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+example.com/remind/metrics.Instrument.func1(...)
+	/app/remind/metrics/instrument.go:24
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+example.com/remind/crash.(*Reporter).Middleware.func1(...)
+	/app/remind/crash/crash.go:106
+net/http.HandlerFunc.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:2338
+net/http.serverHandler.ServeHTTP(...)
+	/usr/local/go/src/net/http/server.go:3413
+net/http.(*conn).serve(...)
+	/usr/local/go/src/net/http/server.go:2137
+created by net/http.(*Server).Serve in goroutine 2
+	/usr/local/go/src/net/http/server.go:3581
+
+1 goroutine(s) [IO wait]:
+internal/poll.runtime_pollWait(...)
+	/usr/local/go/src/runtime/netpoll.go:351
+internal/poll.(*pollDesc).wait(...)
+	/usr/local/go/src/internal/poll/fd_poll_runtime.go:84
+internal/poll.(*pollDesc).waitRead(...)
+	/usr/local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(...)
+	/usr/local/go/src/internal/poll/fd_unix.go:170
+net.(*netFD).Read(...)
+	/usr/local/go/src/net/fd_posix.go:68
+net.(*conn).Read(...)
+	/usr/local/go/src/net/net.go:196
+net/http.(*connReader).backgroundRead(...)
+	/usr/local/go/src/net/http/server.go:746
+created by net/http.(*connReader).startBackgroundRead in goroutine 12
+	/usr/local/go/src/net/http/server.go:742
+
+1 goroutine(s) [IO wait]:
+internal/poll.runtime_pollWait(...)
+	/usr/local/go/src/runtime/netpoll.go:351
+internal/poll.(*pollDesc).wait(...)
+	/usr/local/go/src/internal/poll/fd_poll_runtime.go:84
+internal/poll.(*pollDesc).waitRead(...)
+	/usr/local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(...)
+	/usr/local/go/src/internal/poll/fd_unix.go:170
+net.(*netFD).Read(...)
+	/usr/local/go/src/net/fd_posix.go:68
+net.(*conn).Read(...)
+	/usr/local/go/src/net/net.go:196
+net/http.(*connReader).Read(...)
+	/usr/local/go/src/net/http/server.go:856
+bufio.(*Reader).fill(...)
+	/usr/local/go/src/bufio/bufio.go:113
+bufio.(*Reader).ReadSlice(...)
+	/usr/local/go/src/bufio/bufio.go:377
+bufio.(*Reader).ReadLine(...)
+	/usr/local/go/src/bufio/bufio.go:406
+net/textproto.(*Reader).readLineSlice(...)
+	/usr/local/go/src/net/textproto/reader.go:64
+net/textproto.(*Reader).ReadLine(...)
+	/usr/local/go/src/net/textproto/reader.go:44
+net/http.readRequestLimit(...)
+	/usr/local/go/src/net/http/request.go:1106
+net/http.(*conn).readRequest(...)
+	/usr/local/go/src/net/http/server.go:1054
+net/http.(*conn).serve(...)
+	/usr/local/go/src/net/http/server.go:2055
+created by net/http.(*Server).Serve in goroutine 2
+	/usr/local/go/src/net/http/server.go:3581
+
+

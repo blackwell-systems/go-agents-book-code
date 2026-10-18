@@ -1,0 +1,86 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You are a helpful assistant for Go programmers. Answer in a few sentences."
+			},
+			{
+				"role": "user",
+				"content": "What is a goroutine?"
+			},
+			{
+				"role": "assistant",
+				"content": "A goroutine is a lightweight thread of execution managed by the Go runtime rather than the operating system. You start one by placing the `go` keyword before a function call, such as `go doSomething()`, and it runs concurrently with the rest of your program. Goroutines are cheap to create (they start with a small, growable stack), so a Go program can run thousands or even millions of them at once."
+			},
+			{
+				"role": "user",
+				"content": "And how do I stop one?"
+			},
+			{
+				"role": "assistant",
+				"content": "There's no direct way to kill a goroutine from outside it. The idiomatic approach is to signal it to stop and let it exit on its own, usually by passing a `context.Context` and checking `ctx.Done()` in a `select` statement, or by listening on a done channel. For example:\n\n```go\nctx, cancel := context.WithCancel(context.Background())\ngo func() {\n    for {\n        select {\n        case <-ctx.Done():\n            return\n        default:\n            // do work\n        }\n    }\n}()\ncancel() // signals the goroutine to stop\n```\n\nCalling `cancel()` closes the context's Done channel, and the goroutine returns the next time it checks. If the goroutine is blocked on something else, include `ctx.Done()` in that `select` as well so it can wake up."
+			},
+			{
+				"role": "user",
+				"content": "Show me a two-line example."
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792089536-hS6TcWQzLDehxD2zUElC",
+		"object": "chat.completion",
+		"created": 1792089536,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "stop",
+				"native_finish_reason": "end_turn",
+				"message": {
+					"role": "assistant",
+					"content": "```go\ndone := make(chan struct{})\ngo func() { <-done }()  // goroutine blocks until done is closed, then exits\nclose(done)             // signals it to stop\n```",
+					"refusal": null,
+					"reasoning": null,
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 439,
+			"completion_tokens": 700,
+			"total_tokens": 1139,
+			"cost": 0.0003939,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.0003939,
+				"upstream_inference_prompt_cost": 0.0000439,
+				"upstream_inference_completions_cost": 0.00035
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 642,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

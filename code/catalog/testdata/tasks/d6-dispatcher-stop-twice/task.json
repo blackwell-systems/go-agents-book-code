@@ -1,0 +1,46 @@
+{
+  "id": "d6-dispatcher-stop-twice",
+  "category": "direct",
+  "title": "Stopping the dispatcher twice",
+  "notes": "Stop closes a channel with no guard, so a second stop panics.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ops",
+      "method": "POST",
+      "path": "/v1/admin/dispatcher/stop"
+    },
+    {
+      "as": "usr_ops",
+      "method": "POST",
+      "path": "/v1/admin/dispatcher/stop",
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "notify/notify.go:(*Dispatcher).Stop"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "notify/notify.go",
+      "old": "\tretries map[string]int // failed sends per reminder ID\n\tstop    chan struct{}\n}",
+      "new": "\tretries map[string]int // failed sends per reminder ID\n\tstop    chan struct{}\n\tstopped sync.Once\n}"
+    },
+    {
+      "file": "notify/notify.go",
+      "old": "func (d *Dispatcher) Stop() {\n\tclose(d.stop)\n}",
+      "new": "func (d *Dispatcher) Stop() {\n\td.stopped.Do(func() { close(d.stop) })\n}"
+    }
+  ],
+  "noise": [
+    "d5-bearer-no-token",
+    "d2-clock-no-minutes"
+  ]
+}

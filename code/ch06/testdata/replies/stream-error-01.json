@@ -1,0 +1,84 @@
+{
+  "note": "Hand-written in OpenRouter's response format until recorded from the live API with -record.",
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "user",
+				"content": "The tests in this project fail. Find out why and fix it."
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "list_files",
+					"description": "List the files in the project.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "read_file",
+					"description": "Read a file in the project.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "edit_file",
+					"description": "Replace text in a file. old must appear exactly once in the file.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"old": {
+								"type": "string"
+							},
+							"new": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"path",
+							"old",
+							"new"
+						]
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run the project's tests and report the results.",
+					"parameters": {
+						"type": "object"
+					}
+				}
+			}
+		],
+		"stream": true,
+		"stream_options": {
+			"include_usage": true
+		}
+	},
+	"response_text": ": OPENROUTER PROCESSING\n\ndata: {\"id\":\"gen-hand-stream-error-1\",\"provider\":\"Anthropic\",\"model\":\"anthropic/claude-haiku-5.5\",\"object\":\"chat.completion.chunk\",\"created\":1760001001,\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"The tests fail \"},\"finish_reason\":null}]}\n\ndata: {\"id\":\"gen-hand-stream-error-1\",\"provider\":\"Anthropic\",\"model\":\"anthropic/claude-haiku-5.5\",\"object\":\"chat.completion.chunk\",\"created\":1760001001,\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"because the units \"},\"finish_reason\":null}]}\n\ndata: {\"id\":\"gen-hand-stream-error-1\",\"provider\":\"Anthropic\",\"model\":\"anthropic/claude-haiku-5.5\",\"object\":\"chat.completion.chunk\",\"created\":1760001001,\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"table maps 'm' \"},\"finish_reason\":null}]}\n\ndata: {\"id\":\"gen-hand-stream-error-1\",\"provider\":\"Anthropic\",\"model\":\"anthropic/claude-haiku-5.5\",\"object\":\"chat.completion.chunk\",\"created\":1760001001,\"error\":{\"code\":\"server_error\",\"message\":\"Provider disconnected\"},\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"error\"}]}\n\ndata: [DONE]\n\n"
+}

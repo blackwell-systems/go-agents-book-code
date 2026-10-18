@@ -1,0 +1,196 @@
+{
+	"status": 200,
+	"request": {
+		"model": "anthropic/claude-haiku-5.5",
+		"messages": [
+			{
+				"role": "system",
+				"content": "You triage one crash group in the remind service. Run the tests of the package that crashed to confirm the bug, file one issue that describes the cause (a person approves it first), then call submit_diagnosis with your answer."
+			},
+			{
+				"role": "user",
+				"content": "Crash group 7f3a, 4 reports: panic: assignment to entry in nil map, at store.(*Store).Tag (store/tags.go:41), called from api.(*Server).tagReminder. All four came after a reminder was restored from the trash."
+			},
+			{
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"index": 0,
+						"id": "toolu_01JzhZHuYU7k7e3HQLvMw1uV",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{\"package\": \"./store\"}"
+						}
+					},
+					{
+						"index": 1,
+						"id": "toolu_01SzScjAbhja9n4355CAPSyq",
+						"type": "function",
+						"function": {
+							"name": "run_tests",
+							"arguments": "{\"package\": \"./api\"}"
+						}
+					}
+				]
+			},
+			{
+				"role": "tool",
+				"content": "--- FAIL: TestTagRestored (0.00s)\npanic: assignment to entry in nil map [recovered]\n\tstore.(*Store).Tag(...)\n\t\tstore/tags.go:41\nFAIL\texample.com/remind/store\t0.012s",
+				"tool_call_id": "toolu_01JzhZHuYU7k7e3HQLvMw1uV"
+			},
+			{
+				"role": "tool",
+				"content": "ok  \texample.com/remind/api\t0.020s",
+				"tool_call_id": "toolu_01SzScjAbhja9n4355CAPSyq"
+			}
+		],
+		"tools": [
+			{
+				"type": "function",
+				"function": {
+					"name": "run_tests",
+					"description": "Run one package's tests and return their output.",
+					"parameters": {
+						"properties": {
+							"package": {
+								"description": "a package directory, such as ./store",
+								"type": "string"
+							}
+						},
+						"additionalProperties": false,
+						"required": [
+							"package"
+						],
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "issue_file",
+					"description": "File an issue in the tracker. A person approves each issue before it is filed.",
+					"parameters": {
+						"properties": {
+							"title": {
+								"description": "one line naming the bug",
+								"type": "string"
+							},
+							"body": {
+								"description": "the cause, the evidence, and the reports",
+								"type": "string"
+							}
+						},
+						"additionalProperties": false,
+						"required": [
+							"body",
+							"title"
+						],
+						"type": "object"
+					}
+				}
+			},
+			{
+				"type": "function",
+				"function": {
+					"name": "submit_diagnosis",
+					"description": "Finish the job: submit the diagnosis. Call it once, at the end.",
+					"parameters": {
+						"properties": {
+							"fingerprint": {
+								"description": "the crash group's fingerprint",
+								"type": "string"
+							},
+							"file": {
+								"description": "the file where the code is wrong",
+								"type": "string"
+							},
+							"function": {
+								"description": "the function where the code is wrong",
+								"type": "string"
+							},
+							"issue": {
+								"description": "the issue you filed",
+								"type": "integer"
+							}
+						},
+						"additionalProperties": false,
+						"required": [
+							"file",
+							"fingerprint",
+							"function",
+							"issue"
+						],
+						"type": "object"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"id": "gen-1792185318-GIUn4RnB23afOqDCgCjt",
+		"object": "chat.completion",
+		"created": 1792185318,
+		"model": "anthropic/claude-haiku-5.5",
+		"provider": "Claude Platform on AWS",
+		"system_fingerprint": null,
+		"service_tier": "default",
+		"choices": [
+			{
+				"index": 0,
+				"logprobs": null,
+				"finish_reason": "tool_calls",
+				"native_finish_reason": "tool_use",
+				"message": {
+					"role": "assistant",
+					"content": "The store test reproduces the panic: `TestTagRestored` fails at `store/tags.go:41`. The api tests pass, so the failure is in the store layer. I'll file the issue with that evidence.",
+					"refusal": null,
+					"reasoning": null,
+					"tool_calls": [
+						{
+							"type": "function",
+							"index": 0,
+							"id": "toolu_016RwHnrBwpEmZEWwYgiZ47d",
+							"function": {
+								"name": "issue_file",
+								"arguments": "{\"title\": \"Tagging a reminder restored from trash panics: assignment to nil map in Store.Tag\", \"body\": \"Crash group 7f3a (4 reports): panic: assignment to entry in nil map at store.(*Store).Tag (store/tags.go:41), called from api.(*Server).tagReminder. Every report followed restoring a reminder from the trash.\\n\\nReproduction: `go test ./store` fails in TestTagRestored with \\\"panic: assignment to entry in nil map\\\" at store/tags.go:41 (store.(*Store).Tag). `go test ./api` passes, so the fault is in the store layer.\\n\\nLikely cause (not yet confirmed by reading the code): the restore-from-trash path brings a reminder back with its tags map left nil instead of initialized, and Store.Tag writes into that map without checking or creating it first. Fix should make restore initialize the map (or make Tag create it lazily), and add a regression check that tagging after restore succeeds.\"}"
+							}
+						}
+					],
+					"reasoning_details": [
+						{
+							"type": "reasoning.text",
+							"signature": "CAQSlQsKEAgSGAI4AUIIdGhpbmtpbmcSDFF5xnDxF+Vs0leoORoMquCcPSpF1D+iKQHVIjBIy7Ji9MjK+T0/dPlkCP5JrFzwmTkv7Q41Daltwcg6+8NWckm57/xrOvldUfHiNjcqsgor21m6tZs5ja6xlVYoWGCkOY4S9oWk0xgZ/N+Dy/xDLr+I+oPUUIeooWay2ivPjUrsb9E2pQfhKVKNRZ2nTM8waX4MJ15uD3QgJZFa+eAbMhahJ7cAvnrtZQXKpqYhi9oLsLcpGIrzD7ylCDEGYxH2kKBC8ZGvsw3qz2yjF0GRpwrKyZh22egjqQ9+d2IBSz4t5moozWsAkQm2f5rUPgpK3bfi7us1OVdRVIy7o2KKqZQqKKxzoRc30x2AqsltanezAmkKR1hN+k2svG6zHLQ6z45urWKjAEcxVjZUx535hM0JHQVcc9+DzE90eHIzTkbI0+BqZK4YCwHpRLyxyfsb3Mk3e3A9enlGFlN4tFLzRFdcqHqHTf3XBrGrz5Yw6tfdsT3bP7w/7i2FX0QyMVBhDTD1MoEgXTX+4sFEz9i/sN2CyRejKoko0pDz7gY68izG3NpQU5luy+jDdK6xNRwKlz8QC1yKrZIFYPKZh0kgSq8vnIztXf1iLZX0UMJEwb2DuR8W6NcQ1g3RkNbVc8Vz7PjTfhZvmJ4W1hMHG8XihvtRgC1NI4/St+BqL3femYKjFMsMqqlVNLZaJbld4XQ65cqSgsgCZ57vQ6Te2JNlSUbjDrg8zYb2clav9aqzgfgohTFPXxus7oSgPhAz9bHznR45l3uZ7mlNwQ2W2mKXCnD8KG6uW9WXu1h13tYo2r62GzNfajV03201zPUiwiKwPGTs+WuApjxfTMLwZ9AMd52coI/48BgcNfUlCGyVV1rYMRQlC2RR2m2tAXCwnS4vBhf1crsOq2AnvSmOw6a8eKby24y3K7w55AGR8LaClF+tNfCbQC9oKz81jcUUGdEywkngn3z53sESfrcgWzyX7DoK8E+zczC7pc05TH0hYQDGQKFXSSexfkQzkjv/kO7iGiaH2Hr1MyX6NFnWE4M+csLow3t/dwp7BR9a9cdMEGj7KNANRCUkj47SXVcai87csekBwf2rDA21TDqx5gn1bvhcnasJB6fhsmJOwx7/IkfW48zuKu+AXnjUxMF9wRWYcjXAjOa+ZEErs+KSQ8EnTV2y1A+qkf+qVwByI7IGJoZag8T/bPcywZCdMewlOnPb16z10IJUIEyD8K7JwJYYnOSIdwOurHbyleMu4yWnkLEHVbHJrucSSfQhJ2SOgrDh5xxgt87SHV8qG2FXfxBwhI6Bj3IDqLboG1wyDkXT330hfcil/ANt1VpPiEvb4WCv0l5HYewPo9d/CPG1m5FJxpsIPWYQgKLZE8Vcl7vC3OlTC8j9S+RbDecgdIgiG2RkL+PnOhE2fS6s9B88+k9NTeKAmaWwW/Vwb4bfnrCB7MQZ1MJgVO2/QT+6w2UxbSs34/2Hw7hO0dxFmjQp3J8u++EOJ5ufIOJUo6uMYyCT8/IaMWkVke7VnhNXxc2d4IASeJU7b4v2VAX9SvJSpTmnML25YmAbpdbSlmBzObQd0X5a+T94WwSjYvQGkqy12YARTRE7bIuXpPtPjw/Afl06WLbxgcYgdQSqOiSeMbbhDE+prbcYSWu4a7lOAxJW0xFoW66AeYj/q8B9sHj6EIh//2kWCbP8eh+iLHLQrOlvFzeKVPusUlbW3ugldqjYtrmGBz+9mvVHiHu7xq5loUgFStouiUrQ5G4GpvIeKkwqQZKEYMDUJvpi32njiifpY88c/iPhdI4I7Ux5TZL4aFboyMz1iJqxFhQzsry2xy7MPn4n/spBb/GHv2vRN9r7dLTkpPx8cgGqGnYvm4COyThOT6uqGAE=.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9",
+							"format": "anthropic-claude-v1",
+							"index": 0
+						}
+					]
+				}
+			}
+		],
+		"usage": {
+			"prompt_tokens": 1145,
+			"completion_tokens": 713,
+			"total_tokens": 1858,
+			"cost": 0.000471,
+			"is_byok": false,
+			"prompt_tokens_details": {
+				"cached_tokens": 0,
+				"cache_write_tokens": 0,
+				"audio_tokens": 0,
+				"video_tokens": 0
+			},
+			"cost_details": {
+				"upstream_inference_cost": 0.000471,
+				"upstream_inference_prompt_cost": 0.0001145,
+				"upstream_inference_completions_cost": 0.0003565
+			},
+			"completion_tokens_details": {
+				"reasoning_tokens": 272,
+				"image_tokens": 0,
+				"audio_tokens": 0
+			}
+		}
+	}
+}

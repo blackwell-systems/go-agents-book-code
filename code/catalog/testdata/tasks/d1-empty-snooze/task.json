@@ -1,0 +1,58 @@
+{
+  "id": "d1-empty-snooze",
+  "category": "direct",
+  "title": "Snoozing with an empty duration",
+  "notes": "The iOS app sends an empty snooze duration when the picker is cleared. duration.Parse reads s[len(s)-1] before checking for an empty string.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "pick up dry cleaning",
+        "in": "2h"
+      },
+      "save": "id"
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders/{id}/snooze",
+      "body": {
+        "for": "10m"
+      }
+    },
+    {
+      "as": "usr_bo",
+      "method": "POST",
+      "path": "/v1/reminders/{id}/snooze",
+      "body": {
+        "for": ""
+      },
+      "group": "A",
+      "repeat": 3
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "duration/duration.go:Parse"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "duration/duration.go",
+      "old": "func Parse(s string) (time.Duration, error) {\n\tif last",
+      "new": "func Parse(s string) (time.Duration, error) {\n\tif s == \"\" {\n\t\treturn 0, fmt.Errorf(\"duration %q: empty\", s)\n\t}\n\tif last"
+    }
+  ],
+  "noise": [
+    "d2-clock-no-minutes",
+    "d4-preview-multibyte"
+  ]
+}

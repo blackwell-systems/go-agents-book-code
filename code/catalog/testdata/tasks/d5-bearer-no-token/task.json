@@ -1,0 +1,59 @@
+{
+  "id": "d5-bearer-no-token",
+  "category": "direct",
+  "title": "An Authorization header with no token",
+  "notes": "parseBearer takes SplitN(h, \" \", 2)[1] after checking only the prefix \"Bearer\".",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders"
+    },
+    {
+      "as": "",
+      "method": "GET",
+      "path": "/v1/reminders",
+      "headers": {
+        "Authorization": "Bearer",
+        "User-Agent": "okhttp/4.12.0"
+      },
+      "group": "A",
+      "repeat": 2
+    },
+    {
+      "as": "",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "sync"
+      },
+      "headers": {
+        "Authorization": "Bearer",
+        "User-Agent": "okhttp/4.12.0"
+      },
+      "group": "A"
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "auth/auth.go:parseBearer"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "auth/auth.go",
+      "old": "\tif !strings.HasPrefix(h, \"Bearer\") {\n\t\treturn \"\", false\n\t}\n\treturn strings.SplitN(h, \" \", 2)[1], true",
+      "new": "\ttoken, ok := strings.CutPrefix(h, \"Bearer \")\n\treturn token, ok && token != \"\""
+    }
+  ],
+  "noise": [
+    "d4-preview-multibyte",
+    "d6-dispatcher-stop-twice"
+  ]
+}

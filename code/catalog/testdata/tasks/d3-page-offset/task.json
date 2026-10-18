@@ -1,0 +1,80 @@
+{
+  "id": "d3-page-offset",
+  "category": "direct",
+  "title": "A page offset past the end of the list",
+  "notes": "store.List clamps the end of the page but not its start.",
+  "version": "v1.4.0",
+  "commit": "9c41e7a",
+  "start": "2026-10-05T14:03:00Z",
+  "steps": [
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "renew passport",
+        "in": "3w"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "book flights",
+        "in": "1w"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "POST",
+      "path": "/v1/reminders",
+      "body": {
+        "text": "water plants",
+        "every": "every 2d"
+      }
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?limit=2"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?limit=2&offset=2"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?limit=2&offset=4",
+      "group": "A"
+    },
+    {
+      "as": "usr_ana",
+      "method": "GET",
+      "path": "/v1/reminders?offset=50",
+      "group": "A",
+      "repeat": 2
+    }
+  ],
+  "groups": {
+    "A": {
+      "root_cause": [
+        "store/store.go:(*Store).List"
+      ],
+      "status": "fixed"
+    }
+  },
+  "fix": [
+    {
+      "file": "store/store.go",
+      "old": "\tend := min(offset+limit, len(out))",
+      "new": "\toffset = min(offset, len(out))\n\tend := min(offset+limit, len(out))"
+    }
+  ],
+  "noise": [
+    "d5-bearer-no-token",
+    "d6-dispatcher-stop-twice"
+  ]
+}

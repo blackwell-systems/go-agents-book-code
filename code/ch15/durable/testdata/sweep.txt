@@ -1,0 +1,25 @@
+Runs crashed once that left duplicates, by where the crash landed
+
+crash point            v1     v2     v3     v4     v5
+reply received          0      0      0      0      0
+marker saved            0      0      0      0      0
+tracker accepted        3      3      0      0      0
+tool returned           3      3      0      0      0
+result saved            0      0      0      0      0
+mid-save                2      3      0      0      0
+after rename            0      0      0      0      0
+
+All scenarios
+
+variant                        once  twice with dups  dups missing  asks calls+
+save once per turn               18    225       164   294       0     0    338
+save after the reply             34    654       306   360       0     0    234
++ idempotency keys               34    654         0     0       0     0    234
++ attempt markers, no keys       43    996         0     0       0   669    288
+keys and markers                 43   1014         0     0       0     0    288
+
+v1: save once per turn
+v2: save after the reply
+v3: + idempotency keys
+v4: + attempt markers, no keys
+v5: keys and markers

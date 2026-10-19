@@ -1,7 +1,7 @@
 [
 	{
 		"request": {
-			"model": "xiaomi/mimo-v2.5-pro",
+			"model": "xiaomi/mimo-v2.6-pro",
 			"messages": [
 				{
 					"role": "system",
@@ -46,13 +46,13 @@
 		},
 		"status": 200,
 		"response": {
-			"id": "gen-1792449112-MonyD31Gv4Mxa60uYouJ",
+			"id": "gen-1792449297-E3aN1tYvWQgFyKrMFniZ",
 			"object": "chat.completion",
-			"created": 1792449112,
-			"model": "xiaomi/mimo-v2.5-pro",
-			"provider": "Xiaomi",
+			"created": 1792449297,
+			"model": "xiaomi/mimo-v2.6-pro",
+			"provider": "DeepInfra",
 			"system_fingerprint": null,
-			"service_tier": null,
+			"service_tier": "default",
 			"choices": [
 				{
 					"index": 0,
@@ -63,12 +63,12 @@
 						"role": "assistant",
 						"content": null,
 						"refusal": null,
-						"reasoning": "Let me look at the files in the directory to find information about rate limiting.",
+						"reasoning": "Let me look at files.",
 						"tool_calls": [
 							{
 								"type": "function",
 								"index": 0,
-								"id": "call_3b25bf5c2d494f178dac3350",
+								"id": "chatcmpl-tool-a963129d0451a2d5",
 								"function": {
 									"name": "list_files",
 									"arguments": "{}"
@@ -78,7 +78,7 @@
 						"reasoning_details": [
 							{
 								"type": "reasoning.text",
-								"text": "Let me look at the files in the directory to find information about rate limiting.",
+								"text": "Let me look at files.",
 								"format": "unknown",
 								"index": 0
 							}
@@ -87,10 +87,10 @@
 				}
 			],
 			"usage": {
-				"prompt_tokens": 352,
-				"completion_tokens": 29,
-				"total_tokens": 381,
-				"cost": 0.00017835,
+				"prompt_tokens": 211,
+				"completion_tokens": 18,
+				"total_tokens": 229,
+				"cost": 0.00010639,
 				"is_byok": false,
 				"prompt_tokens_details": {
 					"cached_tokens": 0,
@@ -99,12 +99,12 @@
 					"video_tokens": 0
 				},
 				"cost_details": {
-					"upstream_inference_cost": 0.00017835,
-					"upstream_inference_prompt_cost": 0.00015312,
-					"upstream_inference_completions_cost": 0.00002523
+					"upstream_inference_cost": 0.00010639,
+					"upstream_inference_prompt_cost": 0.00009073,
+					"upstream_inference_completions_cost": 0.00001566
 				},
 				"completion_tokens_details": {
-					"reasoning_tokens": 16,
+					"reasoning_tokens": 6,
 					"image_tokens": 0,
 					"audio_tokens": 0
 				}
@@ -113,7 +113,7 @@
 	},
 	{
 		"request": {
-			"model": "xiaomi/mimo-v2.5-pro",
+			"model": "xiaomi/mimo-v2.6-pro",
 			"messages": [
 				{
 					"role": "system",
@@ -127,7 +127,7 @@
 					"role": "assistant",
 					"tool_calls": [
 						{
-							"id": "call_3b25bf5c2d494f178dac3350",
+							"id": "chatcmpl-tool-a963129d0451a2d5",
 							"type": "function",
 							"function": {
 								"name": "list_files",
@@ -138,7 +138,7 @@
 					"reasoning_details": [
 						{
 							"type": "reasoning.text",
-							"text": "Let me look at the files in the directory to find information about rate limiting.",
+							"text": "Let me look at files.",
 							"format": "unknown",
 							"index": 0
 						}
@@ -147,7 +147,7 @@
 				{
 					"role": "tool",
 					"content": "CHANGELOG.md\nREADME.md\nconfig/defaults.yaml",
-					"tool_call_id": "call_3b25bf5c2d494f178dac3350"
+					"tool_call_id": "chatcmpl-tool-a963129d0451a2d5"
 				}
 			],
 			"tools": [
@@ -184,13 +184,13 @@
 		},
 		"status": 200,
 		"response": {
-			"id": "gen-1792449114-0NRHAJrPHutkbC4VyQg3",
+			"id": "gen-1792449300-lhlT0r7PFxPERDPyMRAY",
 			"object": "chat.completion",
-			"created": 1792449114,
-			"model": "xiaomi/mimo-v2.5-pro",
-			"provider": "Xiaomi",
+			"created": 1792449300,
+			"model": "xiaomi/mimo-v2.6-pro",
+			"provider": "DeepInfra",
 			"system_fingerprint": null,
-			"service_tier": null,
+			"service_tier": "default",
 			"choices": [
 				{
 					"index": 0,
@@ -201,12 +201,12 @@
 						"role": "assistant",
 						"content": null,
 						"refusal": null,
-						"reasoning": "Let me read the CHANGELOG.md and also check the other files for rate limiting information.",
+						"reasoning": "Check CHANGELOG.md and config/defaults.yaml.",
 						"tool_calls": [
 							{
 								"type": "function",
 								"index": 0,
-								"id": "call_f8aa460ef529458798f3f937",
+								"id": "chatcmpl-tool-bf4cd287f51cd98e",
 								"function": {
 									"name": "read_file",
 									"arguments": "{\"path\": \"CHANGELOG.md\"}"
@@ -215,26 +215,17 @@
 							{
 								"type": "function",
 								"index": 1,
-								"id": "call_527e3164cc8248cc97f4670c",
+								"id": "chatcmpl-tool-b7905cd201bd3870",
 								"function": {
 									"name": "read_file",
 									"arguments": "{\"path\": \"config/defaults.yaml\"}"
-								}
-							},
-							{
-								"type": "function",
-								"index": 2,
-								"id": "call_585ccf2ab13a4ec3a1797603",
-								"function": {
-									"name": "read_file",
-									"arguments": "{\"path\": \"README.md\"}"
 								}
 							}
 						],
 						"reasoning_details": [
 							{
 								"type": "reasoning.text",
-								"text": "Let me read the CHANGELOG.md and also check the other files for rate limiting information.",
+								"text": "Check CHANGELOG.md and config/defaults.yaml.",
 								"format": "unknown",
 								"index": 0
 							}
@@ -243,24 +234,24 @@
 				}
 			],
 			"usage": {
-				"prompt_tokens": 405,
-				"completion_tokens": 83,
-				"total_tokens": 488,
-				"cost": 0.0001379466,
+				"prompt_tokens": 247,
+				"completion_tokens": 50,
+				"total_tokens": 297,
+				"cost": 0.0000678412,
 				"is_byok": false,
 				"prompt_tokens_details": {
-					"cached_tokens": 256,
+					"cached_tokens": 192,
 					"cache_write_tokens": 0,
 					"audio_tokens": 0,
 					"video_tokens": 0
 				},
 				"cost_details": {
-					"upstream_inference_cost": 0.0001379466,
-					"upstream_inference_prompt_cost": 0.0000657366,
-					"upstream_inference_completions_cost": 0.00007221
+					"upstream_inference_cost": 0.0000678412,
+					"upstream_inference_prompt_cost": 0.0000243412,
+					"upstream_inference_completions_cost": 0.0000435
 				},
 				"completion_tokens_details": {
-					"reasoning_tokens": 18,
+					"reasoning_tokens": 10,
 					"image_tokens": 0,
 					"audio_tokens": 0
 				}
@@ -269,7 +260,7 @@
 	},
 	{
 		"request": {
-			"model": "xiaomi/mimo-v2.5-pro",
+			"model": "xiaomi/mimo-v2.6-pro",
 			"messages": [
 				{
 					"role": "system",
@@ -283,7 +274,7 @@
 					"role": "assistant",
 					"tool_calls": [
 						{
-							"id": "call_3b25bf5c2d494f178dac3350",
+							"id": "chatcmpl-tool-a963129d0451a2d5",
 							"type": "function",
 							"function": {
 								"name": "list_files",
@@ -294,7 +285,7 @@
 					"reasoning_details": [
 						{
 							"type": "reasoning.text",
-							"text": "Let me look at the files in the directory to find information about rate limiting.",
+							"text": "Let me look at files.",
 							"format": "unknown",
 							"index": 0
 						}
@@ -303,13 +294,13 @@
 				{
 					"role": "tool",
 					"content": "CHANGELOG.md\nREADME.md\nconfig/defaults.yaml",
-					"tool_call_id": "call_3b25bf5c2d494f178dac3350"
+					"tool_call_id": "chatcmpl-tool-a963129d0451a2d5"
 				},
 				{
 					"role": "assistant",
 					"tool_calls": [
 						{
-							"id": "call_f8aa460ef529458798f3f937",
+							"id": "chatcmpl-tool-bf4cd287f51cd98e",
 							"type": "function",
 							"function": {
 								"name": "read_file",
@@ -317,26 +308,18 @@
 							}
 						},
 						{
-							"id": "call_527e3164cc8248cc97f4670c",
+							"id": "chatcmpl-tool-b7905cd201bd3870",
 							"type": "function",
 							"function": {
 								"name": "read_file",
 								"arguments": "{\"path\": \"config/defaults.yaml\"}"
-							}
-						},
-						{
-							"id": "call_585ccf2ab13a4ec3a1797603",
-							"type": "function",
-							"function": {
-								"name": "read_file",
-								"arguments": "{\"path\": \"README.md\"}"
 							}
 						}
 					],
 					"reasoning_details": [
 						{
 							"type": "reasoning.text",
-							"text": "Let me read the CHANGELOG.md and also check the other files for rate limiting information.",
+							"text": "Check CHANGELOG.md and config/defaults.yaml.",
 							"format": "unknown",
 							"index": 0
 						}
@@ -345,17 +328,12 @@
 				{
 					"role": "tool",
 					"content": "# Changelog\n\n## v1.3.0 (2026-08-02)\n\n- Add per-client rate limiting. Each client is identified by its IP\n  address; the limit is set by rate_limit.requests_per_minute.\n- Fix a redirect loop when a short link points to itself.\n\n## v1.2.0 (2026-05-14)\n\n- Add link expiry: links can be created with an expiry date.\n- Store click counts per day instead of a single total.\n\n## v1.1.0 (2026-03-03)\n\n- Add a JSON API for creating links: POST /api/links.\n- Serve a health check at /healthz.\n",
-					"tool_call_id": "call_f8aa460ef529458798f3f937"
+					"tool_call_id": "chatcmpl-tool-bf4cd287f51cd98e"
 				},
 				{
 					"role": "tool",
 					"content": "listen_addr: \":8080\"\ndatabase: \"shortlink.db\"\nbase_url: \"http://localhost:8080\"\n\nrate_limit:\n  requests_per_minute: 120\n  burst: 20\n",
-					"tool_call_id": "call_527e3164cc8248cc97f4670c"
-				},
-				{
-					"role": "tool",
-					"content": "# shortlink\n\nshortlink is a small URL shortener written in Go. It stores links in\nSQLite and serves redirects from a single binary.\n\nRun it with `go run ./cmd/shortlink`. Settings are read from\nconfig/defaults.yaml, and any of them can be overridden with an\nenvironment variable of the same name in capitals, such as\nLISTEN_ADDR.\n\nSee CHANGELOG.md for what changed in each release.\n",
-					"tool_call_id": "call_585ccf2ab13a4ec3a1797603"
+					"tool_call_id": "chatcmpl-tool-b7905cd201bd3870"
 				}
 			],
 			"tools": [
@@ -392,13 +370,13 @@
 		},
 		"status": 200,
 		"response": {
-			"id": "gen-1792449117-Kt6Q60qXFP5FXBU5PhWV",
+			"id": "gen-1792449303-XmqAORBWzWVInNbbX2CJ",
 			"object": "chat.completion",
-			"created": 1792449117,
-			"model": "xiaomi/mimo-v2.5-pro",
-			"provider": "Xiaomi",
+			"created": 1792449303,
+			"model": "xiaomi/mimo-v2.6-pro",
+			"provider": "DeepInfra",
 			"system_fingerprint": null,
-			"service_tier": null,
+			"service_tier": "default",
 			"choices": [
 				{
 					"index": 0,
@@ -407,13 +385,13 @@
 					"native_finish_reason": "stop",
 					"message": {
 						"role": "assistant",
-						"content": "Rate limiting was added in **v1.3.0** (released 2026-08-02). According to `config/defaults.yaml`, the default limit is **120 requests per minute**, with a burst of 20.",
+						"content": "**Release:** v1.3.0 (2026-08-02) added per-client rate limiting, according to `CHANGELOG.md`. Each client is identified by IP address and the limit is set by `rate_limit.requests_per_minute`.\n\n**Default limit:** 120 requests per minute (with a burst of 20), per `config/defaults.yaml`.",
 						"refusal": null,
-						"reasoning": "I have all the information needed.",
+						"reasoning": "Answer: v1.3.0 added rate limiting, default limit 120 requests per minute (burst 20).",
 						"reasoning_details": [
 							{
 								"type": "reasoning.text",
-								"text": "I have all the information needed.",
+								"text": "Answer: v1.3.0 added rate limiting, default limit 120 requests per minute (burst 20).",
 								"format": "unknown",
 								"index": 0
 							}
@@ -422,24 +400,24 @@
 				}
 			],
 			"usage": {
-				"prompt_tokens": 800,
-				"completion_tokens": 64,
-				"total_tokens": 864,
-				"cost": 0.0002380224,
+				"prompt_tokens": 511,
+				"completion_tokens": 111,
+				"total_tokens": 622,
+				"cost": 0.0003163,
 				"is_byok": false,
 				"prompt_tokens_details": {
-					"cached_tokens": 384,
+					"cached_tokens": 0,
 					"cache_write_tokens": 0,
 					"audio_tokens": 0,
 					"video_tokens": 0
 				},
 				"cost_details": {
-					"upstream_inference_cost": 0.0002380224,
-					"upstream_inference_prompt_cost": 0.0001823424,
-					"upstream_inference_completions_cost": 0.00005568
+					"upstream_inference_cost": 0.0003163,
+					"upstream_inference_prompt_cost": 0.00021973,
+					"upstream_inference_completions_cost": 0.00009657
 				},
 				"completion_tokens_details": {
-					"reasoning_tokens": 7,
+					"reasoning_tokens": 27,
 					"image_tokens": 0,
 					"audio_tokens": 0
 				}

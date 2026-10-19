@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	defaultModel    = "xiaomi/mimo-v2.5-pro"
+	defaultModel    = "xiaomi/mimo-v2.6-pro"
 	defaultQuestion = "Which release added rate limiting, " +
 		"and what is the default limit?"
 )

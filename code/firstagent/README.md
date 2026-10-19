@@ -19,7 +19,7 @@ From the `code` directory, with no API key:
 $ go run ./firstagent
 ```
 
-The model's replies come from `testdata/run.json`, recorded from `xiaomi/mimo-v2.5-pro` on October 19, 2026 (three calls, $0.0006); the tools read the sample project in `testdata/project` for real.
+The model's replies come from `testdata/run.json`, recorded from `xiaomi/mimo-v2.6-pro` on October 19, 2026 (three calls, $0.0005); the tools read the sample project in `testdata/project` for real.
 `testdata/out.txt` is the output.
 
 With `OPENROUTER_API_KEY` set, the program calls the live model, and you can point it at your own files and ask your own question:

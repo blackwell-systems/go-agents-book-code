@@ -2,9 +2,10 @@ question: Which release added rate limiting, and what is the default limit?
 turn 1: list_files {}
 turn 2: read_file {"path": "CHANGELOG.md"}
 turn 2: read_file {"path": "config/defaults.yaml"}
-turn 2: read_file {"path": "README.md"}
-3 model calls, 1557 tokens in, 176 out, $0.0006
+3 model calls, 969 tokens in, 179 out, $0.0005
 
-Rate limiting was added in **v1.3.0** (released 2026-08-02). According to `config/defaults.yaml`, the default limit is **120 requests per minute**, with a burst of 20.
+**Release:** v1.3.0 (2026-08-02) added per-client rate limiting, according to `CHANGELOG.md`. Each client is identified by IP address and the limit is set by `rate_limit.requests_per_minute`.
 
-9 messages
+**Default limit:** 120 requests per minute (with a burst of 20), per `config/defaults.yaml`.
+
+8 messages

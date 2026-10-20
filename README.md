@@ -63,14 +63,15 @@ Model replies vary from run to run, so a live run will not match the book's outp
 
 ## Extra examples
 
-Four small programs go beyond the chapters, tested like the rest. The first two build on chapter 6's agent types; the last two stand alone:
+Five small programs go beyond the chapters, tested like the rest. The first two build on chapter 6's agent types; the last three stand alone:
 
 * `code/shapes/`: the workflow shapes from chapter 5's table, written out: a fixed chain with checks between steps, a router that uses a small model to pick a handler, parallel calls with a vote, and check and revise.
 * `code/ssebrowser/`: an agent's progress served to a browser with server-sent events, using `net/http` alone, with heartbeats, flushing, and cancellation when the client leaves.
 * `code/firstagent/`: the smallest complete agent, which answers a question about the files in a directory with two read-only tools. It imports nothing from the chapters, so its files can start a module of your own; golang-agents.com walks through it.
 * `code/rag/`: retrieval-augmented generation (RAG) with the standard library: documents split into chunks, embedded through OpenRouter, and searched in memory. It answers questions about a small service's documentation three ways, RAG in one call, search as a tool, and an agent that reads the files, and compares them. The book doesn't cover retrieval; golang-agents.com does.
+* `code/memory/`: memory between sessions: notes an agent saves with a tool, replaces when they change, and recalls by meaning, compared over eight sessions with carrying nothing and with carrying the whole conversation. The book doesn't cover memory across sessions; golang-agents.com does.
 
-All four run offline:
+All five run offline:
 
 ```
 cd code
@@ -78,7 +79,8 @@ go run ./shapes
 go run ./ssebrowser   # then open the address it prints
 go run ./firstagent
 go run ./rag
-go test -race ./shapes ./ssebrowser ./firstagent ./rag
+go run ./memory
+go test -race ./shapes ./ssebrowser ./firstagent ./rag ./memory
 ```
 
 Each directory's `README.md` says more.
@@ -96,6 +98,7 @@ Each directory's `README.md` says more.
 | `code/ssebrowser/` | An agent's events streamed to a browser page |
 | `code/firstagent/` | A standalone first agent: files in a directory, two tools |
 | `code/rag/` | Retrieval (RAG) compared with search as a tool and with reading the files |
+| `code/memory/` | Memory between sessions compared with no memory and with the whole history |
 
 ## License
 

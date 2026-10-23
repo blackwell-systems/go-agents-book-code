@@ -70,6 +70,7 @@ Five small programs go beyond the chapters, tested like the rest. The first two 
 * `code/firstagent/`: the smallest complete agent, which answers a question about the files in a directory with two read-only tools. It imports nothing from the chapters, so its files can start a module of your own; golang-agents.com walks through it.
 * `code/rag/`: retrieval-augmented generation (RAG) with the standard library: documents split into chunks, embedded through OpenRouter, and searched in memory. It answers questions about a small service's documentation three ways, RAG in one call, search as a tool, and an agent that reads the files, and compares them. The book doesn't cover retrieval; golang-agents.com does.
 * `code/memory/`: memory between sessions: notes an agent saves with a tool, replaces when they change, and recalls by meaning, compared over eight sessions with carrying nothing and with carrying the whole conversation. The book doesn't cover memory across sessions; golang-agents.com does.
+* `code/identity/`: an agent's three identities, the user it acts for, the agent, and the run, carried by a short-lived, scoped credential: the harness mints it, a tool's transport attaches it so the model never sees it, a service verifies it and checks its scope, a sub-agent gets a narrower one, and every attempt is audited. It needs no model and no API key. The book doesn't cover agent identity; golang-agents.com does.
 
 All five run offline:
 
@@ -80,7 +81,8 @@ go run ./ssebrowser   # then open the address it prints
 go run ./firstagent
 go run ./rag
 go run ./memory
-go test -race ./shapes ./ssebrowser ./firstagent ./rag ./memory
+go run ./identity
+go test -race ./shapes ./ssebrowser ./firstagent ./rag ./memory ./identity
 ```
 
 Each directory's `README.md` says more.
@@ -99,6 +101,7 @@ Each directory's `README.md` says more.
 | `code/firstagent/` | A standalone first agent: files in a directory, two tools |
 | `code/rag/` | Retrieval (RAG) compared with search as a tool and with reading the files |
 | `code/memory/` | Memory between sessions compared with no memory and with the whole history |
+| `code/identity/` | Scoped, short-lived credentials for an agent, its tools, and its sub-agents, with an audit log |
 
 ## License
 
